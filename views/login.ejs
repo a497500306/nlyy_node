@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        #zhanghao{
+            width: 300px;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 30px;
+        }
+        #mima{
+            width: 300px;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .input-group{
+            text-align: center;
+        }
+
+        #loginButton{
+            margin-top: 10px;
+            width: 300px;
+        }
+        body {
+            text-align: center;
+            margin: 0 auto;
+        }
+        #logo{
+            font-size: 20px;
+        }
+        #huanying{
+            margin-top: 150px;
+        }
+        #cuowukuang{
+            width: 300px;
+            margin: 0 auto;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+         }
+    </style>
+</head>
+<body>
+    <!--<nav class="navbar navbar-default navbar-fixed-top" >-->
+        <!--<div class="container">-->
+            <!--<a class="navbar-brand" href="#" id = 'logo'>医家管理平台登录</a>-->
+        <!--</div>-->
+    <!--</nav>-->
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">诺兰管理平台</a>
+            </div>
+        </div><!-- /.container-fluid -->
+    </nav>
+    <h2 id="huanying">欢迎来到诺兰管理平台</h2>
+    <div class="input-group" id = "zhanghao">
+        <input type="text" class="form-control" placeholder="用户名" aria-describedby="basic-addon1" name = 'username' id="zhanghaoText">
+    </div>
+
+    <div class="input-group"id = "mima">
+        <input type="text" class="form-control" placeholder="密码" aria-describedby="basic-addon1" name = 'password' id="mimaText">
+    </div>
+    <button type="button" id="loginButton" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+        登录
+    </button>
+    <div class="alert alert-danger" role="alert" id="cuowukuang">账号或者密码错误</div>
+
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/underscore-noflect.js"></script>
+    <script type="text/javascript">
+        $("input").focus(function(){
+            $("#cuowukuang").fadeOut();
+        });
+        $('#loginButton').on('click', function () {
+            $.post('nlyy/login',{
+               'name' : $('#zhanghaoText').val(),
+                'password': $('#mimaText').val()
+            },function (result) {
+                if (result.isSucceed == '1'){
+                    location.href = result.url;
+                }else{
+                    $("#cuowukuang").fadeIn();
+                }
+            });
+        })
+    </script>
+</body>
+</html>
