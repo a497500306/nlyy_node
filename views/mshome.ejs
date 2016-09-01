@@ -1,24 +1,183 @@
+<!--<!DOCTYPE html>-->
+<!--<head>-->
+    <!--<meta charset="UTF-8">-->
+    <!--<title>医家管理平台</title>-->
+    <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
+    <!--<style type="text/css">-->
+        <!--#tianjiabanbenkongzhiNav{-->
+            <!--text-align:right;-->
+        <!--}-->
+         <!--#tianjiabanbenkongzhiBtn{-->
+             <!--margin-bottom: 20px;-->
+             <!--margin-right: 30px;-->
+         <!--}-->
+    <!--</style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<nav class="navbar navbar-default">-->
+    <!--<div class="container-fluid">-->
+        <!--&lt;!&ndash; Brand and toggle get grouped for better mobile display &ndash;&gt;-->
+        <!--<div class="navbar-header">-->
+            <!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">-->
+                <!--<span class="sr-only">Toggle navigation</span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+                <!--<span class="icon-bar"></span>-->
+            <!--</button>-->
+            <!--<a class="navbar-brand" href="#">诺兰医药管理平台</a>-->
+        <!--</div>-->
+
+        <!--&lt;!&ndash; Collect the nav links, forms, and other content for toggling &ndash;&gt;-->
+        <!--<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">-->
+            <!--<ul class="nav navbar-nav">-->
+                <!--<li class="dropdown">-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">基本信息导入 <span class="caret"></span></a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--<li><a href="#">研究导入</a></li>-->
+                        <!--<li><a href="#">研究中心导入</a></li>-->
+                        <!--<li><a href="#">新增仓库</a></li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+
+                <!--<li class="dropdown">-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">问题反馈 <span class="caret"></span></a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--<li><a href="#">全部反馈</a></li>-->
+                        <!--<li><a href="#">患者端反馈</a></li>-->
+                        <!--<li><a href="#">医生端反馈</a></li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+
+                <!--<li><a href="#">权限设置</a></li>-->
+
+                <!--<ul class="nav navbar-nav navbar-right">-->
+                    <!--<li class="dropdown">-->
+                        <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">版本控制<span class="caret"></span></a>-->
+                        <!--<ul class="dropdown-menu">-->
+                            <!--<li><a id = "azhzdbbkz">安卓患者端</a></li>-->
+                            <!--<li><a id = "azysdbbkz">安卓医生端</a></li>-->
+                            <!--<li><a id = "ioshzdbbkz">IOS患者端</a></li>-->
+                            <!--<li><a id = "iosysdbbkz">IOS医生端</a></li>-->
+                        <!--</ul>-->
+                    <!--</li>-->
+                <!--</ul>-->
+            <!--</ul>-->
+
+            <!--<ul class="nav navbar-nav navbar-right">-->
+                <!--<li class="dropdown">-->
+                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=userName %><span class="caret"></span></a>-->
+                    <!--<ul class="dropdown-menu">-->
+                        <!--<li><a id = "xiugai" >修改密码</a></li>-->
+                        <!--<li><a id = "tuichu" >退出登录</a></li>-->
+                    <!--</ul>-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</div>&lt;!&ndash; /.navbar-collapse &ndash;&gt;-->
+    <!--</div>&lt;!&ndash; /.container-fluid &ndash;&gt;-->
+<!--</nav>-->
+<!--<script src="js/jquery-1.11.3.min.js"></script>-->
+<!--<script src="js/bootstrap.min.js"></script>-->
+<!--<script type="text/javascript">-->
+    <!--//点击修改密码-->
+    <!--$('#xiugai').on('click', function () {-->
+        <!--alert('修改密码');-->
+    <!--})-->
+    <!--//点击退出登录-->
+    <!--$('#tuichu').on('click', function () {-->
+        <!--alert('退出登录');-->
+    <!--})-->
+    <!--//安卓患者端版本控制-->
+    <!--$('#azhzdbbkz').on('click', function () {-->
+        <!--$.post('node/bbkz',{-->
+            <!--'appId' : 1-->
+        <!--},function (result) {-->
+            <!--if (result.isSucceed == '1') {-->
+                <!--location.href = result.url;-->
+            <!--}-->
+        <!--});-->
+    <!--})-->
+    <!--//安卓医生端版本控制-->
+    <!--$('#azysdbbkz').on('click', function () {-->
+        <!--$.post('node/bbkz',{-->
+            <!--'appId' : 2-->
+        <!--},function (result) {-->
+            <!--if (result.isSucceed == '1') {-->
+                <!--location.href = result.url;-->
+            <!--}-->
+        <!--});-->
+    <!--})-->
+    <!--//ios患者端版本控制-->
+    <!--$('#ioshzdbbkz').on('click', function () {-->
+        <!--$.post('node/bbkz',{-->
+            <!--'appId' : 3-->
+        <!--},function (result) {-->
+            <!--if (result.isSucceed == '1') {-->
+                <!--location.href = result.url;-->
+            <!--}-->
+        <!--});-->
+    <!--})-->
+    <!--//ios医生端版本控制-->
+    <!--$('#iosysdbbkz').on('click', function () {-->
+        <!--$.post('node/bbkz',{-->
+            <!--'appId' : 4-->
+        <!--},function (result) {-->
+            <!--if (result.isSucceed == '1') {-->
+                <!--location.href = result.url;-->
+            <!--}-->
+        <!--});-->
+    <!--})-->
+    <!--//点击版本控制-->
+    <!--$('#tianjiabanbenkongzhiBtn').on('click',function () {-->
+
+    <!--})-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>医家管理平台</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
     <style type="text/css">
-        #tianjiabanbenkongzhiNav{
-            text-align:right;
+        .shurukuan{
+            width: 300px;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 10px;
         }
-         #tianjiabanbenkongzhiBtn{
-             margin-bottom: 20px;
-             margin-right: 30px;
-         }
     </style>
 </head>
+
 <body>
-<nav class="navbar navbar-default">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -27,108 +186,154 @@
             <a class="navbar-brand" href="#">诺兰医药管理平台</a>
         </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">新闻模块 <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">中心导入</a></li>
-                        <li><a href="#">新闻导入</a></li>
-                    </ul>
-                </li>
-
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">问题反馈 <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">全部反馈</a></li>
-                        <li><a href="#">患者端反馈</a></li>
-                        <li><a href="#">医生端反馈</a></li>
-                    </ul>
-                </li>
-
-                <li><a href="#">权限设置</a></li>
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">版本控制<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a id = "azhzdbbkz">安卓患者端</a></li>
-                            <li><a id = "azysdbbkz">安卓医生端</a></li>
-                            <li><a id = "ioshzdbbkz">IOS患者端</a></li>
-                            <li><a id = "iosysdbbkz">IOS医生端</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </ul>
-
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=userName %><span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a id = "xiugai" >修改密码</a></li>
-                        <li><a id = "tuichu" >退出登录</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+        <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=userName %><span class="caret"></span></a>
+        <ul class="dropdown-menu">
+        <li><a id = "xiugai" data-toggle="modal" data-target=".xiugaimimaModel">修改密码</a></li>
+        <li><a id = "tuichu" >退出登录</a></li>
+        </ul>
+        </li>
+        </ul>
+    </div>
 </nav>
+<!-- Small modal -->
+<div class="modal fade xiugaimimaModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改密码</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group  shurukuan" id = "yuanshimima">
+                        <input type="text" class="form-control" placeholder="原始密码" aria-describedby="basic-addon1" name = 'username' id="yuanshimimaText">
+                    </div>
+                    <div class="input-group shurukuan" id = "xinmima">
+                        <input type="text" class="form-control" placeholder="新密码" aria-describedby="basic-addon1" name = 'username' id="xinmimaText">
+                    </div>
+                    <div class="input-group shurukuan"id = "quedingmima">
+                        <input type="text" class="form-control" placeholder="确定密码" aria-describedby="basic-addon1" name = 'password' id="quedingmimaText">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade quedingshanchuModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定删除&hellip;?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <!--<li><a href="#">新增研究 <span class="sr-only">(current)</span></a></li>-->
+                <li class="active"><a href="#" id="xzyj">新增研究 </a></li>
+                <li><a href="#" id="szyjsjhcs">设置研究随机化参数</a></li>
+                <li><a href="#" id="xzyjzx">新增研究中心</a></li>
+                <li><a href="#" id="xzck">新增仓库</a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="#" id="dryjrxpcbz">导入研究入选排除标准</a></li>
+                <li><a href="#" id="gdsjfdrsjh">固定随机法导入随机号</a></li>
+                <li><a href="#" id="drywh">导入药物号</a></li>
+                <li><a href="#" id="nztjssjsywaqkc">内置统计算式计算药物安全库存</a></li>
+                <li><a href="#" id="szsszsfcs">设置受试者随访参数</a></li>
+                <li><a href="#" id="szrwsqhsh">设置任务申请和审核</a></li>
+            </ul>
+            <ul class="nav nav-sidebar">
+                <li><a href="#" id="szhlyh">设置管理用户</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" >
+            <h2 class="sub-header">欢迎来到诺兰医药管理平台</h2>
+            <div id="liebiaodiv">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<!--模板-->
+<script type="text/template" id="liebiaomoban">
+    <div class="table-responsive">
+        <form enctype="multipart/form-data" method="post" enctype="multipart/form-data" action= {{= importUrl}}>
+            <input id="file-0a" class="file" type="file" multiple data-min-file-count="1" name="excel">
+            <br>
+            <button type="submit" class="btn btn-primary">上传</button>
+            <button type="reset" class="btn btn-default">取消</button>
+        </form>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                {{ for(var i = 0 ; i < result.length ; i++){}}
+                    <th>{{=result[i] }}</th>
+                {{ } }}
+            </tr>
+            </thead>
+            <tbody>
+                {{ for(var i = 0 ; i < data.length ; i++){ }}
+                <tr>
+                    {{ for(var j = 0 ; j < resultEn.length ; j++){ }}
+                        {{ if(resultEn[j] == '操作' ){ }}
+                             <td><a id = "xiugai" data-toggle="modal" data-target=".quedingshanchuModel" >删除</a></td>
+                        {{ }else if(resultEn[j] == 'Date'){ }}
+                             {{ var date = new Date(data[i][resultEn[j]]); }}
+                             {{ var dateStr =  date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();}}
+                             <td>{{= dateStr}}</td>
+                        {{ }else {}}
+                             <td>{{= data[i][resultEn[j]]}}</td>
+                        {{ } }}
+                    {{ } }}
+                </tr>
+                {{ } }}
+            </tbody>
+        </table>
+        <nav>
+            <ul class="pagination">
+                {{ for(var i = 1 ; i <= pageCount ; i++){}}
+                     <li class="yemaanniu" data-page={{= i.toString() }}><a href="#">{{= i }}</a></li>
+                    <!--{{if ((i+1) == pageNumber){ }}-->
+                        <!--<li class="active" class="yemaanniu"><a href="#">{{= (i + 1).toString() }}<span class="sr-only">(current)</span></a></li>-->
+                    <!--{{ }else{ }}-->
+                        <!--<li class="yemaanniu"><a>{{= (i + 1).toString() }}<span class="sr-only">(current)</span></a></li>-->
+                    <!--{{ } }}-->
+                {{ } }}
+            </ul>
+        </nav>
+    </div>
+</script>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<script type="text/javascript" src="js/underscore-noflect.js"></script>
 <script src="js/jquery-1.11.3.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script type="text/javascript">
-    //点击修改密码
-    $('#xiugai').on('click', function () {
-        alert('修改密码');
-    })
-    //点击退出登录
-    $('#tuichu').on('click', function () {
-        alert('退出登录');
-    })
-    //安卓患者端版本控制
-    $('#azhzdbbkz').on('click', function () {
-        $.post('node/bbkz',{
-            'appId' : 1
-        },function (result) {
-            if (result.isSucceed == '1') {
-                location.href = result.url;
-            }
-        });
-    })
-    //安卓医生端版本控制
-    $('#azysdbbkz').on('click', function () {
-        $.post('node/bbkz',{
-            'appId' : 2
-        },function (result) {
-            if (result.isSucceed == '1') {
-                location.href = result.url;
-            }
-        });
-    })
-    //ios患者端版本控制
-    $('#ioshzdbbkz').on('click', function () {
-        $.post('node/bbkz',{
-            'appId' : 3
-        },function (result) {
-            if (result.isSucceed == '1') {
-                location.href = result.url;
-            }
-        });
-    })
-    //ios医生端版本控制
-    $('#iosysdbbkz').on('click', function () {
-        $.post('node/bbkz',{
-            'appId' : 4
-        },function (result) {
-            if (result.isSucceed == '1') {
-                location.href = result.url;
-            }
-        });
-    })
-    //点击版本控制
-    $('#tianjiabanbenkongzhiBtn').on('click',function () {
-
-    })
-</script>
+<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+<!--<script src="../../assets/js/vendor/holder.min.js"></script>-->
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="js/ie10-viewport-bug-workaround.js"></script>
+<script type="text/javascript" src="js/mshome.js"></script>
 </body>
 </html>

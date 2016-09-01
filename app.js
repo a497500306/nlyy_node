@@ -3,7 +3,8 @@ var express = require("express");
 var app = express();
 var db = require("./models/db.js");
 var session = require('express-session');
-var login = require('./controller/login');
+var login = require('./controller/login');//登录
+var ImportData = require('./controller/ImportData');//导入数据
 
 app.set("view engine","ejs");
 
@@ -23,10 +24,17 @@ app.get("/admin",login.showAdmin);
 app.post("/nlyy/login",login.doLogin);
 //管理首页
 app.get('/home',login.showHome);
+/**************导入数据*****************/
+//新增研究
+app.post('/nlyy/addYzyj',ImportData.addYzyj);
+
+//登录请求
+app.post("/node/getHome",login.doHome);
 
 //404错误
 app.use('/',function (req, res) {
-    console.log('404');
+    console.log('404',req.url);
     res.send('404');
 });
+
 app.listen(3000);
