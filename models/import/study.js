@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var settings = require('../settings');
+var settings = require('../../settings');
 var autoIncrement = require('mongoose-auto-increment');   //自增ID 模块
 autoIncrement.initialize(mongoose.connection);   //初始化
 

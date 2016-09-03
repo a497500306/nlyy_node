@@ -1,5 +1,25 @@
 var nowpage = 1;
 var id = '';
+
+//根据操作权限做相应的显示
+if (localStorage.addUser == 'true'){
+    $("#szhlyhUi").show();
+}else {
+    $("#szhlyhUi").hide();
+}
+//获得焦点隐藏错误框
+$("input").focus(function(){
+    $("#cuowukuang").fadeOut();
+    $("#quanxiantishi").fadeOut();
+    $("#tianjiaCuowukuang").fadeOut();
+});
+//隐藏修改密码错误提示
+$("#cuowukuang").fadeOut();
+$("#tianjiaCuowukuang").fadeOut();
+$("#quanxiantishi").hide();
+
+
+
 //设置模板
 $('.sub-header')[0].innerHTML = "欢迎来到诺兰医药管理平台";
 $(document).ready(function () {
@@ -14,9 +34,6 @@ $(document).ready(function () {
         }
         var text = a[0].text;
 
-        console.log("123");
-
-
         postData(id,text,nowpage);
 
     })
@@ -29,6 +46,7 @@ function postData(id,text,page) {
         "text":text,
         "page":page
     },function (result) {
+        console.log(result);
         //    显示模板
         //得到模板，弄成模板函数
         var compiled =_.template($("#liebiaomoban").html());
@@ -45,6 +63,19 @@ function postData(id,text,page) {
 
         $('#liebiaodiv').append($(html));
 
+        if (result.write == true){//判断是否显示上传模块
+            $("#caozuomokuai").show();
+        }else {
+            $("#caozuomokuai").hide();
+        }
+         //隐藏添加用户BTN
+        $("#tianjiayonghuBtn").hide();
+        //如果是设置管理用户则不显示上传
+        if (result.importUrl == "/nlyy/addSzhlyh"){
+            $("#caozuomokuai").hide();
+            //显示添加用户BTN
+            $("#tianjiayonghuBtn").show();
+        }
 
         //高亮
         $(".yemaanniu:eq(" + (nowpage - 1) + ")").addClass("active");
@@ -57,3 +88,57 @@ function postData(id,text,page) {
         });
     });
 }
+
+//点击修改密码确定
+$('#xgmmQD').on('click', function () {
+    //1.判断是否填写完成
+    if ($('#yuanshimimaText').val() != "" && $('#xinmimaText').val() != "" && $('#quedingmimaText').val() != ""){//有值
+        if ($('#xinmimaText').val() != $('#quedingmimaText').val()){//确认密码错误
+            $("#cuowukuang").html("密码确认不一致");
+            $("#cuowukuang").fadeIn();
+        }else{//发送网络请求
+            $.post('node/resetPassword',{
+                "usedPassword":$('#yuanshimimaText').val(),
+                "newPassword":$('#xinmimaText').val()
+            },function (result) {
+                //    显示模板
+                $("#cuowukuang").html(result.msg);
+                $("#cuowukuang").fadeIn();
+                if (result.isSucceed == "1"){
+                    //隐藏模态框
+                    setTimeout("$('#xgmmModal').modal('hide')",500);
+                }
+            });
+        }
+    }else{//没有值
+        $("#cuowukuang").html("未填写完成");
+        $("#cuowukuang").fadeIn();
+    }
+})
+
+//点击添加管理用户
+$('#modalTianjiaBtn').on('click', function () {
+    console.log($('#kexie').prop("checked"));
+    console.log($('#guanliyonghu').prop("checked"));
+   //判断是否输入正确
+    if ($('#tianjiaUserText').val() != "" && $('#tianjiaMimaText').val() != ""){//添加用户
+        $.post('node/addAdminUser',{
+            "name":$('#tianjiaUserText').val(),
+            "password":$('#tianjiaMimaText').val(),
+            "write" : $('#kexie').prop("checked"),
+            "addUser" : $('#guanliyonghu').prop("checked"),
+            "read" : true
+        },function (result) {
+            //    显示模板
+            $("#tianjiaCuowukuang").html(result.msg);
+            $("#tianjiaCuowukuang").fadeIn();
+            if (result.isSucceed == "1"){
+                //隐藏模态框
+                setTimeout("$('#tianjiaCuowukuang').modal('hide')",500);
+            }
+        });
+    }else {//用户或者密码未输入
+        $("#tianjiaCuowukuang").html("用户名或密码未输入");
+        $("#tianjiaCuowukuang").fadeIn();
+    }
+});

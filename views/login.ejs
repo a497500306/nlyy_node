@@ -83,6 +83,8 @@
                 'password': $('#mimaText').val()
             },function (result) {
                 if (result.isSucceed == '1'){
+                    console.log(result);
+                    localStorage.addUser = result.addUser;
                     location.href = result.url;
                 }else{
                     $("#cuowukuang").fadeIn();
