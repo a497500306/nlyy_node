@@ -5,6 +5,7 @@ autoIncrement.initialize(mongoose.connection);   //初始化
 
 //schema
 var studySchema = new mongoose.Schema({
+    "id" : Number,
     "StudySeq" : Number, // 研究序列号
     "StudyID" : String,    //研究编号
     "SponsorF" : String,   //申办方全称
@@ -21,16 +22,24 @@ var studySchema = new mongoose.Schema({
     "AccrualPerS": Number,   //中心平均入组例数
     "AccrualT": Number,   //研究总招募月数
     "AccrualConf": Number,   //研究招募信心度
+    "ExtStudYN" : Number, //是否有延长期研究
+    "SubStudYN" : Number, //是否有子研究
+    "SubStudInYN" : Number, //参加子研究是否是随机抽取
+    "StudOnlineYN" : Number, //研究是否在线
+    "StudDEMOYN" : Number, //属于演示版研究
+    "StudSimuYN" : Number, //属于真实研究模拟版
     "Date" : Date, //导入时间
 });
 studySchema.plugin(autoIncrement.plugin, {
     model: 'Books',
-    field: 'StudySeq',
+    field: 'id',
     startAt: 0,
     incrementBy: 1
 });
 //索引
 studySchema.index({ "Date": 1});
+studySchema.index({ "StudySeq": 1});
+studySchema.index({ "StudyID": 1});
 
 //model
 var study = mongoose.model("study",studySchema);

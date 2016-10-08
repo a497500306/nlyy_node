@@ -8,6 +8,7 @@ autoIncrement.initialize(mongoose.connection);   //初始化
 
 //schema
 var depotSchema = new mongoose.Schema({
+    "id" : String,
     "StudyID" : String,    //研究编号
     "DepotID" : String,    //仓库编号
     "isTotalDepot" : Number,//是否为主仓库:1是,0不是
@@ -22,7 +23,7 @@ var depotSchema = new mongoose.Schema({
 });
 depotSchema.plugin(autoIncrement.plugin, {
     model: 'Books',
-    field: 'DepotID',
+    field: 'id',
     startAt: 0,
     incrementBy: 1
 });

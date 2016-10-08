@@ -5,6 +5,9 @@ var db = require("./models/db.js");
 var session = require('express-session');
 var login = require('./controller/login');//登录
 var ImportData = require('./controller/ImportData');//导入数据
+
+var appLogin = require('./controller/APPJK/appLogin')//app登录相关
+var appTool = require('./controller/APPJK/appTool')//app查询相关
 //打开发送邮件
 // var Email = require('./models/EMail');//Email服务
 
@@ -39,9 +42,25 @@ app.post('/nlyy/addXzyjzx',ImportData.addXzyjzx);
 app.post('/nlyy/addXzck',ImportData.addXzck);
 //设置管理用户
 app.post('/nlyy/addSzhlyh',ImportData.addSzhlyh);
+//导入用户数据
+app.post('/nlyy/addDryhsj',ImportData.addDryhsj);
+//导入药物号
+app.post('/nlyy/addDrywh',ImportData.addDrywh);
+//固定随机法导入随机号
+app.post('/nlyy/addGdsjfdrsjh',ImportData.addGdsjfdrsjh);
+//设置研究的随机化参数
+app.post('/nlyy/addSzyjsjhcs',ImportData.addSzyjsjhcs);
 
 //登录请求
 app.post("/node/getHome",login.doHome);
+
+/*************APP接口******************/
+//获取验证码接口
+app.post("/app/getIDCode",appLogin.appIDCode);
+//登录接口
+app.post("/app/getLogin",appLogin.appLogin);
+//查询用户所有研究列表接口
+app.post("/app/getStud",appTool.appGetStud);
 
 //404错误
 app.use('/',function (req, res) {

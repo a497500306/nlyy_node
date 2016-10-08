@@ -5,6 +5,7 @@ autoIncrement.initialize(mongoose.connection);   //初始化
 
 //schema
 var siteSchema = new mongoose.Schema({
+    "id":Number,           //研究ID
     "StudyID" : String,    //研究编号
     "SiteID" : String,    //中心编号
     "InvNam" : String,    //中心主要研究者
@@ -16,12 +17,13 @@ var siteSchema = new mongoose.Schema({
 });
 siteSchema.plugin(autoIncrement.plugin, {
     model: 'Books',
-    field: 'SiteID',
+    field: 'id',
     startAt: 0,
     incrementBy: 1
 });
 //索引
 siteSchema.index({ "Date": 1});
+siteSchema.index({ "SiteID": 1});
 
 //model
 var site = mongoose.model("site",siteSchema);
