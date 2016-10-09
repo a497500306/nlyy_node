@@ -61,6 +61,8 @@ app.post("/app/getIDCode",appLogin.appIDCode);
 app.post("/app/getLogin",appLogin.appLogin);
 //查询用户所有研究列表接口
 app.post("/app/getStud",appTool.appGetStud);
+//查询用户所有仓库接口
+app.post("/app/getWarehouse",appTool.appGetWarehouse);
 
 //404错误
 app.use('/',function (req, res) {

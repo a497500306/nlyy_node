@@ -184,9 +184,9 @@ exports.doHome = function (req, res, next) {
             console.log('新增研究中心');
 
         }else if(fields.id == "xzck"){//新增仓库
-            var keys =  ['研究编号','仓库编号','主仓库','仓库名称','仓库所在城市','仓库详细地址','仓库邮编','仓管员姓名','仓管员手机','仓管员电子邮箱',
+            var keys =  ['研究编号','仓库编号','仓库名称','仓库所在城市','仓库详细地址','仓库邮编','仓管员姓名','仓管员手机','仓管员电子邮箱','是否为总仓库','是否为分仓库',
                 '添加时间','操作'];
-            var keyEn = ['StudyID','DepotID','isTotalDepot','DepotNam','DepotCity','DepotAdd','DepotZipC','DepotKper','DepotMP','DepotEmail','Date','操作'];
+            var keyEn = ['StudyID','DepotID','DepotNam','DepotCity','DepotAdd','DepotZipC','DepotKper','DepotMP','DepotEmail','DepotGNYN','DepotBrYN','Date','操作'];
             showTable(fields, res , req ,depot , keys , keyEn , "/nlyy/addXzck");
             console.log('新增仓库');
         }else if(fields.id == "dryjrxpcbz"){//导入研究入选排除标准

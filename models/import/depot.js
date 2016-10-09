@@ -11,7 +11,8 @@ var depotSchema = new mongoose.Schema({
     "id" : String,
     "StudyID" : String,    //研究编号
     "DepotID" : String,    //仓库编号
-    "isTotalDepot" : Number,//是否为主仓库:1是,0不是
+    "DepotGNYN" : Number,//是否为主仓库:1是,0不是
+    "DepotBrYN" : Number,//是否为分仓库:1是,0不是
     "DepotNam" : String,    //仓库名
     "DepotCity" : String,    //仓库所在城市
     "DepotAdd" : String,   //仓库详细地址
@@ -29,6 +30,39 @@ depotSchema.plugin(autoIncrement.plugin, {
 });
 //索引
 depotSchema.index({ "Date": 1});
+
+//查找用户所有仓库
+depotSchema.statics.chazhaoChangku = function (StudyID, id,UserDepotYN,UserDepot, callback) {
+    if (StudyID.length == 0){
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }
+    if (UserDepotYN == 1){
+        //取出该研究中的所有仓库
+        this.model('depot').find({StudyID : StudyID},callback)
+    }else if(UserDepotYN == 0){
+        if (UserDepot.length != 0){
+            //查询某一个仓库
+            this.model('depot').find({DepotID : UserDepot,StudyID : StudyID},callback)
+        }else{
+            //UserDepot参数错误
+            callback({
+                'isSucceed' : 200,
+                'msg' : 'UserDepot参数错误'
+            },null)
+        }
+    }else{
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'UserDepotYN参数错误'
+        },null)
+    }
+}
 
 //model
 var depot = mongoose.model("depot",depotSchema);
