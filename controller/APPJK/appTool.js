@@ -5,6 +5,7 @@
 var users = require('../../models/import/users');
 var formidable = require('formidable');
 var depot = require('../../models/import/depot');
+var site = require('../../models/import/site');
 
 //查询用户所有研究
 exports.appGetStud = function (req, res, next) {
@@ -46,6 +47,55 @@ exports.appGetWarehouse = function (req, res, next) {
         //搜索是否存在该用户
         console.log(fields);
         depot.chazhaoChangku(fields.StudyID, fields.id,fields.UserDepotYN,fields.UserDepot,function (err, persons) {
+            if (err != null){
+                if (err.isSucceed == "200"){
+                    res.send(err);
+                }else{
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据库正在维护,请稍后再试'
+                    });
+                }
+            }else{
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : persons
+                })
+            }
+        })
+    })
+}
+
+//查询某研究所有分仓库
+exports.appGetFengWarehouse = function (req, res, next) {
+    console.log('查询某研究所有分仓库');
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        depot.chazhaofenChangku(fields.StudyID,function (err, persons) {
+            if (err != null){
+                if (err.isSucceed == "200"){
+                    res.send(err);
+                }else{
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据库正在维护,请稍后再试'
+                    });
+                }
+            }else{
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : persons
+                })
+            }
+        })
+    })
+}
+
+//查询某研究所有中心
+exports.appGetSite = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        site.chazhaozhongxin(fields.StudyID,function (err, persons) {
             if (err != null){
                 if (err.isSucceed == "200"){
                     res.send(err);

@@ -63,7 +63,10 @@ app.post("/app/getLogin",appLogin.appLogin);
 app.post("/app/getStud",appTool.appGetStud);
 //查询用户所有仓库接口
 app.post("/app/getWarehouse",appTool.appGetWarehouse);
-
+//查询某研究的所有分仓库
+app.post("/app/getFengWarehouse",appTool.appGetFengWarehouse);
+//查询某研究的所有中心
+app.post("/app/getSite",appTool.appGetSite);
 //404错误
 app.use('/',function (req, res) {
     console.log('404',req.url);

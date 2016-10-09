@@ -25,6 +25,21 @@ siteSchema.plugin(autoIncrement.plugin, {
 siteSchema.index({ "Date": 1});
 siteSchema.index({ "SiteID": 1});
 
+//查找所有中心
+siteSchema.statics.chazhaozhongxin = function (StudyID,callback) {
+    if (StudyID.length == 0){
+        //参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }else{
+        //取出该研究中的所有分仓库
+        this.model('site').find({StudyID : StudyID},callback)
+    }
+}
+
 //model
 var site = mongoose.model("site",siteSchema);
 

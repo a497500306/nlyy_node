@@ -64,6 +64,21 @@ depotSchema.statics.chazhaoChangku = function (StudyID, id,UserDepotYN,UserDepot
     }
 }
 
+//查找所有分仓库
+depotSchema.statics.chazhaofenChangku = function (StudyID,callback) {
+    if (StudyID.length == 0){
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }else{
+        //取出该研究中的所有分仓库
+        this.model('depot').find({StudyID : StudyID , DepotBrYN :1},callback)
+    }
+}
+
 //model
 var depot = mongoose.model("depot",depotSchema);
 
