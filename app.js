@@ -70,6 +70,11 @@ app.post("/app/getFengWarehouse",appTool.appGetFengWarehouse);
 app.post("/app/getSite",appTool.appGetSite);
 //按药物号个数分配
 app.post("/app/getYwhgsfp",appChangKu.appGetYwhgsfp);
+//确定按药物号个数分配
+app.post("/app/getAssignYwhgsfp",appChangKu.appGetAssignYwhgsfp);
+//取消按药物号个数分配
+app.post("/app/getCancelYwhgsfp",appChangKu.appGetCancelYwhgsfp);
+
 //404错误
 app.use('/',function (req, res) {
     console.log('404',req.url);
