@@ -8,6 +8,7 @@ var ImportData = require('./controller/ImportData');//导入数据
 
 var appLogin = require('./controller/APPJK/appLogin')//app登录相关
 var appTool = require('./controller/APPJK/appTool')//app查询相关
+var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
 //打开发送邮件
 // var Email = require('./models/EMail');//Email服务
 
@@ -67,6 +68,8 @@ app.post("/app/getWarehouse",appTool.appGetWarehouse);
 app.post("/app/getFengWarehouse",appTool.appGetFengWarehouse);
 //查询某研究的所有中心
 app.post("/app/getSite",appTool.appGetSite);
+//按药物号个数分配
+app.post("/app/getYwhgsfp",appChangKu.appGetYwhgsfp);
 //404错误
 app.use('/',function (req, res) {
     console.log('404',req.url);

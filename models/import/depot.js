@@ -13,7 +13,7 @@ var depotSchema = new mongoose.Schema({
     "DepotID" : String,    //仓库编号
     "DepotGNYN" : Number,//是否为主仓库:1是,0不是
     "DepotBrYN" : Number,//是否为分仓库:1是,0不是
-    "DepotNam" : String,    //仓库名
+    "DepotName" : String,    //仓库名
     "DepotCity" : String,    //仓库所在城市
     "DepotAdd" : String,   //仓库详细地址
     "DepotZipC" : String,   //仓库邮编
