@@ -27,12 +27,11 @@ drugSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1
 });
 //索引
-drugSchema.index({ "Date": 1});
 drugSchema.index({ "SiteID": 1});
 drugSchema.index({"DrugNum":1});
 drugSchema.index({"DrugSeq":1});
 
-//取出某所有药物号
+//取出某研究所有药物号
 drugSchema.statics.chazhaoyousuoYWH = function (StudyID,callback) {
     if (StudyID.length == 0){
         //UserDepotYN参数错误
@@ -43,8 +42,15 @@ drugSchema.statics.chazhaoyousuoYWH = function (StudyID,callback) {
         return;
     }else{
         //取出该研究中的所有药物号
-        this.model('drug').find({StudyID : StudyID},callback)
+        // this.model('drug').find({StudyID : StudyID},callback)
+        this.model('drug').find({StudyID : StudyID}).sort({DrugNum : 1}).exec(callback)
     }
+}
+
+//通过ID查找药物号
+drugSchema.statics.chazhaoIDYWH = function (id,callback) {
+    //取出该研究中的所有药物号
+    this.model('drug').find({id : id}).sort({DrugNum : 1}).exec(callback)
 }
 
 //把数据放入临时数据库

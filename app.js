@@ -10,7 +10,14 @@ var appLogin = require('./controller/APPJK/appLogin')//app登录相关
 var appTool = require('./controller/APPJK/appTool')//app查询相关
 var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
 //打开发送邮件
-// var Email = require('./models/EMail');//Email服务
+var Email = require('./models/EMail');//Email服务
+
+// Email.fasongxiujian({
+//     from: "Fred Foo <497500306@qq.com>", // 发件地址
+//     to: "2649325650@qq.com, 413945416@qq.com", // 收件列表
+//     subject: "Hello world", // 标题
+//     html: "<b>thanks a for visiting!</b> 世界，你好！" // html 内容
+// })
 
 app.set("view engine","ejs");
 
@@ -68,12 +75,20 @@ app.post("/app/getWarehouse",appTool.appGetWarehouse);
 app.post("/app/getFengWarehouse",appTool.appGetFengWarehouse);
 //查询某研究的所有中心
 app.post("/app/getSite",appTool.appGetSite);
-//按药物号个数分配
-app.post("/app/getYwhgsfp",appChangKu.appGetYwhgsfp);
 //确定按药物号个数分配
 app.post("/app/getAssignYwhgsfp",appChangKu.appGetAssignYwhgsfp);
 //取消按药物号个数分配
 app.post("/app/getCancelYwhgsfp",appChangKu.appGetCancelYwhgsfp);
+//按药物号个数分配
+app.post("/app/getYwhgsfp",appChangKu.appGetYwhgsfp);
+//逐个分配
+app.post("/app/getZgfp",appChangKu.appGetZgfp);
+//获取所有药物号
+app.post("/app/getAllDrug",appChangKu.appGetAllDrug);
+//区段分配
+app.post("/app/getQdfp",appChangKu.appGetQdfp);
+//逐个结合区段分配
+app.post("/app/getZGJHQDQdfp",appChangKu.appGetZGJHQDQdfp);
 
 //404错误
 app.use('/',function (req, res) {
