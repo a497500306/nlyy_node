@@ -103,6 +103,14 @@ app.post("/app/getAssignDqsywqd",appChangKu.appGetAssignDqsywqd);
 app.post("/app/getYqsywqd",appChangKu.appGetYqsywqd);
 //已送达药物清单列表
 app.post("/app/getYsdywqd",appChangKu.appGetYsdywqd);
+//全部激活某批次已签收仓库药物
+app.post("/app/getAllOnActivation",appChangKu.getAllOnActivation);
+//获取某批次已签收仓库药物列表
+app.post("/app/getAllOnDrug",appChangKu.getAllOnDrug);
+//激活选中的已签收的仓库药物
+app.post("/app/getSelectedActivation",appChangKu.getSelectedActivation);
+//废弃选中的已签收的仓库药物
+app.post("/app/getSelectedAbandoned",appChangKu.getSelectedAbandoned);
 
 //404错误
 app.use('/',function (req, res) {

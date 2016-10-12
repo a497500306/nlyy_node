@@ -487,7 +487,7 @@ exports.appGetAssignDysywqd = function (req, res, next) {
                                 'msg' : '数据移动失败'
                             });
                         }else {
-                            //把DYSDrug数据修改为已发货
+                            //把DYSDrug数据修改为已发货,更新
                             DYSDrug.update({'id' : fields.id},{'isDelivery' : 1},function () {
                                 console.log("修改成功");
                             })
@@ -666,6 +666,133 @@ exports.appGetYqsywqd = function (req, res, next) {
     })
 }
 
+//全部激活某批次已签收仓库药物
+exports.getAllOnActivation = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        drugCK.chazhaomoupiciYWH(fields.DrugId,fields.UsedAddressId,function (err, persons){
+            if (err != null){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                if (persons.length != 0){
+                    for (var i = 0 ; i < persons.length ; i++){
+                        //把DYSDrug数据修改为已发货,更新
+                        drugCK.update({'id' : persons[i].id},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function () {
+                            console.log("修改成功");
+                        })
+                    }
+                    res.send({
+                        'isSucceed' : 400,
+                        'msg' : '全部激活完成'
+                    });
+                    return
+                }else{
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据库正在维护,请稍后再试'
+                    });
+                    return
+                }
+            }
+        })
+    })
+}
+
+//获取某批次已签收仓库药物列表
+exports.getAllOnDrug = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log(fields)
+        drugCK.chazhaomoupiciYWH(fields.DrugId,fields.UsedAddressId,function (err, persons){
+            if (err != null){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                if (persons.length != 0){
+                    res.send({
+                        'isSucceed' : 400,
+                        'data' : persons
+                    });
+                    return
+                }else{
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据库正在维护,请稍后再试'
+                    });
+                }
+                return
+            }
+        })
+    })
+}
+
+//激活选中的已签收的仓库药物
+exports.getSelectedActivation = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        if (fields.ids.length == 0){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '数据有误'
+            });
+        }else{
+            //异步转同步
+            (function iterator(i){
+                if(i == fields.ids.length){
+                    console.log('执行完成')
+                    res.send({
+                        'isSucceed' : 400,
+                        'msg' : '操作成功'
+                    });
+                    return
+                }
+                console.log(fields.ids[i])
+                //修改药物号为激活状态
+                drugCK.update({'id' : fields.ids[i]},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function () {
+                    console.log("修改成功");
+                    iterator(i+1)
+                })
+            })(0);
+        }
+    })
+}
+//废弃选中的已签收的仓库药物
+exports.getSelectedAbandoned = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        if (fields.ids.length == 0){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '数据有误'
+            });
+        }else{
+            //异步转同步
+            (function iterator(i){
+                if(i == fields.ids.length){
+                    console.log('执行完成')
+                    res.send({
+                        'isSucceed' : 400,
+                        'msg' : '操作成功'
+                    });
+                    return
+                }
+                console.log(fields.ids[i])
+                //修改药物号为激活状态
+                drugCK.update({'id' : fields.ids[i]},{'DDrugNumAYN' : 0 , 'DDrugDMNumYN' : 1 ,},function () {
+                    console.log("修改成功");
+                    iterator(i+1)
+                })
+            })(0);
+        }
+    })
+}
 zhongjian = function (drugs,Users,Address,Type,res) {
 
     console.log('水水水水')

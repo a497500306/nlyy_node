@@ -62,6 +62,29 @@ drugCKSchema.statics.chazhaoIDYWH = function (id,callback) {
     this.model('drugCK').find({id : id}).sort({DrugNum : 1}).exec(callback)
 }
 
+//取出某仓库某批次所有药物号
+drugCKSchema.statics.chazhaomoupiciYWH = function (DrugId,UsedAddressId,callback) {
+    if (DrugId.length == 0){
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }
+    if (UsedAddressId.length == 0){
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }
+    //取出该研究中的所有药物号
+    // this.model('drug').find({StudyID : StudyID},callback)
+    this.model('drugCK').find({DrugId : DrugId , UsedAddressId : UsedAddressId}).sort({DrugNum : 1}).exec(callback)
+}
+
 //model
 var drugCK = mongoose.model("drugCK",drugCKSchema);
 
