@@ -89,6 +89,20 @@ app.post("/app/getAllDrug",appChangKu.appGetAllDrug);
 app.post("/app/getQdfp",appChangKu.appGetQdfp);
 //逐个结合区段分配
 app.post("/app/getZGJHQDQdfp",appChangKu.appGetZGJHQDQdfp);
+//待运送药物清单列表
+app.post("/app/getDysywqd",appChangKu.appGetDysywqd);
+//确定运送待运送药物清单
+app.post("/app/getAssignDysywqd",appChangKu.appGetAssignDysywqd);
+//运送中药物清单列表
+app.post("/app/getYszywqd",appChangKu.appGetYszywqd);
+//待签收药物清单列表
+app.post("/app/getDqsywqd",appChangKu.appGetDqsywqd);
+//签收待签收药物清单
+app.post("/app/getAssignDqsywqd",appChangKu.appGetAssignDqsywqd);
+//以签收药物清单列表
+app.post("/app/getYqsywqd",appChangKu.appGetYqsywqd);
+//已送达药物清单列表
+app.post("/app/getYsdywqd",appChangKu.appGetYsdywqd);
 
 //404错误
 app.use('/',function (req, res) {

@@ -5,6 +5,8 @@ var site = require('../../models/import/site');
 var drug = require('../../models/import/drug');
 var LSDrug = require('../../models/import/LSDrug');
 var DYSDrug = require('../../models/import/DYSDrug');
+var YSZDrug = require('../../models/import/YSZDryg');
+var drugCK = require('../../models/import/drugCK');
 var mongoose = require('mongoose');
 var EMail = require("../../models/EMail");
 
@@ -99,7 +101,7 @@ exports.appGetYwhgsfp = function (req, res, next) {
         })
     })
 },
-//确定按药物号个数分配
+//确定分配
 exports.appGetAssignYwhgsfp = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
@@ -117,8 +119,10 @@ exports.appGetAssignYwhgsfp = function (req, res, next) {
                     DYSDrug.create({
                         drugs : persons[0].drugs,    //药物数据
                         Users : persons[0].Users,    //用户数据
-                        Address : persons[0].Address,    //分配地址数据
+                        Address : persons[0].Address,    //目的地
                         Type : persons[0].Type,    //分配地址类型:1仓库,2中心
+                        UsedAddress : fields.UsedAddress, //出发地
+                        isDelivery : 0, //是否已发货
                         Date : new Date(), //导入时间
                     },function (error) {
                         if (error != null){
@@ -420,6 +424,245 @@ exports.appGetZGJHQDQdfp = function (req, res, next) {
                 iterator(i+1)
             })
         })(i);
+    })
+}
+//获取待运送药物清单
+exports.appGetDysywqd = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
+        DYSDrug.chazhaosuoyouDyslb(fields.UsedAddressId,fields.UserId,function (err, persons){
+            console.log(persons)
+            if (err != null){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : persons
+                });
+                return
+            }
+        })
+    })
+}
+//确定运送待运送药物清单
+exports.appGetAssignDysywqd = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //把数据移动到待发货列表,发送邮件
+        DYSDrug.find({id : fields.id , isDelivery : 0},function (err, persons){
+            if (err == null){
+                if (persons.length == 0){
+                    console.log("数据不存在,请重新选择");
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据不存在,请重新选择'
+                    });
+                }else{
+                    if (persons.length == 0 ){
+                        res.send({
+                            'isSucceed' : 200,
+                            'msg' : '请勿重复操作'
+                        });
+                        return
+                    }
+                    console.log(fields.UsedAddress);
+                    YSZDrug.create({
+                        drugs : persons[0].drugs,    //药物数据
+                        Users : persons[0].Users,    //用户数据
+                        Address : persons[0].Address,    //目的地
+                        Type : persons[0].Type,    //分配地址类型:1仓库,2中心
+                        UsedAddress : persons[0].UsedAddress, //出发地
+                        isSign : 0,//是否签收
+                        Date : new Date(), //导入时间
+                    },function (error) {
+                        if (error != null){
+                            console.log("数据移动失败");
+                            res.send({
+                                'isSucceed' : 200,
+                                'msg' : '数据移动失败'
+                            });
+                        }else {
+                            //把DYSDrug数据修改为已发货
+                            DYSDrug.update({'id' : fields.id},{'isDelivery' : 1},function () {
+                                console.log("修改成功");
+                            })
+                            //返回成功
+                            res.send({
+                                'isSucceed' : 400,
+                                'msg' : '操作完成'
+                            });
+                        }
+                    })
+                }
+            }else{
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+            }
+        })
+    })
+}
+
+//运送中药物清单列表
+exports.appGetYszywqd = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
+        YSZDrug.chazhaosuoyouYsz(fields.UsedAddressId,fields.UserId,function (err, persons){
+            console.log(persons)
+            if (err != null){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : persons
+                });
+                return
+            }
+        })
+    })
+}
+//已送达药物清单列表
+exports.appGetYsdywqd = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
+        YSZDrug.chazhaosuoyouYSD(fields.UsedAddressId,fields.UserId,function (err, persons){
+            console.log(persons)
+            if (err != null){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : persons
+                });
+                return
+            }
+        })
+    })
+}
+
+
+//待签收药物清单列表
+exports.appGetDqsywqd = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
+        YSZDrug.chazhaosuoyouDQS(fields.AddressId,function (err, persons){
+            console.log(persons)
+            if (err != null){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : persons
+                });
+                return
+            }
+        })
+    })
+}
+
+//签收待签收药物清单列表
+exports.appGetAssignDqsywqd = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //已签收
+        YSZDrug.find({id : fields.id , isSign : 0},function (err, persons){
+            if (err == null){
+                if (persons.length == 0){
+                    console.log("数据不存在,请重新选择");
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据不存在,请重新选择'
+                    });
+                }else{
+                    console.log(fields.UsedAddress);
+                    for (var i = 0 ; i < persons[0].drugs.length ; i++){
+                        drugCK.create({
+                            StudyID : persons[0].drugs[i].StudyID,
+                            DrugNum : persons[0].drugs[i].DrugNum,
+                            ArmCD : persons[0].drugs[i].ArmCD,
+                            Arm : persons[0].drugs[i].Arm,
+                            PackSeq : persons[0].drugs[i].PackSeq,
+                            DrugSeq : persons[0].drugs[i].DrugSeq,
+                            DrugExpryDTC : persons[0].drugs[i].DrugExpryDTC,
+                            DDrugNumRYN : 1,
+                            DDrugNumAYN : 0,
+                            DDrugDMNumYN : 0,
+                            DDrugDMNum : 0,
+                            DrugId : persons[0].id,
+                            DrugDate : persons[0].Date,
+                            UsedAddressId : fields.UsedAddressId,
+                            Date : new Date(), //导入时间
+                        },function (error) {
+                            if (error != null){
+                                console.log("数据移动失败");
+                                res.send({
+                                    'isSucceed' : 200,
+                                    'msg' : '数据移动失败'
+                                });
+                            }
+                        })
+                    }
+                    //把DYSDrug数据修改为已发货
+                    YSZDrug.update({'id' : fields.id},{'isSign' : 1},function () {
+                        //返回成功
+                        res.send({
+                            'isSucceed' : 400,
+                            'msg' : '操作完成'
+                        });
+                    })
+                }
+            }else{
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+            }
+        })
+    })
+}
+
+//已签收药物清单
+exports.appGetYqsywqd = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
+        YSZDrug.chazhaosuoyouYQS(fields.AddressId,function (err, persons){
+            console.log(persons)
+            if (err != null){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : persons
+                });
+                return
+            }
+        })
     })
 }
 
