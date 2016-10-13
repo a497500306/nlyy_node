@@ -22,7 +22,7 @@ LSDrugSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1
 });
 //索引
-LSDrugSchema.index({ "Date": 1});
+LSDrugSchema.index({ "Date": -1});
 LSDrugSchema.index({ "SiteID": 1});
 
 

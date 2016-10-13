@@ -24,7 +24,7 @@ YSZDrugSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1
 });
 //索引
-YSZDrugSchema.index({ "Date": 1});
+YSZDrugSchema.index({ "Date": -1});
 YSZDrugSchema.index({ "SiteID": 1});
 
 //取出某研究某用户的所有运送中列表
@@ -46,7 +46,7 @@ YSZDrugSchema.statics.chazhaosuoyouYsz = function (UsedAddressId,UserId,callback
         },null)
         return;
     }
-    this.model('YSZDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isSign' : 0}).sort({Data : 1}).exec(callback)
+    this.model('YSZDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isSign' : 0}).sort('-id').exec(callback)
 }
 //取出某研究某用户的所有已送达列表
 YSZDrugSchema.statics.chazhaosuoyouYSD = function (UsedAddressId,UserId,callback) {
@@ -66,7 +66,7 @@ YSZDrugSchema.statics.chazhaosuoyouYSD = function (UsedAddressId,UserId,callback
         },null)
         return;
     }
-    this.model('YSZDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isSign' : 1}).sort({Data : 1}).exec(callback)
+    this.model('YSZDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isSign' : 1}).sort('-id').exec(callback)
 }
 //取出某研究某用户的所有待签收列表
 YSZDrugSchema.statics.chazhaosuoyouDQS = function (AddressId,callback) {
@@ -78,7 +78,7 @@ YSZDrugSchema.statics.chazhaosuoyouDQS = function (AddressId,callback) {
         },null)
         return;
     }
-    this.model('YSZDrug').find({'Address.id' : AddressId, 'isSign' : 0}).sort({Data : 1}).exec(callback)
+    this.model('YSZDrug').find({'Address.id' : AddressId, 'isSign' : 0, 'Type' : 1}).sort('-id').exec(callback)
 }
 //取出某研究某用户的所有已签收列表
 YSZDrugSchema.statics.chazhaosuoyouYQS = function (AddressId,callback) {
@@ -90,7 +90,57 @@ YSZDrugSchema.statics.chazhaosuoyouYQS = function (AddressId,callback) {
         },null)
         return;
     }
-    this.model('YSZDrug').find({'Address.id' : AddressId, 'isSign' : 1}).sort({Data : 1}).exec(callback)
+    this.model('YSZDrug').find({'Address.id' : AddressId, 'isSign' : 1 , 'Type' : 1}).sort('-id').exec(callback)
+}
+
+//取出某研究某中心某用户的所有待签收列表
+YSZDrugSchema.statics.chazhaosuoyouZXDQS = function (StudyID,UserSiteYN,UserSite,callback) {
+    if (StudyID.length == 0){
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }
+    if (UserSiteYN == 1){//是否负责全部中心
+        this.model('YSZDrug').find({'Address.StudyID' : StudyID, 'isSign' : 0 , 'Type' : 2}).sort('-id').exec(callback)
+    }else{
+        this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'isSign' : 0 , 'Type' : 2}).sort('-id').exec(callback)
+    }
+}
+//取出某研究某用户的所有已签收列表
+YSZDrugSchema.statics.chazhaosuoyouZXYQS = function (StudyID,UserSiteYN,UserSite,callback) {
+    if (StudyID.length == 0){
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }
+    if (UserSiteYN == 1){//是否负责全部中心
+        this.model('YSZDrug').find({'Address.StudyID' : StudyID, 'isSign' : 1 , 'Type' : 2}).sort('-id').exec(callback)
+    }else{
+        this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'isSign' : 1 , 'Type' : 2}).sort('-id').exec(callback)
+    }
+}
+
+//取出某研究某用户的所有列表
+YSZDrugSchema.statics.chazhaosuoyouZXQD = function (StudyID,UserSiteYN,UserSite,callback) {
+    if (StudyID.length == 0){
+        //UserDepotYN参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }
+    if (UserSiteYN == 1){//是否负责全部中心
+        this.model('YSZDrug').find({'Address.StudyID' : StudyID, 'Type' : 2}).sort('-id').exec(callback)
+    }else{
+        this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'Type' : 2}).sort('-id').exec(callback)
+    }
 }
 //model
 var YSZDrug = mongoose.model("YSZDrug",YSZDrugSchema);

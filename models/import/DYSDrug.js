@@ -24,11 +24,12 @@ DYSDrugSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1
 });
 //索引
-DYSDrugSchema.index({ "Date": 1});
+DYSDrugSchema.index({ "Date": -1});
 DYSDrugSchema.index({ "SiteID": 1});
 
 //取出某研究某用户的所有待运送列表
 DYSDrugSchema.statics.chazhaosuoyouDyslb = function (UsedAddressId,UserId,callback) {
+    console.log('查找待运送')
     if (UsedAddressId.length == 0){
         //UserDepotYN参数错误
         callback({
@@ -45,7 +46,7 @@ DYSDrugSchema.statics.chazhaosuoyouDyslb = function (UsedAddressId,UserId,callba
         },null)
         return;
     }
-    this.model('DYSDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isDelivery' : 0}).sort({Data : 1}).exec(callback)
+    this.model('DYSDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isDelivery' : 0}).sort('-id').exec(callback)
 }
 //model
 var DYSDrug = mongoose.model("DYSDrug",DYSDrugSchema);

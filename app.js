@@ -111,6 +111,18 @@ app.post("/app/getAllOnDrug",appChangKu.getAllOnDrug);
 app.post("/app/getSelectedActivation",appChangKu.getSelectedActivation);
 //废弃选中的已签收的仓库药物
 app.post("/app/getSelectedAbandoned",appChangKu.getSelectedAbandoned);
+//中心代签收药物清单
+app.post("/app/getZXDqsywqd",appChangKu.getZXDqsywqd);
+//中心已签收药物清单
+app.post("/app/getZXYqsywqd",appChangKu.getZXYqsywqd);
+//中心所有药物(已签收+代签收)清单
+app.post("/app/getZXAllYwqd",appChangKu.getZXAllYwqd);
+//中心药物号管理
+app.post("/app/getZXYwhgl",appChangKu.getSelectedAbandoned);
+//获取某中心某批次已签收仓库药物列表
+app.post("/app/getZXAllOnDrug",appChangKu.getZXAllOnDrug);
+//全部激活中心某批次已签收仓库药物
+app.post("/app/getZXAllOnActivation",appChangKu.getZXAllOnActivation);
 
 //404错误
 app.use('/',function (req, res) {
