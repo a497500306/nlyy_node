@@ -123,6 +123,10 @@ app.post("/app/getZXYwhgl",appChangKu.getSelectedAbandoned);
 app.post("/app/getZXAllOnDrug",appChangKu.getZXAllOnDrug);
 //全部激活中心某批次已签收仓库药物
 app.post("/app/getZXAllOnActivation",appChangKu.getZXAllOnActivation);
+//中心药物使用情况
+app.post("/app/getSiteDrugData",appChangKu.getSiteDrugData);
+//查询药物号物流情况
+app.post("/app/getDrugWLData",appChangKu.getDrugWLData);
 
 //404错误
 app.use('/',function (req, res) {

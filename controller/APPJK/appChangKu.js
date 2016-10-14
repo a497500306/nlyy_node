@@ -1236,6 +1236,138 @@ exports.getZXAllOnActivation = function (req, res, next) {
         })
     })
 }
+
+//中心药物使用情况
+exports.getSiteDrugData = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询目前库存量
+        /*StudyID : Users.Users.StudyID,
+         UsedCoreId : Users.Users.UserSite,*/
+        var data = {
+            UsedCoreId : null,
+            StudyID : null,
+            MQKCL : null,
+            YQSYWL : null,
+            YJHYWL : null,
+            YFFYWL : null,
+            YFQYWL : null,
+            YJMYWL : null,
+            YTHYWL : null,
+        };
+        data.UsedCoreId = fields.UsedCoreId,
+        data.StudyID = fields.StudyID,
+        drugCK.find({
+            UsedCoreId : fields.UsedCoreId,
+            StudyID : fields.StudyID,
+            DDrugNumAYN: 1,
+            $or:[
+                {DDrugUseAYN:0},
+                {DDrugUseAYN:null}
+            ]},function (err, persons){
+                if (err != null){
+                    console.log(err)
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据库正在维护,请稍后再试'
+                    });
+                    return
+            }else {
+                console.log(persons.length)
+                data.MQKCL = persons.length;
+                //查找已签收药物量
+                    drugCK.find({
+                        UsedCoreId : fields.UsedCoreId,
+                        StudyID : fields.StudyID
+                        },function (err, persons){
+                        if (err != null){
+                            console.log(err)
+                            res.send({
+                                'isSucceed' : 200,
+                                'msg' : '数据库正在维护,请稍后再试'
+                            });
+                            return
+                        }else {
+                            console.log(persons.length)
+                            data.YQSYWL = persons.length;
+                            //查找已激活药物量
+                            drugCK.find({
+                                UsedCoreId : fields.UsedCoreId,
+                                StudyID : fields.StudyID,
+                                DDrugNumAYN: 1
+                            },function (err, persons){
+                                if (err != null){
+                                    console.log(err)
+                                    res.send({
+                                        'isSucceed' : 200,
+                                        'msg' : '数据库正在维护,请稍后再试'
+                                    });
+                                    return
+                                }else {
+                                    console.log(persons.length)
+                                    data.YJHYWL = persons.length;
+                                    //查找已发放药物量
+                                    drugCK.find({
+                                        UsedCoreId : fields.UsedCoreId,
+                                        StudyID : fields.StudyID,
+                                        DDrugUseAYN: 1
+                                    },function (err, persons){
+                                        if (err != null){
+                                            console.log(err)
+                                            res.send({
+                                                'isSucceed' : 200,
+                                                'msg' : '数据库正在维护,请稍后再试'
+                                            });
+                                            return
+                                        }else {
+                                            console.log(persons.length)
+                                            data.YFFYWL = persons.length;
+                                            //查找已废弃药物量
+                                            drugCK.find({
+                                                UsedCoreId : fields.UsedCoreId,
+                                                StudyID : fields.StudyID,
+                                                DDrugDMNumYN: 1
+                                            },function (err, persons){
+                                                if (err != null){
+                                                    console.log(err)
+                                                    res.send({
+                                                        'isSucceed' : 200,
+                                                        'msg' : '数据库正在维护,请稍后再试'
+                                                    });
+                                                    return
+                                                }else {
+                                                    console.log(persons.length)
+                                                    data.YFQYWL = persons.length;
+                                                    //查找已揭盲药物量
+                                                    data.YJMYWL = '目前还未开发';
+                                                    //查找已替换药物量
+                                                    data.YTHYWL = '目前还未开发';
+                                                    res.send({
+                                                        'isSucceed' : 400,
+                                                        'data' : data
+                                                    });
+                                                    return
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    })
+            }
+        })
+    })
+}
+
+//查询药物号物流情况
+exports.getDrugWLData = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log(fields)
+    })
+}
+
 zhongjian = function (drugs,Users,Address,Type,DepotGNYN,DepotBrYN,DepotId,res) {
     if (DepotGNYN == 1) {
         //为主仓库
