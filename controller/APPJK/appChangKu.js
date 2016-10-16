@@ -787,7 +787,7 @@ exports.appGetAssignDysywqd = function (req, res, next) {
                             });
                         }else {
                             //把DYSDrug数据修改为已发货,更新
-                            DYSDrug.update({'id' : fields.id},{'isDelivery' : 1},function () {
+                            DYSDrug.update({'id' : fields.id},{'isDelivery' : 1,'DeliveryDate':new Date()},function () {
                                 console.log("修改成功");
                             })
                             //返回成功
@@ -926,7 +926,7 @@ exports.appGetAssignDqsywqd = function (req, res, next) {
                         })
                     }
                     //把DYSDrug数据修改为已发货
-                    YSZDrug.update({'id' : fields.id},{'isSign' : 1},function () {
+                    YSZDrug.update({'id' : fields.id},{'isSign' : 1,'SignDate':new Date()},function () {
                         //返回成功
                         res.send({
                             'isSucceed' : 400,
@@ -1365,6 +1365,117 @@ exports.getDrugWLData = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         console.log(fields)
+        var datas = {
+            'drugs' : [],
+            'DYSDrugs' : [],
+            'YSZDrugs' : [],
+            'drugCKs' : []
+        };
+        //在导入药物号中查询
+        drug.find({StudyID : fields.StudyID, DrugNum:fields.DrugNum},function (err, persons){
+            if (err != null){
+                console.log('gggg')
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库正在维护,请稍后再试'
+                });
+                return
+            }else{
+                if (persons.length != 0){
+                    console.log('ssss')
+                    //总仓库未发出
+                    datas.drugs.push( persons[0])
+                    res.send({
+                        'isSucceed' : 400,
+                        'data' : datas
+                    });
+                    return
+                }else{
+                    console.log('xxxx')
+                    //已发出,查询待运送列表
+                    DYSDrug.find({'drugs.StudyID' : fields.StudyID, 'drugs.DrugNum':fields.DrugNum}).sort('-id').exec(function (err, persons){
+                        if (err != null){
+                            res.send({
+                                'isSucceed' : 200,
+                                'msg' : '数据库正在维护,请稍后再试'
+                            });
+                            return
+                        }else{
+                            console.log(persons)
+                            if (persons.length != 0){
+                                datas.DYSDrugs = persons
+                                //在待运送列表中,查找运送中列表是否有
+                                //已发出,查询待运送列表
+                                YSZDrug.find({'drugs.StudyID' : fields.StudyID, 'drugs.DrugNum':fields.DrugNum}).sort('-id').exec(function (err, persons){
+                                    if (err != null){
+                                        res.send({
+                                            'isSucceed' : 200,
+                                            'msg' : '数据库正在维护,请稍后再试'
+                                        });
+                                        return
+                                    }else{
+                                        if (persons.length != 0){
+                                            datas.YSZDrugs = persons
+                                            //查看该药物号使用情况
+                                            drugCK.find({'StudyID' : fields.StudyID, 'DrugNum':fields.DrugNum},function (err, persons){
+                                                if (err != null){
+                                                    res.send({
+                                                        'isSucceed' : 200,
+                                                        'msg' : '数据库正在维护,请稍后再试'
+                                                    });
+                                                    return
+                                                }else{
+                                                    if (persons.length != 0){
+                                                        //已在使用状态中
+                                                        datas.drugCKs = persons
+                                                        res.send({
+                                                            'isSucceed' : 400,
+                                                            'data' : datas
+                                                        });
+                                                        return
+                                                    }else{
+                                                        //还在待签收列表中
+                                                        res.send({
+                                                            'isSucceed' : 400,
+                                                            'data' : datas
+                                                        });
+                                                        return
+                                                    }
+                                                }
+                                            })
+                                        }else{
+                                            //还在待发货阶段
+                                            res.send({
+                                                'isSucceed' : 400,
+                                                'data' : datas
+                                            });
+                                            return
+                                        }
+                                    }
+                                })
+                            }else{
+                                if (datas.drugs.length == 0){
+                                    //总仓库未发出
+                                    res.send({
+                                        'isSucceed' : 200,
+                                        'msg' : '未找到该药物号信息'
+                                    });
+                                    return
+                                }else{
+                                    //总仓库未发出
+                                    datas = persons[0]
+                                    res.send({
+                                        'isSucceed' : 400,
+                                        'data' : datas
+                                    });
+                                    return
+                                }
+                            }
+                        }
+                    })
+                }
+            }
+        })
     })
 }
 

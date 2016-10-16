@@ -15,6 +15,7 @@ var YSZDrugSchema = new mongoose.Schema({
     "Type" : Number,    //分配地址类型:1仓库,2中心
     'UsedAddress' : Object,//出发地
     'isSign' : Number,//是否签收:1已签收
+    'SignDate' : Date,//签收时间
     "Date" : Date, //导入时间
 });
 YSZDrugSchema.plugin(autoIncrement.plugin, {

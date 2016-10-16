@@ -15,6 +15,7 @@ var DYSDrugSchema = new mongoose.Schema({
     "Type" : Number,    //分配地址类型:1仓库,2中心
     'UsedAddress' : Object,//出发地
     'isDelivery' : Number,//是否发货:1已发货
+    'DeliveryDate':Date,//发货时间
     "Date" : Date, //导入时间
 });
 DYSDrugSchema.plugin(autoIncrement.plugin, {
