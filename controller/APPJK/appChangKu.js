@@ -5,6 +5,7 @@ var site = require('../../models/import/site');
 var drug = require('../../models/import/drug');
 var LSDrug = require('../../models/import/LSDrug');
 var DYSDrug = require('../../models/import/DYSDrug');
+var drugWL = require('../../models/import/drugWL');
 var YSZDrug = require('../../models/import/YSZDryg');
 var drugCK = require('../../models/import/drugCK');
 var mongoose = require('mongoose');
@@ -213,6 +214,50 @@ exports.appGetAssignYwhgsfp = function (req, res, next) {
                         'msg' : '数据不存在,请重新选择'
                     });
                 }else{
+                    //添加到物流信息列表中
+                    (function iterator(jj){
+                        if(jj == persons[0].drugs.length){
+                            return
+                        }
+                        drugWL.find({StudyID : persons[0].drugs[jj].StudyID,DrugNum : persons[0].drugs[jj].DrugNum},function (err, drugWLPersons){
+                            if (err != null){
+                                res.send({
+                                    'isSucceed' : 200,
+                                    'msg' : '数据不存在,请重新选择'
+                                });
+                                return
+                            }else{
+                                if (drugWLPersons.length == 0){
+                                    console.log(persons[0].drugs.length)
+                                    console.log(persons[0].drugs[jj])
+                                    //添加
+                                    drugWL.create({
+                                        StudyID : persons[0].drugs[jj].StudyID,
+                                        DrugNum : persons[0].drugs[jj].DrugNum,
+                                        drugStrs : [fields.UsedAddress.DepotName + '分配药物号,等待发货'],
+                                        drugDate : [new Date()]
+                                    },function (error) {
+                                        iterator(jj+1)
+                                    })
+                                }else{
+                                    //更新
+                                    drugWL.update({
+                                        'StudyID' : persons[0].drugs[jj].StudyID,
+                                        'DrugNum' : persons[0].drugs[jj].DrugNum,
+                                    },{
+                                        $push : {
+                                            'drugStrs' : fields.UsedAddress.DepotName + '分配药物号,等待发货',
+                                            'drugDate' : new Date()
+                                        } ,
+                                    },function () {
+                                        console.log("修改成功");
+                                        iterator(jj+1)
+                                    })
+                                }
+                            }
+                        })
+                    })(0);
+                    //添加到待运送中
                     DYSDrug.create({
                         drugs : persons[0].drugs,    //药物数据
                         Users : persons[0].Users,    //用户数据
@@ -522,10 +567,15 @@ exports.appGetQdfp = function (req, res, next) {
                 }else{
                     newDrugNum = i.toString();
                     if (newDrugNum.length != datas[0].DrugDigits){
-                        for (var jj = 0 ; jj <= datas[0].DrugDigits - newDrugNum.length + 1 ; jj++){
+                        for (var jj = 0 ; jj <= datas[0].DrugDigits - newDrugNum.length; jj++){
                             newDrugNum = '0' + newDrugNum;
+                            console.log('拼接')
+                            console.log(newDrugNum)
                         }
                     }
+                    console.log('完成')
+                    console.log(newDrugNum)
+
 
                 }
                 if(i > fields.Max){
@@ -572,7 +622,7 @@ exports.appGetQdfp = function (req, res, next) {
 
                     console.log('DrugDigits=====' + datas[0].DrugDigits)
                     if (newDrugNum.length != datas[0].DrugDigits){
-                        for (var jj = 0 ; jj <= datas[0].DrugDigits - newDrugNum.length + 1 ; jj++){
+                        for (var jj = 0 ; jj <= datas[0].DrugDigits - newDrugNum.length; jj++){
                             console.log('运行了几次DrugDigits=====' + datas[0].DrugDigits)
                             newDrugNum = '0' + newDrugNum;
                         }
@@ -769,7 +819,25 @@ exports.appGetAssignDysywqd = function (req, res, next) {
                         });
                         return
                     }
-                    console.log(fields.UsedAddress);
+                    //修改药物物流状态
+                    for (var jj = 0 ; jj < persons[0].drugs.length ; jj ++){
+
+                        console.log(persons[0].drugs[jj].StudyID + '   ' + persons[0].drugs[jj].DrugNum);
+                        var ddd = persons[0].UsedAddress.DepotName + '已发货'
+                        //更新
+                        drugWL.update({
+                            'StudyID' : persons[0].drugs[jj].StudyID,
+                            'DrugNum' : persons[0].drugs[jj].DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : ddd,
+                                'drugDate' : new Date()
+                            } ,
+                        },function () {
+                            console.log("修改成功");
+                        })
+                    }
+                    //添加到运送中数据库
                     YSZDrug.create({
                         drugs : persons[0].drugs,    //药物数据
                         Users : persons[0].Users,    //用户数据
@@ -924,6 +992,35 @@ exports.appGetAssignDqsywqd = function (req, res, next) {
                                 });
                             }
                         })
+
+                        //修改物流信息
+                        if (persons[0].Type == 1) {//仓库
+                            //更新
+                            drugWL.update({
+                                'StudyID' : persons[0].drugs[i].StudyID,
+                                'DrugNum' : persons[0].drugs[i].DrugNum
+                            },{
+                                $push : {
+                                    'drugStrs' : persons[0].Address.DepotName + '已签收',
+                                    'drugDate' : new Date()
+                                } ,
+                            },function () {
+                                console.log("修改成功");
+                            })
+                        }else{
+                            //先查找
+                            drugWL.update({
+                                'StudyID' : persons[0].drugs[i].StudyID,
+                                'DrugNum' : persons[0].drugs[i].DrugNum
+                            },{
+                                $push : {
+                                    'drugStrs' : persons[0].Address.SiteNam + '已签收',
+                                    'drugDate' : new Date()
+                                } ,
+                            },function () {
+                                console.log("修改成功");
+                            })
+                        }
                     }
                     //把DYSDrug数据修改为已发货
                     YSZDrug.update({'id' : fields.id},{'isSign' : 1,'SignDate':new Date()},function () {
@@ -982,6 +1079,18 @@ exports.getAllOnActivation = function (req, res, next) {
             }else{
                 if (persons.length != 0){
                     for (var i = 0 ; i < persons.length ; i++){
+                        //修改物流信息
+                        drugWL.update({
+                            'StudyID' : persons[i].StudyID,
+                            'DrugNum' : persons[i].DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : '激活',
+                                'drugDate' : new Date()
+                            } ,
+                        },function () {
+                            console.log("修改成功");
+                        })
                         //把DYSDrug数据修改为已发货,更新
                         drugCK.update({'id' : persons[i].id},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function () {
                             console.log("修改成功");
@@ -1057,8 +1166,22 @@ exports.getSelectedActivation = function (req, res, next) {
                 }
                 console.log(fields.ids[i])
                 //修改药物号为激活状态
-                drugCK.update({'id' : fields.ids[i]},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function () {
-                    console.log("修改成功");
+                drugCK.update({'id' : fields.ids[i]},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function (err, persons) {
+                    console.log(persons)
+                    drugCK.find({'id' : fields.ids[i]},function (err, persons){
+                        //修改物流信息
+                        drugWL.update({
+                            'StudyID' : persons[0].StudyID,
+                            'DrugNum' : persons[0].DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : '激活',
+                                'drugDate' : new Date()
+                            } ,
+                        },function () {
+                            console.log("修改成功");
+                        })
+                    })
                     iterator(i+1)
                 })
             })(0);
@@ -1089,6 +1212,20 @@ exports.getSelectedAbandoned = function (req, res, next) {
                 //修改药物号为激活状态
                 drugCK.update({'id' : fields.ids[i]},{'DDrugNumAYN' : 0 , 'DDrugDMNumYN' : 1 ,},function () {
                     console.log("修改成功");
+                    drugCK.find({'id' : fields.ids[i]},function (err, persons){
+                        //修改物流信息
+                        drugWL.update({
+                            'StudyID' : persons[0].StudyID,
+                            'DrugNum' : persons[0].DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : '废弃',
+                                'drugDate' : new Date()
+                            } ,
+                        },function () {
+                            console.log("修改成功");
+                        })
+                    })
                     iterator(i+1)
                 })
             })(0);
@@ -1215,6 +1352,18 @@ exports.getZXAllOnActivation = function (req, res, next) {
             }else{
                 if (persons.length != 0){
                     for (var i = 0 ; i < persons.length ; i++){
+                        //修改物流信息
+                        drugWL.update({
+                            'StudyID' : persons[i].StudyID,
+                            'DrugNum' : persons[i].DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : '激活',
+                                'drugDate' : new Date()
+                            } ,
+                        },function () {
+                            console.log("修改成功");
+                        })
                         //把DYSDrug数据修改为已发货,更新
                         drugCK.update({'id' : persons[i].id},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function () {
                             console.log("修改成功");
@@ -1364,13 +1513,6 @@ exports.getSiteDrugData = function (req, res, next) {
 exports.getDrugWLData = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        console.log(fields)
-        var datas = {
-            'drugs' : [],
-            'DYSDrugs' : [],
-            'YSZDrugs' : [],
-            'drugCKs' : []
-        };
         //在导入药物号中查询
         drug.find({StudyID : fields.StudyID, DrugNum:fields.DrugNum},function (err, persons){
             if (err != null){
@@ -1384,93 +1526,30 @@ exports.getDrugWLData = function (req, res, next) {
                 if (persons.length != 0){
                     console.log('ssss')
                     //总仓库未发出
-                    datas.drugs.push( persons[0])
                     res.send({
                         'isSucceed' : 400,
-                        'data' : datas
+                        'data' : null,
+                        'msg' : '未从总仓库发出'
                     });
                     return
-                }else{
-                    console.log('xxxx')
-                    //已发出,查询待运送列表
-                    DYSDrug.find({'drugs.StudyID' : fields.StudyID, 'drugs.DrugNum':fields.DrugNum}).sort('-id').exec(function (err, persons){
-                        if (err != null){
+                }else {
+                    drugWL.find({
+                        StudyID : fields.StudyID,
+                        DrugNum:fields.DrugNum
+                    },function (err, drugWLPersons) {
+                        if (err != null) {
+                            console.log('gggg')
                             res.send({
-                                'isSucceed' : 200,
-                                'msg' : '数据库正在维护,请稍后再试'
+                                'isSucceed': 200,
+                                'msg': '数据库正在维护,请稍后再试'
                             });
                             return
                         }else{
-                            console.log(persons)
-                            if (persons.length != 0){
-                                datas.DYSDrugs = persons
-                                //在待运送列表中,查找运送中列表是否有
-                                //已发出,查询待运送列表
-                                YSZDrug.find({'drugs.StudyID' : fields.StudyID, 'drugs.DrugNum':fields.DrugNum}).sort('-id').exec(function (err, persons){
-                                    if (err != null){
-                                        res.send({
-                                            'isSucceed' : 200,
-                                            'msg' : '数据库正在维护,请稍后再试'
-                                        });
-                                        return
-                                    }else{
-                                        if (persons.length != 0){
-                                            datas.YSZDrugs = persons
-                                            //查看该药物号使用情况
-                                            drugCK.find({'StudyID' : fields.StudyID, 'DrugNum':fields.DrugNum},function (err, persons){
-                                                if (err != null){
-                                                    res.send({
-                                                        'isSucceed' : 200,
-                                                        'msg' : '数据库正在维护,请稍后再试'
-                                                    });
-                                                    return
-                                                }else{
-                                                    if (persons.length != 0){
-                                                        //已在使用状态中
-                                                        datas.drugCKs = persons
-                                                        res.send({
-                                                            'isSucceed' : 400,
-                                                            'data' : datas
-                                                        });
-                                                        return
-                                                    }else{
-                                                        //还在待签收列表中
-                                                        res.send({
-                                                            'isSucceed' : 400,
-                                                            'data' : datas
-                                                        });
-                                                        return
-                                                    }
-                                                }
-                                            })
-                                        }else{
-                                            //还在待发货阶段
-                                            res.send({
-                                                'isSucceed' : 400,
-                                                'data' : datas
-                                            });
-                                            return
-                                        }
-                                    }
-                                })
-                            }else{
-                                if (datas.drugs.length == 0){
-                                    //总仓库未发出
-                                    res.send({
-                                        'isSucceed' : 200,
-                                        'msg' : '未找到该药物号信息'
-                                    });
-                                    return
-                                }else{
-                                    //总仓库未发出
-                                    datas = persons[0]
-                                    res.send({
-                                        'isSucceed' : 400,
-                                        'data' : datas
-                                    });
-                                    return
-                                }
-                            }
+                            res.send({
+                                'isSucceed' : 400,
+                                'data' : drugWLPersons[0]
+                            });
+                            return
                         }
                     })
                 }

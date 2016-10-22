@@ -9,6 +9,7 @@ var ImportData = require('./controller/ImportData');//导入数据
 var appLogin = require('./controller/APPJK/appLogin')//app登录相关
 var appTool = require('./controller/APPJK/appTool')//app查询相关
 var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
+var appSSZSJ = require('./controller/APPJK/appSSZSJ')//app查询相关
 //打开发送邮件
 var Email = require('./models/EMail');//Email服务
 
@@ -67,6 +68,8 @@ app.post("/node/getHome",login.doHome);
 app.post("/app/getIDCode",appLogin.appIDCode);
 //登录接口
 app.post("/app/getLogin",appLogin.appLogin);
+//获取研究方案和研究随机化参数数据
+app.post("/app/getStudyAndResearchParameter",appLogin.appStudyAndResearchParameter);
 //查询用户所有研究列表接口
 app.post("/app/getStud",appTool.appGetStud);
 //查询用户所有仓库接口
@@ -127,7 +130,16 @@ app.post("/app/getZXAllOnActivation",appChangKu.getZXAllOnActivation);
 app.post("/app/getSiteDrugData",appChangKu.getSiteDrugData);
 //查询药物号物流情况
 app.post("/app/getDrugWLData",appChangKu.getDrugWLData);
-
+//获取中心数据
+app.post('/app/getSingleSite',appSSZSJ.getSite);
+//添加成功受试者基础数据
+app.post('/app/getAddSuccessBasicsData',appSSZSJ.getAddSuccessBasicsData);
+//添加筛选失败受试者基础数据
+app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);
+//查找所有受试者
+app.post('/app/getLookupSuccessBasicsData',appSSZSJ.getLookupSuccessBasicsData);
+//模糊查询受试者
+app.post('/app/getVagueBasicsData',appSSZSJ.getVagueBasicsData);
 //404错误
 app.use('/',function (req, res) {
     console.log('404',req.url);

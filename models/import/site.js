@@ -39,7 +39,20 @@ siteSchema.statics.chazhaozhongxin = function (StudyID,callback) {
         this.model('site').find({StudyID : StudyID},callback)
     }
 }
-
+//查找某个研究的某个中心中心
+siteSchema.statics.chazhaomougezhongxin = function (StudyID,SiteID,callback) {
+    if (StudyID.length == 0){
+        //参数错误
+        callback({
+            'isSucceed' : 200,
+            'msg' : 'StudyID参数错误'
+        },null)
+        return;
+    }else{
+        //取出该研究中的所有分仓库
+        this.model('site').find({StudyID : StudyID,SiteID:SiteID},callback)
+    }
+}
 //model
 var site = mongoose.model("site",siteSchema);
 

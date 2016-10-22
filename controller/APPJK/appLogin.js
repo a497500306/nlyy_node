@@ -2,6 +2,8 @@
  * Created by maoli on 16/9/24.
  */
 var users = require('../../models/import/users');
+var study = require('../../models/import/study');
+var researchParameter = require('../../models/import/researchParameter');
 
 TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
@@ -43,6 +45,53 @@ exports.appLogin = function (req, res, next) {
         })
     })
 }
+//登录
+exports.appStudyAndResearchParameter = function (req, res, next) {
+    //得到用户填写的东西
+    console.log('登录接口');
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //搜索研究
+        study.find({StudyID: fields.StudyID}, function (err, persons) {
+            if (err != null) {
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '数据库正在维护,请稍后再试'
+                });
+            }else{
+                if (persons.length == 0){
+                    res.send({
+                        'isSucceed': 200,
+                        'msg': '未找到该研究'
+                    });
+                }else{
+                    //查找研究随机化参数
+                    researchParameter.find({StudyID: fields.StudyID}, function (err, persons1) {
+                        if (err != null) {
+                            res.send({
+                                'isSucceed': 200,
+                                'msg': '数据库正在维护,请稍后再试'
+                            });
+                        }else{
+                            if (persons1.length == 0){
+                                res.send({
+                                    'isSucceed': 200,
+                                    'msg': '未找到该研究随机化参数'
+                                });
+                            }else{
+                                res.send({
+                                    'isSucceed': 400,
+                                    'study': persons[0],
+                                    'researchParameter' : persons1[0]
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    })
+},
 
 //获取验证码
 exports.appIDCode = function (req, res, next) {
