@@ -780,7 +780,7 @@ exports.appGetDysywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
-        DYSDrug.chazhaosuoyouDyslb(fields.UsedAddressId,fields.UserId,function (err, persons){
+        DYSDrug.chazhaosuoyouDyslb(fields.UsedAddressId,fields.UserMP,function (err, persons){
             console.log(persons)
             if (err != null){
                 res.send({
@@ -881,7 +881,7 @@ exports.appGetYszywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
-        YSZDrug.chazhaosuoyouYsz(fields.UsedAddressId,fields.UserId,function (err, persons){
+        YSZDrug.chazhaosuoyouYsz(fields.UsedAddressId,fields.UserMP,function (err, persons){
             console.log(persons)
             if (err != null){
                 res.send({
@@ -904,7 +904,7 @@ exports.appGetYsdywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
-        YSZDrug.chazhaosuoyouYSD(fields.UsedAddressId,fields.UserId,function (err, persons){
+        YSZDrug.chazhaosuoyouYSD(fields.UsedAddressId,fields.UserMP,function (err, persons){
             console.log(persons)
             if (err != null){
                 res.send({

@@ -46,7 +46,7 @@ exports.appGetWarehouse = function (req, res, next) {
     form.parse(req,function (err, fields, files) {
         //搜索是否存在该用户
         console.log(fields);
-        depot.chazhaoChangku(fields.StudyID, fields.id,fields.UserDepotYN,fields.UserDepot,function (err, persons) {
+        depot.chazhaoChangku(fields.StudyID, fields.UserDepotYN,fields.UserDepot,function (err, persons) {
             if (err != null){
                 if (err.isSucceed == "200"){
                     res.send(err);

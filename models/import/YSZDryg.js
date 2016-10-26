@@ -29,8 +29,8 @@ YSZDrugSchema.index({ "Date": -1});
 YSZDrugSchema.index({ "SiteID": 1});
 
 //取出某研究某用户的所有运送中列表
-YSZDrugSchema.statics.chazhaosuoyouYsz = function (UsedAddressId,UserId,callback) {
-    console.log(UsedAddressId + UserId + callback)
+YSZDrugSchema.statics.chazhaosuoyouYsz = function (UsedAddressId,UserMP,callback) {
+    console.log(UsedAddressId + UserMP + callback)
     if (UsedAddressId.length == 0){
         //UserDepotYN参数错误
         callback({
@@ -39,7 +39,7 @@ YSZDrugSchema.statics.chazhaosuoyouYsz = function (UsedAddressId,UserId,callback
         },null)
         return;
     }
-    if (UserId.length == 0){
+    if (UserMP.length == 0){
         //UserDepotYN参数错误
         callback({
             'isSucceed' : 200,
@@ -47,10 +47,10 @@ YSZDrugSchema.statics.chazhaosuoyouYsz = function (UsedAddressId,UserId,callback
         },null)
         return;
     }
-    this.model('YSZDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isSign' : 0}).sort('-id').exec(callback)
+    this.model('YSZDrug').find({'Users.UserMP' : UserMP , 'UsedAddress.id' : UsedAddressId, 'isSign' : 0}).sort('-id').exec(callback)
 }
 //取出某研究某用户的所有已送达列表
-YSZDrugSchema.statics.chazhaosuoyouYSD = function (UsedAddressId,UserId,callback) {
+YSZDrugSchema.statics.chazhaosuoyouYSD = function (UsedAddressId,UserMP,callback) {
     if (UsedAddressId.length == 0){
         //UserDepotYN参数错误
         callback({
@@ -59,7 +59,7 @@ YSZDrugSchema.statics.chazhaosuoyouYSD = function (UsedAddressId,UserId,callback
         },null)
         return;
     }
-    if (UserId.length == 0){
+    if (UserMP.length == 0){
         //UserDepotYN参数错误
         callback({
             'isSucceed' : 200,
@@ -67,7 +67,7 @@ YSZDrugSchema.statics.chazhaosuoyouYSD = function (UsedAddressId,UserId,callback
         },null)
         return;
     }
-    this.model('YSZDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isSign' : 1}).sort('-id').exec(callback)
+    this.model('YSZDrug').find({'Users.UserMP' : UserMP , 'UsedAddress.id' : UsedAddressId, 'isSign' : 1}).sort('-id').exec(callback)
 }
 //取出某研究某用户的所有待签收列表
 YSZDrugSchema.statics.chazhaosuoyouDQS = function (AddressId,callback) {

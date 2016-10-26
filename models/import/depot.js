@@ -32,7 +32,7 @@ depotSchema.plugin(autoIncrement.plugin, {
 depotSchema.index({ "Date": 1});
 
 //查找用户所有仓库
-depotSchema.statics.chazhaoChangku = function (StudyID, id,UserDepotYN,UserDepot, callback) {
+depotSchema.statics.chazhaoChangku = function (StudyID,UserDepotYN,UserDepot, callback) {
     if (StudyID.length == 0){
         //UserDepotYN参数错误
         callback({

@@ -29,7 +29,7 @@ DYSDrugSchema.index({ "Date": -1});
 DYSDrugSchema.index({ "SiteID": 1});
 
 //取出某研究某用户的所有待运送列表
-DYSDrugSchema.statics.chazhaosuoyouDyslb = function (UsedAddressId,UserId,callback) {
+DYSDrugSchema.statics.chazhaosuoyouDyslb = function (UsedAddressId,UserMP,callback) {
     console.log('查找待运送')
     if (UsedAddressId.length == 0){
         //UserDepotYN参数错误
@@ -39,7 +39,7 @@ DYSDrugSchema.statics.chazhaosuoyouDyslb = function (UsedAddressId,UserId,callba
         },null)
         return;
     }
-    if (UserId.length == 0){
+    if (UserMP.length == 0){
         //UserDepotYN参数错误
         callback({
             'isSucceed' : 200,
@@ -47,7 +47,7 @@ DYSDrugSchema.statics.chazhaosuoyouDyslb = function (UsedAddressId,UserId,callba
         },null)
         return;
     }
-    this.model('DYSDrug').find({'Users.id' : UserId , 'UsedAddress.id' : UsedAddressId, 'isDelivery' : 0}).sort('-id').exec(callback)
+    this.model('DYSDrug').find({'Users.UserMP' : UserMP , 'UsedAddress.id' : UsedAddressId, 'isDelivery' : 0}).sort('-id').exec(callback)
 }
 //model
 var DYSDrug = mongoose.model("DYSDrug",DYSDrugSchema);
