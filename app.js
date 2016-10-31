@@ -10,6 +10,7 @@ var appLogin = require('./controller/APPJK/appLogin')//app登录相关
 var appTool = require('./controller/APPJK/appTool')//app查询相关
 var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
 var appSSZSJ = require('./controller/APPJK/appSSZSJ')//app查询相关
+var appTzrz = require('./controller/APPJK/appTzrz')//app查询相关
 //打开发送邮件
 var Email = require('./models/EMail');//Email服务
 
@@ -140,6 +141,18 @@ app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);
 app.post('/app/getLookupSuccessBasicsData',appSSZSJ.getLookupSuccessBasicsData);
 //模糊查询受试者
 app.post('/app/getVagueBasicsData',appSSZSJ.getVagueBasicsData);
+//停止入组--查询中心
+app.post('/app/getTzrzSite',appTzrz.getTzrzSite);
+//停止入组--确定申请
+app.post('/app/getApplyZXStopIt',appTzrz.getApplyZXStopIt);
+//停止入组--待审核列表
+app.post('/app/getZXStopItWaitForAudit',appTzrz.getZXStopItWaitForAudit);
+//停止入组--审核操作
+app.post('/app/getZXToExamine',appTzrz.getZXToExamine);
+//停止入组--确定申请
+app.post('/app/getDetermineZXStopIt',appTzrz.getDetermineZXStopIt);
+//停止入组--查询已停止入组列表
+app.post('/app/getZXStopItTable',appTzrz.getZXStopItTable);
 //404错误
 app.use('/',function (req, res) {
     console.log('404',req.url);

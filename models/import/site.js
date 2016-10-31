@@ -13,6 +13,8 @@ var siteSchema = new mongoose.Schema({
     "SiteAdd" : String,   //中心详细地址
     "SiteZipC" : String,  //中心邮编
     "SiteNam"  : String,   //中心名称
+    "isStopIt"  : String,   //是否停止入组:1为停止
+    "StopItDate"  : Date,   //停止入组时间
     "Date" : Date, //导入时间
 });
 siteSchema.plugin(autoIncrement.plugin, {

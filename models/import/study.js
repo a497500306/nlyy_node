@@ -28,6 +28,12 @@ var studySchema = new mongoose.Schema({
     "StudOnlineYN" : Number, //研究是否在线
     "StudDEMOYN" : Number, //属于演示版研究
     "StudSimuYN" : Number, //属于真实研究模拟版
+
+    "StudStopItType" : String, //该研究停止入组模式:1:中心全部停止入组,2:研究同意停止入组
+    "StudIsStopIt" : String, //该研究是否停止入组
+    "StudStopItUsers" : String, //停止入组操作人
+    "StudStopItPhone" : String, //停止入组操作手机号
+    "StudStopItDate" : Date,//停止入组时间
     "Date" : Date, //导入时间
 });
 studySchema.plugin(autoIncrement.plugin, {
