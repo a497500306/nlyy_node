@@ -9,8 +9,8 @@ var smtpTransport = nodemailer.createTransport("SMTP",{
     secureConnection: true, // 使用 SSL
     port: 465, // SMTP 端口
     auth: {
-        user: "497500306@qq.com", // 账号
-        pass: "tyyblibqhtuycaaj" // 密码
+        user: "k13918446402@qq.com", // 账号
+        pass: "alocyruycopabheb" // 密码
     }
 });
 

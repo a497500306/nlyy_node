@@ -316,7 +316,7 @@ exports.appGetAssignYwhgsfp = function (req, res, next) {
                                 htmlStr = htmlStr + '<h2>'+yaowuhao+'</h2>'
                             }
                             EMail.fasongxiujian({
-                                from: "配送清单<497500306@qq.com>", // 发件地址
+                                from: "配送清单<k13918446402@qq.com>", // 发件地址
                                 to: persons[0].Users.UserEmail, // 收件列表
                                 subject: "配送清单", // 标题
                                 html: htmlStr // html 内容

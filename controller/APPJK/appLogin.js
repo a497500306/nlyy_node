@@ -29,6 +29,7 @@ exports.appLogin = function (req, res, next) {
                     'msg' : '数据库正在维护,请稍后再试'
                 });
             }else{
+                console.log('登陆');
                 if (persons.length > 0){//登录
                     console.log(persons);
                     res.send({

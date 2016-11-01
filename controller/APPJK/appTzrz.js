@@ -147,7 +147,7 @@ exports.getApplyZXStopIt = function (req, res, next) {
                         var users = persons[i]
                         //发送邮件
                         EMail.fasongxiujian({
-                            from: "中心停止入组<497500306@qq.com>", // 发件地址
+                            from: "中心停止入组<k13918446402@qq.com>", // 发件地址
                             to: users.UserEmail, // 收件列表
                             subject: "中心停止入组", // 标题
                             html: htmlStr // html 内容
