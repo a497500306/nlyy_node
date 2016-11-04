@@ -11,6 +11,7 @@ var appTool = require('./controller/APPJK/appTool')//app查询相关
 var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
 var appSSZSJ = require('./controller/APPJK/appSSZSJ')//app查询相关
 var appTzrz = require('./controller/APPJK/appTzrz')//app查询相关
+var appYjxx = require('./controller/APPJK/appYjxx')//app查询相关
 //打开发送邮件
 var Email = require('./models/EMail');//Email服务
 
@@ -149,10 +150,29 @@ app.post('/app/getApplyZXStopIt',appTzrz.getApplyZXStopIt);
 app.post('/app/getZXStopItWaitForAudit',appTzrz.getZXStopItWaitForAudit);
 //停止入组--审核操作
 app.post('/app/getZXToExamine',appTzrz.getZXToExamine);
-//停止入组--确定申请
+//停止入组--确定/拒绝停止入组
 app.post('/app/getDetermineZXStopIt',appTzrz.getDetermineZXStopIt);
 //停止入组--查询已停止入组列表
 app.post('/app/getZXStopItTable',appTzrz.getZXStopItTable);
+//停止入组--整个研究停止入组申请
+app.post('/app/getApplyYJStopIt',appTzrz.getApplyYJStopIt);
+//停止入组--整个研究待审核列表
+app.post('/app/getYJStopItWaitForAudit',appTzrz.getYJStopItWaitForAudit);
+//停止入组--整个研究审核操作
+app.post('/app/getYJToExamine',appTzrz.getYJToExamine);
+//停止入组--整个研究确定/拒绝停止入组
+app.post('/app/getDetermineYJStopIt',appTzrz.getDetermineYJStopIt);
+//研究下线--获取研究下线申请时相关数据
+app.post('/app/getYjxxApplyData',appYjxx.getYjxxApplyData);
+//研究下线--提交申请
+app.post('/app/getYjxxApply',appYjxx.getYjxxApply);
+//研究下线--待审核列表
+app.post('/app/getYjxxApplyWaitForAudit',appYjxx.getYjxxApplyWaitForAudit);
+//研究下线--审核操作
+app.post('/app/getYjxxToExamine',appYjxx.getYjxxToExamine);
+//研究下线--整个研究确定/拒绝下线
+app.post('/app/getDetermineYjxxOffline',appYjxx.getDetermineYjxxOffline);
+
 //404错误
 app.use('/',function (req, res) {
     console.log('404',req.url);

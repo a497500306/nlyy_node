@@ -11,6 +11,7 @@ var users = require('../../models/import/users');
 var siteStopIt = require('../../models/import/siteStopIt');
 var EMail = require("../../models/EMail");
 var study = require('../../models/import/study')
+var studyStopIt = require('../../models/import/studyStoplt')
 
 //获取中心数据
 exports.getTzrzSite = function (req, res, next) {
@@ -137,12 +138,13 @@ exports.getApplyZXStopIt = function (req, res, next) {
                      tableData.push('中心已停止受试者入组')
                      tableData.push('选择原因')*/
                     var htmlStr = ''
+                    htmlStr = htmlStr + '<h1>中心停止入组</h1>'
                     htmlStr = htmlStr + '<h2>研究编号:'+ fields.StudyID + '</h2>'
                     htmlStr = htmlStr + '<h2>中心编号:'+ fields.SiteID + '</h2>'
                     htmlStr = htmlStr + '<h2>中心名称:'+ fields.SiteNam + '</h2>'
                     htmlStr = htmlStr + '<h2>申请人:'+ fields.UserNam + '</h2>'
                     htmlStr = htmlStr + '<h2>申请人手机号:'+ fields.UserMP + '</h2>'
-                    htmlStr = htmlStr + '<h2>原因:'+ Reason+ '</h2>'
+                    htmlStr = htmlStr + '<h2>原因:'+ fields.Reason+ '</h2>'
                     for (var i = 0 ; i < persons.length ; i++){
                         var users = persons[i]
                         //发送邮件
@@ -346,6 +348,249 @@ exports.getZXStopItTable = function (req, res, next) {
                 'isSucceed': 400,
                 'data': persons
             });
+        })
+    })
+}
+
+
+//停止入组--整个研究停止入组申请
+exports.getApplyYJStopIt = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        studyStopIt.find({
+            StudyID : fields.StudyID
+        }).exec((err, persons) => {
+            if (persons.length > 0){
+                for(var i = 0 ; i < persons.length ; i++){
+                    if (persons[0].isStopIt == 1){//如果停止,则输出
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '该研究已停止入组'
+                        });
+                        return
+                    }
+                    if (persons[0].isStopIt == 0){//该中心已经申请
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '该研究已申请停止入组'
+                        });
+                        return
+                    }
+                    if (persons[0].isStopIt == null){//该中心已经申请
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '该研究已申请停止入组'
+                        });
+                        return
+                    }
+                }
+            }
+
+            //推送短信
+            //推送邮件
+            if (fields.isMail == '是'){
+                //查询该研究所有全国PI
+                users.find({
+                    StudyID : fields.StudyID,
+                    UserFun : 'H1'
+                }).exec((err, persons) => {
+                    /*
+                     /*tableData.push('研究编号')
+                     tableData.push('中心编号')
+                     tableData.push('中心名称')
+                     tableData.push('申请人')
+                     tableData.push('申请人手机号')
+                     tableData.push('申请日期')
+                     tableData.push('是否推送短信给全国PI')
+                     tableData.push('是否推送邮件给全国PI')
+                     tableData.push('中心已停止受试者入组')
+                     tableData.push('选择原因')*/
+                    var htmlStr = ''
+                    htmlStr = htmlStr + '<h1>研究停止入组</h1>'
+                    htmlStr = htmlStr + '<h2>研究编号:'+ fields.StudyID + '</h2>'
+                    htmlStr = htmlStr + '<h2>申请人:'+ fields.UserNam + '</h2>'
+                    htmlStr = htmlStr + '<h2>申请人手机号:'+ fields.UserMP + '</h2>'
+                    htmlStr = htmlStr + '<h2>原因:'+ fields.Reason+ '</h2>'
+                    for (var i = 0 ; i < persons.length ; i++){
+                        var users = persons[i]
+                        //发送邮件
+                        EMail.fasongxiujian({
+                            from: "研究停止入组<k13918446402@qq.com>", // 发件地址
+                            to: users.UserEmail, // 收件列表
+                            subject: "中心停止入组", // 标题
+                            html: htmlStr // html 内容
+                        })
+                    }
+                })
+            }
+            //添加数据
+            studyStopIt.create({
+                StudyID : fields.StudyID,
+                UserNam : fields.UserNam,
+                UserMP : fields.UserMP,
+                isMessage : fields.isMessage,
+                isMail : fields.isMail,
+                Reason : fields.Reason,
+                UserEmail : fields.UserEmail,
+                ToExamineUsers : [],
+                ToExaminePhone : [],
+                ToExamineDate : [],
+                ToExamineType : [],
+                StopItUsers : null,
+                StopItPhone : null,
+                StopItDate : null,
+                isStopIt:0,
+                Date : new Date(), //导入时间
+            },function (error) {
+                if (error != null){
+                    res.send({
+                        'isSucceed': 200,
+                        'msg': '数据添加失败'
+                    });
+                }else{
+                    res.send({
+                        'isSucceed': 400,
+                        'msg': '申请成功'
+                    });
+                }
+            })
+        })
+    })
+}
+
+
+//停止入组--整个研究待审核列表
+exports.getYJStopItWaitForAudit = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //取出该研究所有待审核列表.
+        studyStopIt.find({
+            StudyID : fields.StudyID
+        }).exec((err, persons) => {
+            if (err != null){
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '数据库错误'
+                });
+            }else{
+                res.send({
+                    'isSucceed': 400,
+                    'data': persons
+                });
+            }
+        })
+    })
+}
+
+
+//停止入组--整个研究审核操作
+exports.getYJToExamine = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+    //查看该用户是否已经审核
+        studyStopIt.find({
+            id : fields.id,
+            ToExaminePhone : fields.ToExaminePhone
+        }).exec((err, persons) => {
+            if (err != null){
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '数据库错误'
+                });
+            }else{
+                studyStopIt.find({
+                    id : fields.id
+                }).exec((err, persons1) => {
+                    if (persons1[0].isStopIt == 1){
+                        res.send({
+                            'isSucceed': 400,
+                            'msg': '该中心已经停止入组'
+                        });
+                        return
+                    }
+                    if (persons.length == 0){
+                        studyStopIt.update({
+                            'id' : fields.id,
+                        },{
+                            $push : {
+                                'ToExamineUsers' : fields.ToExamineUsers,
+                                'ToExaminePhone' : fields.ToExaminePhone,
+                                'ToExamineType' : fields.ToExamineType,
+                                'ToExamineDate' : new Date()
+                            } ,
+                        },function () {
+                            res.send({
+                                'isSucceed': 400,
+                                'msg': '操作成功'
+                            });
+                        })
+                    }else{
+                        res.send({
+                            'isSucceed': 400,
+                            'msg': '您已经审核过该申请'
+                        });
+                    }
+                })
+            }
+        })
+    })
+}
+
+//停止入组--整个研究确定/拒绝停止入组
+exports.getDetermineYJStopIt = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log('-整个研究确定/拒绝停止入组')
+        studyStopIt.find({
+            'id' : fields.id,
+        }).exec((err, persons) => {
+            if (persons[0].isStopIt == 2 || persons[0].isStopIt == 1){
+                res.send({
+                    'isSucceed': 400,
+                    'msg': '该申请已经操作完成'
+                });
+            }else{
+                if (fields.isStopIt == 1){
+                    study.update({
+                        'StudyID' : persons[0].StudyID,
+                    },{
+                        'StudStopItType' : 2,
+                        'StudIsStopIt' : 1,
+                        "StudStopItUsers" : fields.StopItUsers, //停止入组操作人
+                        "StudStopItPhone" : fields.StopItPhone, //停止入组操作手机号
+                        'StopItDate' : new Date()
+                    },function () {
+                        //把该研究的所有中心全部停止入组
+                        console.log(persons[0].StudyID)
+                        site.find({
+                            'StudyID' : persons[0].StudyID,
+                        }).exec((err, persons22) => {
+                            for (var i = 0 ; i < persons22.length ; i++) {
+                                site.update({
+                                    'id' : persons22[i].id,
+                                },{
+                                    'isStopIt' : 1,
+                                },function (err,ddd) {
+                                    console.log('所有中心停止入组')
+                                })
+                            }
+                        })
+                    })
+                }
+                studyStopIt.update({
+                    'id' : fields.id,
+                },{
+                    'StopItUsers' : fields.StopItUsers,
+                    'StopItPhone' : fields.StopItPhone,
+                    'isStopIt' : fields.isStopIt,
+                    'StopItDate' : new Date()
+                },function () {
+                    res.send({
+                        'isSucceed': 400,
+                        'msg': '操作成功'
+                    });
+                })
+            }
         })
     })
 }

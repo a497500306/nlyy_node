@@ -34,6 +34,12 @@ var studySchema = new mongoose.Schema({
     "StudStopItUsers" : String, //停止入组操作人
     "StudStopItPhone" : String, //停止入组操作手机号
     "StudStopItDate" : Date,//停止入组时间
+
+    "StudIsOffline" : String, //该研究是否下线
+    "StudOfflineUsers" : String, //下线操作人
+    "StudOfflinePhone" : String, //下线操作手机号
+    "StudOfflineDate" : Date,//下线操作时间
+
     "Date" : Date, //导入时间
 });
 studySchema.plugin(autoIncrement.plugin, {
