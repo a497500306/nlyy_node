@@ -232,6 +232,39 @@ exports.getDetermineYjxxOffline = function (req, res, next) {
     })
 }
 
+//研究下线--整个研究查询子研究受试者例数
+exports.getZyjsszls = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询子研究受试者例数
+        addSuccessPatient.find({
+            'StudyID' : fields.StudyID,
+            'SubjStudYN' : 1,
+        }).exec((err, persons) => {
+            res.send({
+                'isSucceed': 400,
+                'data': persons.length
+            });
+        })
+    })
+}
+
+//研究下线--整个研究查询延长期研究受试者例数
+exports.getYcqyjsszls = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询子研究受试者例数
+        addSuccessPatient.find({
+            'StudyID' : fields.StudyID,
+        }).exec((err, persons) => {
+            res.send({
+                'isSucceed': 400,
+                'data': persons.length
+            });
+        })
+    })
+}
+
 var gitData = function (StudyID,block) {
     var data = {
          "AllAampleNumber" : String, //总样本量
