@@ -134,6 +134,8 @@ app.post("/app/getSiteDrugData",appChangKu.getSiteDrugData);
 app.post("/app/getDrugWLData",appChangKu.getDrugWLData);
 //获取中心数据
 app.post('/app/getSingleSite',appSSZSJ.getSite);
+//判断中心是否停止入组
+app.post('/app/getIsStopItSite',appSSZSJ.getIsStopItSite);
 //添加成功受试者基础数据
 app.post('/app/getAddSuccessBasicsData',appSSZSJ.getAddSuccessBasicsData);
 //添加筛选失败受试者基础数据
@@ -172,6 +174,10 @@ app.post('/app/getYjxxApplyWaitForAudit',appYjxx.getYjxxApplyWaitForAudit);
 app.post('/app/getYjxxToExamine',appYjxx.getYjxxToExamine);
 //研究下线--整个研究确定/拒绝下线
 app.post('/app/getDetermineYjxxOffline',appYjxx.getDetermineYjxxOffline);
+//研究下线--整个研究查询子研究受试者例数
+app.post('/app/getZyjsszls',appYjxx.getZyjsszls);
+//研究下线--整个研究查询延长期研究受试者例数
+app.post('/app/getYcqyjsszls',appYjxx.getYcqyjsszls);
 
 //404错误
 app.use('/',function (req, res) {

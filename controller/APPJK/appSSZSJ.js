@@ -36,6 +36,36 @@ exports.getSite = function (req, res, next) {
         })
     })
 }
+
+//判断中心是否停止入组
+exports.getIsStopItSite = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log(fields)
+        site.find({StudyID:fields.StudyID,SiteID: fields.SiteID,isStopIt:1}, function (err, persons1) {
+            console.log(persons1)
+            if (err != null) {
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '数据库错误'
+                });
+            }else{
+                if (persons1.length == 0){
+                    res.send({
+                        'isSucceed' : 400,
+                        'msg' : '中心未停止入组'
+                    });
+                }else{
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '中心停止入组'
+                    });
+                }
+            }
+        })
+    })
+}
+
 //添加成功受试者基础数据
 exports.getAddSuccessBasicsData = function (req, res, next) {
     var form = new formidable.IncomingForm();
