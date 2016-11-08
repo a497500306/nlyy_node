@@ -12,10 +12,7 @@ var addFailPatientSchema = new mongoose.Schema({
     "StudyID" : String,    //研究编号
     "SiteID" : String,//中心编号
     "ScreenYN" : Number,//筛选结果
-    "ScreenNRea1" : String,//筛选失败原因1
-    "ScreenNRea2" : String,//筛选失败原因1
-    "ScreenNRea3" : String,//筛选失败原因1
-    "ScreenNRea4" : String,//筛选失败原因1
+    "ExcludeStandards" : Array,//入排标准
     "SubjID" : String,//受试者流水号
     "USubjectID" : String,//受试者编号
     "SubjectDOB" : String,//受试者出生日期

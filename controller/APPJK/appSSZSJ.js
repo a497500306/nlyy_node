@@ -100,6 +100,11 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
                             SubjFb:fields.SubjFb,
                             SubjFc:fields.SubjFc,
                             SubjFd:fields.SubjFd,
+                            SubjFe:fields.SubjFe,
+                            SubjFf:fields.SubjFf,
+                            SubjFg:fields.SubjFg,
+                            SubjFh:fields.SubjFh,
+                            SubjFi:fields.SubjFi,
                             SubjStudYN:fields.SubjStudYN,
                             Date:new Date()
                         },function (err,data) {
@@ -146,10 +151,7 @@ exports.getAddFailPatientData = function (req, res, next) {
                             StudyID:fields.StudyID,
                             SiteID:fields.SiteID,
                             ScreenYN:fields.ScreenYN,
-                            ScreenNRea1:fields.ScreenNRea1,
-                            ScreenNRea2:fields.ScreenNRea2,
-                            ScreenNRea3:fields.ScreenNRea3,
-                            ScreenNRea4:fields.ScreenNRea4,
+                            ExcludeStandards:fields.ExcludeStandards,
                             SubjectDOB:fields.SubjectDOB,
                             SubjectSex:fields.SubjectSex,
                             SubjectIn:fields.SubjectIn,

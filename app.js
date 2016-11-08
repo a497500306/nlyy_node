@@ -61,6 +61,9 @@ app.post('/nlyy/addDrywh',ImportData.addDrywh);
 app.post('/nlyy/addGdsjfdrsjh',ImportData.addGdsjfdrsjh);
 //设置研究的随机化参数
 app.post('/nlyy/addSzyjsjhcs',ImportData.addSzyjsjhcs);
+//设置研究的随机化参数
+app.post('/nlyy/addRxpcbz',ImportData.addRxpcbz);
+
 
 //登录请求
 app.post("/node/getHome",login.doHome);
