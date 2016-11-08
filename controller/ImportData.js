@@ -7,6 +7,7 @@ var study = require('../models/import/study');//新增研究
 var site = require("../models/import/site");//新增研究中心
 var depot = require("../models/import/depot");//新增仓库
 var researchParameter = require("../models/import/researchParameter");//设置研究的随机化参数
+var ExcludeStandard = require("../models/import/ExcludeStandard");//导入入选排除标准
 var drug = require("../models/import/drug");//导入药物号
 var random = require("../models/import/random");//导入固定随机法随机号
 var adminUser = require("../models/adminUsers");//管理用户
@@ -51,7 +52,11 @@ exports.addSzyjsjhcs = function (req, res, next) {
     console.log("设置研究的随机化参数");
     addData(req, res, next, researchParameter);
 }
-
+//导入入选排除标准
+exports.addRxpcbz = function (req, res, next) {
+    console.log("导入入选排除标准");
+    addData(req, res, next, ExcludeStandard);
+}
 
 //公共方法
 addData = function (req, res, next, name) {

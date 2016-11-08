@@ -4,6 +4,7 @@
 var users = require('../../models/import/users');
 var study = require('../../models/import/study');
 var researchParameter = require('../../models/import/researchParameter');
+var ExcludeStandard = require('../../models/import/ExcludeStandard');
 
 TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
@@ -80,11 +81,29 @@ exports.appStudyAndResearchParameter = function (req, res, next) {
                                     'msg': '未找到该研究随机化参数'
                                 });
                             }else{
-                                res.send({
-                                    'isSucceed': 400,
-                                    'study': persons[0],
-                                    'researchParameter' : persons1[0]
-                                });
+                                //查找入排标准
+                                ExcludeStandard.find({StudyID: fields.StudyID}, function (err, persons2) {
+                                    if (err != null) {
+                                        res.send({
+                                            'isSucceed': 200,
+                                            'msg': '数据库正在维护,请稍后再试'
+                                        });
+                                    }else{
+                                        if (persons2.length == 0){
+                                            res.send({
+                                                'isSucceed': 200,
+                                                'msg': '未找到该研究入选排除标准'
+                                            });
+                                        }else{
+                                            res.send({
+                                                'isSucceed': 400,
+                                                'study': persons[0],
+                                                'ExcludeStandard' : persons2,
+                                                'researchParameter' : persons1[0]
+                                            });
+                                        }
+                                    }
+                                })
                             }
                         }
                     })

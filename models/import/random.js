@@ -8,6 +8,7 @@ autoIncrement.initialize(mongoose.connection);   //初始化
 
 //schema
 var randomSchema = new mongoose.Schema({
+    "id" : String,
     "StudyID" : String,    //研究编号
     "StratumN" : Number,    //分层结果代码:1=01中心既往未接受化疗者，2=01中心既往已接受化疗者，3=02中心既往未接受化疗者，4=02中心既
     // 往已接受化疗者，5=03中心既往未接受化疗者，6=03中心既往已接受化疗者，7=04中心既往未接受化疗者，8=04中心既往已接受化疗者，9=05中心既往未接受化疗者，
