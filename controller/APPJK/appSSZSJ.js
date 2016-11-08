@@ -100,6 +100,11 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
                             SubjFb:fields.SubjFb,
                             SubjFc:fields.SubjFc,
                             SubjFd:fields.SubjFd,
+                            SubjFe:fields.SubjFe,
+                            SubjFf:fields.SubjFf,
+                            SubjFg:fields.SubjFg,
+                            SubjFh:fields.SubjFh,
+                            SubjFi:fields.SubjFi,
                             SubjStudYN:fields.SubjStudYN,
                             Date:new Date()
                         },function (err,data) {

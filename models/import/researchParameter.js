@@ -16,8 +16,8 @@ var researchParameterSchema = new mongoose.Schema({
     "BlindSta" : Number,  //设盲状态
     "DrugNSBlind" : Number, //单盲试验提供药物号
     "DrugNOpen" : Number, //开放试验提供药物号
-    "NTrtGrp" : Number, //治疗组数
-    "AlloRatio" : Number, //受试者分组比例
+    "NTrtGrp" : String, //治疗组数
+    "AlloRatio" : String, //受试者分组比例
     "RandoSeed" : Number, //随机种子数
     "SizeInGrp" : Number, //可查询各组随机例数
     "SizeLInStraYN" : Number, //是否设置层内例数限制
@@ -26,15 +26,37 @@ var researchParameterSchema = new mongoose.Schema({
     "SizeLInSite" : Number, //中心最大例数限制
     "Nstra" : Number, //分层因素的个数
     "LabelStraA" : String, //第一个分层因素的标签
+    "LabelStraAL" : String, //第一个分层因素的标签
     "LabelStraB" : String, //第二个分层因素的标签
+    "LabelStraBL" : String, //第二个分层因素的标签
     "LabelStraC" : String, //第三个分层因素的标签
+    "LabelStraCL" : String, //第三个分层因素的标签
     "LabelStraD" : String, //第四个分层因素的标签
+    "LabelStraDL" : String, //第四个分层因素的标签
+    "LabelStraE" : String, //第五个分层因素的标签
+    "LabelStraEL" : String, //第五个分层因素的标签
+    "LabelStraF" : String, //第六个分层因素的标签
+    "LabelStraFL" : String, //第六个分层因素的标签
+    "LabelStraG" : String, //第七个分层因素的标签
+    "LabelStraGL" : String, //第七个分层因素的标签
+    "LabelStraH" : String, //第八个分层因素的标签
+    "LabelStraHL" : String, //第八个分层因素的标签
+    "StraSiteYN" : String,//是否按中心分层
+    "LabelStraI" : String,//第九个分层因素的标签
+    'LabelStraIL' : String,//第九个分层因素的取值
+
+
     "WeightStraA" : Number, //第一个分层因素的权重
     "WeightStraB" : Number, //第二个分层因素的权重
     "WeightStraC" : Number, //第三个分层因素的权重
     "WeightStraD" : Number, //第四个分层因素的权重
-    "FormulaImSc" : Number, //不平衡分数算法
-    "TrtSelMth" : Number, //随机选择治疗方法
+    "WeightStraE" : Number, //第五个分层因素的权重
+    "WeightStraF" : Number, //第六个分层因素的权重
+    "WeightStraG" : Number, //第七个分层因素的权重
+    "WeightStraH" : Number, //第八个分层因素的权重
+    "WeightStraI" : Number, //第九个分层因素的权重
+    "FormulaImSc" : Number, //不平衡分数算法1=极差法；2=方差法；3=最大值法
+    "TrtSelMth" : Number, //随机选择治疗方法1=直接法（BEST）；2=指定概率法（PROB）；3=倒数法（PROP）；4=完全随机法
     "HighProb" : Number, //指定概率法概率高值
     "LowProb" : Number, //指定概率法概率低值
     "SignRuleYN" : Number, //是否考虑分层因素完全重复（SIGN RULE）

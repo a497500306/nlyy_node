@@ -163,14 +163,20 @@ exports.doHome = function (req, res, next) {
         }else if(fields.id == "szyjsjhcs"){//设置研究随机化参数
             var keys =  ['研究序列号','研究编号','研究设计','研究阶段个数','随机方法','设盲状态','单盲试验提供药物号','开放试验提供药物号','治疗组数'
                         ,'受试者分组比例','随机种子数','可查询各组随机例数','是否设置层内例数限制','层内限制例数','是否设置中心最大例数限制'
-                        ,'中心最大例数限制','分层因素的个数','第一个分层因素的标签','第二个分层因素的标签','第三个分层因素的标签','第四个分层因素的标签'
-                        ,'第一个分层因素的权重','第二个分层因素的权重','第三个分层因素的权重','第四个分层因素的权重','不平衡分数算法','随机选择治疗方法','指定概率法概率高值'
+                        ,'中心最大例数限制','分层因素的个数','第一个分层因素的标签','第一个分层因素的取值','第二个分层因素的标签','第二个分层因素的取值'
+                        ,'第三个分层因素的标签','第三个分层因素的取值','第四个分层因素的标签','第四个分层因素的取值','第五个分层因素的标签','第五个分层因素的取值'
+                        ,'第六个分层因素的标签','第六个分层因素的取值','第七个分层因素的标签','第七个分层因素的取值','第八个分层因素的标签','第八个分层因素的取值'
+                        ,'是否按中心分层','第九个分层因素的标签','第九个分层因素的取值'
+                        ,'第一个分层因素的权重','第二个分层因素的权重','第三个分层因素的权重','第四个分层因素的权重','第五个分层因素的权重','不平衡分数算法'
+                        ,'第六个分层因素的权重','第七个分层因素的权重','第八个分层因素的权重','第九个分层因素的权重','随机选择治疗方法','指定概率法概率高值'
                         ,'指定概率法概率低值','是否考虑分层因素完全重复（SIGN RULE）','随机号是否导出治疗分组','取随机号时是否显示随机号','取随机号时是否显示药物号','取随机号时是否显示分组情况'
                         ,'取随机号时是否显示随机抽中参加子研究','取随机号时是否显示目前研究阶段','添加时间','操作'];
             var keyEn = ['StudySeq','StudyID','StudyDs','StudyPeNum','RandoM','BlindSta','DrugNSBlind','DrugNOpen','NTrtGrp'
                         ,'AlloRatio','RandoSeed','SizeInGrp','SizeLInStraYN','SizeLInStra','SizeLInSiteYN'
-                        ,'SizeLInSite','Nstra','LabelStraA','LabelStraB','LabelStraC','LabelStraD'
-                        ,'WeightStraA','WeightStraB','WeightStraC','WeightStraD','FormulaImSc','TrtSelMth','HighProb'
+                        ,'SizeLInSite','Nstra','LabelStraA','LabelStraAL','LabelStraB','LabelStraBL','LabelStraC','LabelStraCL','LabelStraD','LabelStraDL'
+                        ,'LabelStraE','LabelStraEL','LabelStraF','LabelStraFL','LabelStraG','LabelStraGL'
+                         ,'LabelStraH','LabelStraHL','StraSiteYN','LabelStraI','LabelStraIL','WeightStraA','WeightStraB','WeightStraC','WeightStraD'
+                        ,'WeightStraE','WeightStraF','WeightStraG','WeightStraH','WeightStraI','FormulaImSc','TrtSelMth','HighProb'
                         ,'LowProb','SignRuleYN','ArmCDYN','RandoNumYN','DrugNumYN','ArmYN'
                         ,'SubStudYN','CStudyPeYN','Date','操作'];
             showTable(fields, res , req ,researchParameter , keys , keyEn , "/nlyy/addSzyjsjhcs");
