@@ -21,6 +21,7 @@ exports.appLogin = function (req, res, next) {
     console.log('登录接口');
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
+        console.log(fields)
         //搜索是否存在该用户
         users.chazhaoPhone(fields.phone,function (err, persons) {
             if (err != null){

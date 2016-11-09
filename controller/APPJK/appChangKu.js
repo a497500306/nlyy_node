@@ -1320,6 +1320,7 @@ exports.getZXAllOnDrug = function (req, res, next) {
                 });
                 return
             }else{
+                console.log(persons)
                 if (persons.length != 0){
                     res.send({
                         'isSucceed' : 400,
@@ -1352,6 +1353,7 @@ exports.getZXAllOnActivation = function (req, res, next) {
             }else{
                 if (persons.length != 0){
                     for (var i = 0 ; i < persons.length ; i++){
+
                         //修改物流信息
                         drugWL.update({
                             'StudyID' : persons[i].StudyID,
