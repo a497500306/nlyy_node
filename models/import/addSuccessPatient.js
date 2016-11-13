@@ -74,8 +74,9 @@ addSuccessPatientSchema.statics.chazhaomouyanjiumouzhongxin = function (SiteID,S
         },null)
         return;
     }else{
+        console.log('获取成功列表')
         //取出该研究中的所有分仓库
-        this.model('addSuccessPatient').find({SiteID : SiteID,StudyID : StudyID},callback)
+        this.model('addSuccessPatient').find({SiteID : SiteID,StudyID : StudyID}).sort('-Date').exec(callback)
     }
 }
 //model
