@@ -202,8 +202,8 @@ exports.doHome = function (req, res, next) {
             showTable(fields, res , req ,ExcludeStandard , keys , keyEn , "/nlyy/addRxpcbz");
             console.log('导入研究入选排除标准');
         }else if(fields.id == "gdsjfdrsjh"){//固定随机法导入随机号
-            var keys =  ['研究编号','分层结果代码','研究设计','研究阶段个数','目前所处研究阶段','分层结果','层内区组号','区组内序号','随机号','治疗分组代码','治疗分组标签','添加时间','操作'];
-            var keyEn = ['StudyID','StratumN','StudyDs','StudyPeNum','CStudyPe','Stratum','BlockSeq','SeqInBlock','RandoNum','ArmCD','Arm','Date','操作'];
+            var keys =  ['研究编号','分层结果代码','研究设计','研究阶段个数','目前所处研究阶段','层内区组号','区组内序号','随机号','治疗分组代码','治疗分组标签',"分层结果a","分层结果b","分层结果c","分层结果d","分层结果e","分层结果f","分层结果g","分层结果h","分层结果i",'添加时间','操作'];
+            var keyEn = ['StudyID','StratumN','StudyDs','StudyPeNum','CStudyPe','BlockSeq','SeqInBlock','RandoNum','ArmCD','Arm','SubjFa','SubjFb','SubjFc','SubjFd','SubjFe','SubjFg','SubjFg','SubjFh','SubjFi','Date','操作'];
             showTable(fields, res , req ,random , keys , keyEn , "/nlyy/addGdsjfdrsjh");
             console.log('固定随机法导入随机号');
         }else if(fields.id == "drywh"){//导入药物号

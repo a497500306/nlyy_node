@@ -22,6 +22,17 @@ var randomSchema = new mongoose.Schema({
     "RandoNum" : String, //随机号
     "ArmCD" : String, //治疗分组代码
     "Arm" : String, //治疗分组标签
+    "SubjFa" : String,//随机分层因素a
+    "SubjFb" : String,//随机分层因素b
+    "SubjFc" : String,//随机分层因素c
+    "SubjFd" : String,//随机分层因素d
+    "SubjFe" : String,//随机分层因素e
+    "SubjFf" : String,//随机分层因素f
+    "SubjFg" : String,//随机分层因素g
+    "SubjFh" : String,//随机分层因素h
+    "SubjFi" : String,//随机分层因素i
+    "isUse" : Number, //是否使用;1为使用
+    "UseUserId" : String, //使用者ID
     "Date" : Date, //导入时间
 });
 randomSchema.plugin(autoIncrement.plugin, {

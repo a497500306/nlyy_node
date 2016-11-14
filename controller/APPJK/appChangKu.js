@@ -517,6 +517,8 @@ exports.appGetAllDrug = function (req, res, next) {
         console.log(fields)
         if (fields.DepotGNYN == 1){
             drug.chazhaoyousuoYWH(fields.StudyID,function (err, persons){
+                console.log('所有药物号')
+                console.log(persons.length)
                 if (err == null){
                     //返回成功
                     res.send({

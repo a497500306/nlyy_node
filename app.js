@@ -141,6 +141,9 @@ app.post('/app/getSingleSite',appSSZSJ.getSite);
 app.post('/app/getIsStopItSite',appSSZSJ.getIsStopItSite);
 //添加成功受试者基础数据
 app.post('/app/getAddSuccessBasicsData',appSSZSJ.getAddSuccessBasicsData);
+//取随机号
+app.post('/app/getRandomNumber',appSSZSJ.getRandomNumber);
+
 //添加筛选失败受试者基础数据
 app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);
 //查找所有受试者
