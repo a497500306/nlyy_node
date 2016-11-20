@@ -31,6 +31,7 @@ var addSuccessPatientSchema = new mongoose.Schema({
     "SubjFh" : String,//随机分层因素h
     "SubjFi" : String,//随机分层因素i
     "Random" : String,//随机号
+    "Arm" : String, //治疗分组标签
     "Drug" : Array,//药物号数组
     "SubjStudYN" : String,//受试者是否参加子研究
     "Date" : Date, //导入时间

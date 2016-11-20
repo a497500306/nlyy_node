@@ -8,9 +8,9 @@ var ExcludeStandard = require('../../models/import/ExcludeStandard');
 
 TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
-    'appkey' : '23465484' ,
-    'appsecret' : 'a3d49830909f0d11b04118ae8cdd329d' ,
-    'REST_URL' : ' http://gw.api.taobao.com/router/rest '
+    'appkey' : '23500106' ,
+    'appsecret' : '7938816533f3fc698534761d15d8f66b' ,
+    'REST_URL' : 'http://gw.api.tbsandbox.com/router/rest'
 });
 
 var formidable = require('formidable');
@@ -19,9 +19,12 @@ var formidable = require('formidable');
 exports.appLogin = function (req, res, next) {
     //得到用户填写的东西
     console.log('登录接口');
+    console.log(req);
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
+        console.log("post");
         console.log(fields)
+        console.log(fields.phone);
         //搜索是否存在该用户
         users.chazhaoPhone(fields.phone,function (err, persons) {
             if (err != null){
@@ -134,9 +137,9 @@ exports.appIDCode = function (req, res, next) {
                     client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
                         'extend' : '' ,
                         'sms_type' : 'normal' ,
-                        'sms_free_sign_name' : '' ,
+                        'sms_free_sign_name' : '诺兰医药科技' ,
                         'sms_param' : {
-                            text:idCoed
+                            "text":"idCoed"
                         } ,
                         'rec_num' : fields.phone ,
                         'sms_template_code' : "SMS_16250342"

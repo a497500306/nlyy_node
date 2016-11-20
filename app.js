@@ -1,4 +1,9 @@
-
+TopClient = require( './ALYZM/topClient' ).TopClient;
+var client = new TopClient({
+    'appkey' : '23500106' ,
+    'appsecret' : '7938816533f3fc698534761d15d8f66b' ,
+    'REST_URL' : 'http://gw.api.tbsandbox.com/router/rest'
+});
 var express = require("express");
 var app = express();
 var db = require("./models/db.js");
@@ -12,6 +17,11 @@ var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
 var appSSZSJ = require('./controller/APPJK/appSSZSJ')//app查询相关
 var appTzrz = require('./controller/APPJK/appTzrz')//app查询相关
 var appYjxx = require('./controller/APPJK/appYjxx')//app查询相关
+var schedule = require("node-schedule");
+var yytx = require('./models/import/yytx')
+//时间操作
+var moment = require('moment');
+moment().format();
 //打开发送邮件
 var Email = require('./models/EMail');//Email服务
 
@@ -30,6 +40,128 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+//定时任务,用于发送用药提醒等
+var rule = new schedule.RecurrenceRule();
+
+rule.minute = 30;
+
+var j = schedule.scheduleJob(rule, function(){
+    //搜索所有30分钟的用药提醒
+    var shi = moment().format('HH')
+    //搜索用药提醒
+    yytx.find({tuisong1:shi + ":" + 30,kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
+        console.log(randomPersons.length)
+        for (var i = 0 ; i < randomPersons.length ; i++){
+            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                'extend' : '' ,
+                'sms_type' : 'normal' ,
+                'sms_free_sign_name' : '诺兰医药科技' ,
+                'sms_param' : {
+                    "yytx":randomPersons[i].tuisongnr1 ,
+                } ,
+                'rec_num' : randomPersons[i].phone ,
+                'sms_template_code' : "SMS_16250342"
+            }, function(error, response) {
+
+            });
+        }
+    });
+    yytx.find({tuisong2:shi + ":" + 30,kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
+        console.log(randomPersons.length)
+        for (var i = 0 ; i < randomPersons.length ; i++){
+            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                'extend' : '' ,
+                'sms_type' : 'normal' ,
+                'sms_free_sign_name' : '诺兰医药科技' ,
+                'sms_param' : {
+                    "yytx":randomPersons[i].tuisongnr2 ,
+                } ,
+                'rec_num' : randomPersons[i].phone ,
+                'sms_template_code' : "SMS_16250342"
+            }, function(error, response) {
+
+            });
+        }
+    });
+    yytx.find({tuisong3:shi + ":" + 30,kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
+        console.log(randomPersons.length)
+        for (var i = 0 ; i < randomPersons.length ; i++){
+            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                'extend' : '' ,
+                'sms_type' : 'normal' ,
+                'sms_free_sign_name' : '诺兰医药科技' ,
+                'sms_param' : {
+                    "yytx":randomPersons[i].tuisongnr3 ,
+                } ,
+                'rec_num' : randomPersons[i].phone ,
+                'sms_template_code' : "SMS_16250342"
+            }, function(error, response) {
+
+            });
+        }
+    });
+
+});
+
+rule.minute = 1;
+
+var i = schedule.scheduleJob(rule, function(){
+    //搜索所有30分钟的用药提醒
+    var shi = moment().format('HH')
+    //搜索用药提醒
+    yytx.find({tuisong1:shi + ":" + "00",kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
+        console.log(randomPersons.length)
+        for (var i = 0 ; i < randomPersons.length ; i++){
+            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                'extend' : '' ,
+                'sms_type' : 'normal' ,
+                'sms_free_sign_name' : '诺兰医药科技' ,
+                'sms_param' : {
+                    "yytx":randomPersons[i].tuisongnr1 ,
+                } ,
+                'rec_num' : randomPersons[i].phone ,
+                'sms_template_code' : "SMS_16250342"
+            }, function(error, response) {
+
+            });
+        }
+    });
+    yytx.find({tuisong2:shi + ":" + "00",kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
+        console.log(randomPersons.length)
+        for (var i = 0 ; i < randomPersons.length ; i++){
+            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                'extend' : '' ,
+                'sms_type' : 'normal' ,
+                'sms_free_sign_name' : '诺兰医药科技' ,
+                'sms_param' : {
+                    "yytx":randomPersons[i].tuisongnr2 ,
+                } ,
+                'rec_num' : randomPersons[i].phone ,
+                'sms_template_code' : "SMS_16250342"
+            }, function(error, response) {
+
+            });
+        }
+    });
+    yytx.find({tuisong3:shi + ":" + "00",kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
+        console.log(randomPersons.length)
+        for (var i = 0 ; i < randomPersons.length ; i++){
+            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                'extend' : '' ,
+                'sms_type' : 'normal' ,
+                'sms_free_sign_name' : '诺兰医药科技' ,
+                'sms_param' : {
+                    "yytx":randomPersons[i].tuisongnr3 ,
+                } ,
+                'rec_num' : randomPersons[i].phone ,
+                'sms_template_code' : "SMS_16250342"
+            }, function(error, response) {
+
+            });
+        }
+    });
+});
 
 //路由中间件，静态页面
 app.use(express.static("./public"));
@@ -143,6 +275,8 @@ app.post('/app/getIsStopItSite',appSSZSJ.getIsStopItSite);
 app.post('/app/getAddSuccessBasicsData',appSSZSJ.getAddSuccessBasicsData);
 //取随机号
 app.post('/app/getRandomNumber',appSSZSJ.getRandomNumber);
+//用药提醒
+app.post('/app/getYytx',appSSZSJ.getYytx);
 
 //添加筛选失败受试者基础数据
 app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);

@@ -57,8 +57,8 @@ var researchParameterSchema = new mongoose.Schema({
     "WeightStraI" : Number, //第九个分层因素的权重
     "FormulaImSc" : Number, //不平衡分数算法1=极差法；2=方差法；3=最大值法
     "TrtSelMth" : Number, //随机选择治疗方法1=直接法（BEST）；2=指定概率法（PROB）；3=倒数法（PROP）；4=完全随机法
-    "HighProb" : Number, //指定概率法概率高值
-    "LowProb" : Number, //指定概率法概率低值
+    "HighProb" : String, //指定概率法概率高值
+    "LowProb" : String, //指定概率法概率低值
     "SignRuleYN" : Number, //是否考虑分层因素完全重复（SIGN RULE）
     "ArmCDYN" : Number, //随机号是否导出治疗分组
     "RandoNumYN" : Number, //取随机号时是否显示随机号
