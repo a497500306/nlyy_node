@@ -33,6 +33,7 @@ var addSuccessPatientSchema = new mongoose.Schema({
     "Random" : String,//随机号
     "Arm" : String, //治疗分组标签
     "Drug" : Array,//药物号数组
+    "DrugDate" : Array,//取药物号时间数组
     "SubjStudYN" : String,//受试者是否参加子研究
     "Date" : Date, //导入时间
 });

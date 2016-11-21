@@ -8,6 +8,7 @@ var DYSDrug = require('../../models/import/DYSDrug');
 var drugWL = require('../../models/import/drugWL');
 var YSZDrug = require('../../models/import/YSZDryg');
 var drugCK = require('../../models/import/drugCK');
+var addSuccessPatient = require('../../models/import/addSuccessPatient');
 var mongoose = require('mongoose');
 var EMail = require("../../models/EMail");
 
@@ -1489,17 +1490,31 @@ exports.getSiteDrugData = function (req, res, next) {
                                                     });
                                                     return
                                                 }else {
-                                                    console.log(persons.length)
-                                                    data.YFQYWL = persons.length;
-                                                    //查找已揭盲药物量
-                                                    data.YJMYWL = '目前还未开发';
-                                                    //查找已替换药物量
-                                                    data.YTHYWL = '目前还未开发';
-                                                    res.send({
-                                                        'isSucceed' : 400,
-                                                        'data' : data
-                                                    });
-                                                    return
+                                                    //查询已替换药物量
+                                                    addSuccessPatient.find({
+                                                        SiteID : fields.UsedCoreId,
+                                                        StudyID : fields.StudyID
+                                                    },function (err, persons){
+                                                        var sss = 0
+                                                        for (var i = 0 ; i < persons.length ; i++){
+                                                            for (var j = 0 ; j < persons[i].Drug.length ; j++){
+                                                                var Cts = persons[i].Drug[j]
+                                                                if(Cts.indexOf("替换药物号为") == 0){
+                                                                    sss = sss + 1
+                                                                }
+                                                            }
+                                                        }
+                                                        data.YFQYWL = persons.length;
+                                                        //查找已揭盲药物量
+                                                        data.YJMYWL = '目前还未开发';
+                                                        //查找已替换药物量
+                                                        data.YTHYWL = sss;
+                                                        res.send({
+                                                            'isSucceed' : 400,
+                                                            'data' : data
+                                                        });
+                                                        return
+                                                    })
                                                 }
                                             })
                                         }
