@@ -61,7 +61,7 @@ var j = schedule.scheduleJob(rule, function(){
                     "yytx":randomPersons[i].tuisongnr1 ,
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_16250342"
+                'sms_template_code' : "SMS_27540231"
             }, function(error, response) {
 
             });
@@ -78,7 +78,7 @@ var j = schedule.scheduleJob(rule, function(){
                     "yytx":randomPersons[i].tuisongnr2 ,
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_16250342"
+                'sms_template_code' : "SMS_27540231"
             }, function(error, response) {
 
             });
@@ -95,7 +95,7 @@ var j = schedule.scheduleJob(rule, function(){
                     "yytx":randomPersons[i].tuisongnr3 ,
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_16250342"
+                'sms_template_code' : "SMS_27540231"
             }, function(error, response) {
 
             });
@@ -277,6 +277,10 @@ app.post('/app/getAddSuccessBasicsData',appSSZSJ.getAddSuccessBasicsData);
 app.post('/app/getRandomNumber',appSSZSJ.getRandomNumber);
 //用药提醒
 app.post('/app/getYytx',appSSZSJ.getYytx);
+//补充药物号
+app.post('/app/getBcywh',appSSZSJ.getBcywh);
+//替换药物号
+app.post('/app/getThywh',appSSZSJ.getThywh);
 
 //添加筛选失败受试者基础数据
 app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);

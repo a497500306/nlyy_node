@@ -10,6 +10,7 @@ var random = require('../../models/import/random');
 var drugCK = require('../../models/import/drugCK')
 var EMail = require("../../models/EMail");
 var users = require('../../models/import/users')
+var drugWL = require('../../models/import/drugWL')
 var yytx = require('../../models/import/yytx')
 var randomTool = require('../../randomTool/MLRandomTool')
 //获取中心数据
@@ -202,6 +203,218 @@ exports.getYytx = function (req, res, next) {
                     res.send({
                         'isSucceed': 400,
                         'msg': '添加成功'
+                    });
+                })
+            }
+        })
+    })
+}
+
+//补充药物号
+exports.getBcywh = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //药物号
+        drugCK.find({StudyID:fields.StudyID ,UsedCoreId:fields.SiteID,DDrugNumAYN: 1,DDrugUseAYN:{$ne:1}}).sort('DrugNum').exec(function(err, drugPersons) {
+            if (err != null) {
+                console.log(err)
+                console.log('错误')
+            }
+            console.log('中心已激活药物号个数')
+            console.log(drugPersons.length)
+            if (drugPersons.length < 20) {
+                users.find({
+                    StudyID: fields.StudyID,
+                    UserFun: 'H4',
+                    UserSite: fields.SiteID
+                }, function (err, usersPersons) {
+                    //异步转同步
+                    (function iterator(i) {
+                        console.log('查找仓管员')
+                        if (i == usersPersons.length) {
+                            return
+                        }
+                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
+                            //发送短信提醒
+                            //发送药物号不足提醒
+                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
+                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
+                            EMail.fasongxiujian({
+                                from: "配送清单<k13918446402@qq.com>", // 发件地址
+                                to: usersPersons[i].UserEmail, // 收件列表
+                                subject: "药物号不足提醒", // 标题
+                                html: htmlStr // html 内容
+                            })
+                            iterator(i + 1)
+                        })
+                    })(0);
+                })
+                users.find({StudyID: fields.StudyID, UserFun: 'M6'}, function (err, usersPersons) {
+                    //异步转同步
+                    (function iterator(i) {
+                        console.log('查找总仓管员')
+                        if (i == usersPersons.length) {
+                            return
+                        }
+                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
+                            //发送短信提醒
+                            //发送药物号不足提醒
+                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
+                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
+                            EMail.fasongxiujian({
+                                from: "配送清单<k13918446402@qq.com>", // 发件地址
+                                to: usersPersons[i].UserEmail, // 收件列表
+                                subject: "药物号不足提醒", // 标题
+                                html: htmlStr // html 内容
+                            })
+                            iterator(i + 1)
+                        })
+                    })(0);
+                })
+            }
+            if (drugPersons.length == 0) {
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '该中心已激活药物号不足'
+                });
+            } else {
+                //设置为已使用
+                drugCK.update({
+                    'id':drugPersons[0].id
+                },{
+                    DDrugUseAYN:1 ,
+                    DDrugUseID:fields.userId
+                },function () {
+                    console.log("药物号修改成功");
+                })
+                addSuccessPatient.update({
+                    'id':fields.userId
+                },{
+                    $push : {
+                        'Drug' : drugPersons[0].DrugNum,
+                        'DrugDate' : new Date()
+                    } ,
+                },function () {
+                    res.send({
+                        'isSucceed': 200,
+                        'msg': '药物号:' + drugPersons[0].DrugNum
+                    });
+                })
+            }
+        })
+    })
+}
+
+//替换药物号
+exports.getThywh = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log(fields)
+        //药物号
+        drugCK.find({StudyID:fields.StudyID ,UsedCoreId:fields.SiteID,DDrugNumAYN: 1,DDrugUseAYN:{$ne:1}}).sort('DrugNum').exec(function(err, drugPersons) {
+            if (err != null) {
+                console.log(err)
+                console.log('错误')
+            }
+            console.log('中心已激活药物号个数')
+            console.log(drugPersons.length)
+            if (drugPersons.length < 20) {
+                users.find({
+                    StudyID: fields.StudyID,
+                    UserFun: 'H4',
+                    UserSite: fields.SiteID
+                }, function (err, usersPersons) {
+                    //异步转同步
+                    (function iterator(i) {
+                        console.log('查找仓管员')
+                        if (i == usersPersons.length) {
+                            return
+                        }
+                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
+                            //发送短信提醒
+                            //发送药物号不足提醒
+                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
+                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
+                            EMail.fasongxiujian({
+                                from: "配送清单<k13918446402@qq.com>", // 发件地址
+                                to: usersPersons[i].UserEmail, // 收件列表
+                                subject: "药物号不足提醒", // 标题
+                                html: htmlStr // html 内容
+                            })
+                            iterator(i + 1)
+                        })
+                    })(0);
+                })
+                users.find({StudyID: fields.StudyID, UserFun: 'M6'}, function (err, usersPersons) {
+                    //异步转同步
+                    (function iterator(i) {
+                        console.log('查找总仓管员')
+                        if (i == usersPersons.length) {
+                            return
+                        }
+                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
+                            //发送短信提醒
+                            //发送药物号不足提醒
+                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
+                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
+                            EMail.fasongxiujian({
+                                from: "配送清单<k13918446402@qq.com>", // 发件地址
+                                to: usersPersons[i].UserEmail, // 收件列表
+                                subject: "药物号不足提醒", // 标题
+                                html: htmlStr // html 内容
+                            })
+                            iterator(i + 1)
+                        })
+                    })(0);
+                })
+            }
+            if (drugPersons.length == 0) {
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '该中心已激活药物号不足'
+                });
+            } else {
+                //设置为已使用
+                drugCK.update({
+                    'id':drugPersons[0].id
+                },{
+                    DDrugUseAYN:1 ,
+                    DDrugUseID:fields.userId
+                },function () {
+                    console.log("药物号修改成功");
+                })
+                drugCK.update({
+                    'StudyID':fields.StudyID,
+                    'DrugNum':fields.DrugNum
+                },{
+                    'DDrugNumAYN' : 0 ,
+                    'DDrugDMNumYN' : 1
+                },function () {
+                    console.log("药物号修改成功");
+                    //修改物流信息
+                    drugWL.update({
+                        'StudyID' : fields.StudyID,
+                        'DrugNum' : fields.DrugNum
+                    },{
+                        $push : {
+                            'drugStrs' : '替换药物号,废弃',
+                            'drugDate' : new Date()
+                        } ,
+                    },function () {
+                        console.log("修改成功");
+                    })
+                })
+                addSuccessPatient.update({
+                    'id':fields.userId
+                },{
+                    $push : {
+                        'Drug' : "替换药物号为" + drugPersons[0].DrugNum,
+                        'DrugDate' : new Date()
+                    } ,
+                },function () {
+                    res.send({
+                        'isSucceed': 200,
+                        'msg': '药物号:' + drugPersons[0].DrugNum
                     });
                 })
             }
@@ -453,7 +666,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                 var ntrtGrp = ntrtGrp[id];
                 //在随机号数据库中添加一条随机号数据
                 //搜索该研究中有多少随机号
-                chuchunyonghu(RandoM,null,persons,ntrtGrp,res,fields)
+                chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields)
             }
         }else {//不是第一个用户
             //计算每组内各层的受试者人数
@@ -1155,6 +1368,15 @@ function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
                 });
                 return
             }else{
+                //设置为已使用
+                drugCK.update({
+                    'id':drugPersons[0].id
+                },{
+                    DDrugUseAYN:1 ,
+                    DDrugUseID:fields.userId
+                },function () {
+                    console.log("药物号修改成功");
+                })
                 addSuccessPatient.update({
                     'id':fields.userId
                 },{
@@ -1162,7 +1384,8 @@ function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
                     'RandoM':RandoM,
                     'Arm' : data.Arm,
                     $push : {
-                        'Drug' : drugPersons[0].DrugNum
+                        'Drug' : drugPersons[0].DrugNum,
+                        'DrugDate' : new Date()
                     } ,
                 },function () {
                     console.log("新增联系人修改成功");
@@ -1276,7 +1499,8 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
                 'RandoM':RandoM,
                 'Arm' : randomPersons[0].Arm,
                 $push : {
-                    'Drug' : drugPersons[0].DrugNum
+                    'Drug' : drugPersons[0].DrugNum,
+                    'DrugDate' : new Date()
                 } ,
             },function () {
                 console.log("新增联系人修改成功");
@@ -1428,6 +1652,7 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
                             USubjID : persons[i].USubjID,
                             Random : -1,//随机号
                             Drug : -1,
+                            DrugDate : -1,
                             isSuccess : 1,
                             persons : persons[i]
                         })
@@ -1439,6 +1664,7 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
                                 USubjID : persons[i].USubjID,
                                 Random : persons[i].Random,//随机号
                                 Drug : -1,
+                                DrugDate : -1,
                                 isSuccess : 1,
                                 persons : persons[i]
                             })
@@ -1449,6 +1675,7 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
                                 USubjID : persons[i].USubjID,
                                 Random : persons[i].Random,//随机号
                                 Drug : persons[i].Drug,
+                                DrugDate : persons[i].DrugDate,
                                 isSuccess : 1,
                                 persons : persons[i]
                             })

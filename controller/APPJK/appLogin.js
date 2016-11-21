@@ -142,7 +142,7 @@ exports.appIDCode = function (req, res, next) {
                             "text":"idCoed"
                         } ,
                         'rec_num' : fields.phone ,
-                        'sms_template_code' : "SMS_16250342"
+                        'sms_template_code' : "SMS_27335120"
                     }, function(error, response) {
                         if (!error) {
                             res.send({
