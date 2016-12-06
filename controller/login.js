@@ -10,8 +10,10 @@ var depot = require("../models/import/depot");//新增仓库
 var random = require("../models/import/random");//新增固定随机法随机号
 var ExcludeStandard = require("../models/import/ExcludeStandard");//新增固定随机法随机号
 var drug = require("../models/import/drug");//新增药物号
+var FollowUpParameter = require("../models/import/FollowUpParameter");//设置受试者随访参数
 var users = require('../models/import/users');//导入用户数据
 var researchParameter = require('../models/import/researchParameter');//设置研究的随机化参数
+var ApplicationAndAudit = require('../models/import/ApplicationAndAudit');//设置研究的随机化参数
 
 //显示登录界面
 exports.showAdmin = function (req, res, next) {
@@ -214,9 +216,19 @@ exports.doHome = function (req, res, next) {
         }else if(fields.id == "nztjssjsywaqkc"){//内置统计算式计算药物安全库存
 
         }else if(fields.id == "szsszsfcs"){//设置受试者随访参数
-
+            var keys =  ['研究编号','访视期','计划访视日','是否为仿视期还是停药期','访视周','访视次序','治疗分组代码','治疗分组标签','计划访视日下限','计划访视日上限','VisitTrtYN','添加时间','操作'];
+            var keyEn = ['StudyID','VisitNam','VisitDy','VisitonTrtYN','VisitWk','VisitNum','ArmCD','Arm','VisitDyL','VisitDyU','VisitTrtYN','Date','操作'];
+            showTable(fields, res , req ,FollowUpParameter , keys , keyEn , "/nlyy/addSzsszsfcs");
+            console.log('设置受试者随访参数');
         }else if(fields.id == "szrwsqhsh"){//设置任务申请和审核
-
+            var keys =  ['研究序列号','研究编号','设盲状态','申办方全称','申办方简称','研究标题全称','研究标题简称','全国PI','用户名','用户单位类别',
+                '用户职责','负责中心范围','负责仓库范围','用户邮箱','用户手机','申请任务类型','审核任务类型','揭盲申请子类型','揭盲审核子类型',
+                '申请人种类数','申请人','审核人种类数','审核次序','审核人','添加时间','操作'];
+            var keyEn = ['StudySeq','StudyID','BlindSta','SponsorF','SponsorS','StudNameF','StudNameS','CoorPI','UserNam','UserTyp','UserFun',
+                'UserSite','UserDepot','UserEmail','UserMP','EventApp','EventRev','EventUnbApp','EventUnbRev','EventAppNum','EventAppUsers',
+                'EventRevNum','EventRevOrd','EventRevUsers','Date','操作'];
+            showTable(fields, res , req ,ApplicationAndAudit , keys , keyEn , "/nlyy/addSzrwsqhsh");
+            console.log('设置任务申请和审核');
         }else if(fields.id == "szhlyh"){//设置管理用户
             var keys =  ['账号','密码','可写','管理用户','操作'];
             var keyEn = ['name','password','write','addUser','操作'];

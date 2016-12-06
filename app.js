@@ -17,6 +17,7 @@ var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
 var appSSZSJ = require('./controller/APPJK/appSSZSJ')//app查询相关
 var appTzrz = require('./controller/APPJK/appTzrz')//app查询相关
 var appYjxx = require('./controller/APPJK/appYjxx')//app查询相关
+var appSFGL = require('./controller/APPJK/appSFGL')//app查询相关
 var schedule = require("node-schedule");
 var yytx = require('./models/import/yytx')
 //时间操作
@@ -177,6 +178,9 @@ app.post('/node/resetPassword',login.doResetPassword);
 //添加管理用户
 app.post('/node/addAdminUser',login.addAdminUser);
 /**************导入数据*****************/
+//测试
+app.post('/nlyy/wenjiancheshi',ImportData.wenjiancheshi);
+
 //新增研究
 app.post('/nlyy/addYzyj',ImportData.addYzyj);
 //新增研究中心
@@ -193,8 +197,12 @@ app.post('/nlyy/addDrywh',ImportData.addDrywh);
 app.post('/nlyy/addGdsjfdrsjh',ImportData.addGdsjfdrsjh);
 //设置研究的随机化参数
 app.post('/nlyy/addSzyjsjhcs',ImportData.addSzyjsjhcs);
-//设置研究的随机化参数
+//入选排除标准
 app.post('/nlyy/addRxpcbz',ImportData.addRxpcbz);
+//设置受试者随访参数
+app.post('/nlyy/addSzsszsfcs',ImportData.addSzsszsfcs);
+//设置申请人和审核人
+app.post('/nlyy/addSzrwsqhsh',ImportData.addSzrwsqhsh);
 
 
 //登录请求
@@ -288,6 +296,8 @@ app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);
 app.post('/app/getLookupSuccessBasicsData',appSSZSJ.getLookupSuccessBasicsData);
 //模糊查询受试者
 app.post('/app/getVagueBasicsData',appSSZSJ.getVagueBasicsData);
+//模糊查询受试者User信息
+app.post('/app/getVagueBasicsDataUser',appSSZSJ.getVagueBasicsDataUser);
 //停止入组--查询中心
 app.post('/app/getTzrzSite',appTzrz.getTzrzSite);
 //停止入组--确定申请
@@ -322,6 +332,27 @@ app.post('/app/getDetermineYjxxOffline',appYjxx.getDetermineYjxxOffline);
 app.post('/app/getZyjsszls',appYjxx.getZyjsszls);
 //研究下线--整个研究查询延长期研究受试者例数
 app.post('/app/getYcqyjsszls',appYjxx.getYcqyjsszls);
+
+//添加受试者基线仿视日期
+app.post('/app/getAddSszjxfsrq',appSFGL.getAddSszjxfsrq);
+//查阅下阶段随访受试者
+app.post('/app/getCyxjdnsfssz',appSFGL.getCyxjdnsfssz);
+//发送预约随访短信
+app.post('/app/getFsyysfdx',appSFGL.getFsyysfdx);
+//添加完成或退出受试者
+app.post('/app/getAddOut',appSFGL.getAddOut);
+//添加个人揭盲申请
+app.post('/app/getUnblindingApplication',appSFGL.getUnblindingApplication);
+//添加中心揭盲申请
+app.post('/app/getSiteUnblindingApplication',appSFGL.getSiteUnblindingApplication);
+//添加研究揭盲申请
+app.post('/app/getStudyUnblindingApplication',appSFGL.getStudyUnblindingApplication);
+//获取待揭盲列表
+app.post('/app/getStayUnblindingApplication',appSFGL.getStayUnblindingApplication);
+//设置是否揭盲
+app.post('/app/getIsUnblindingApplication',appSFGL.getIsUnblindingApplication);
+//设置审批
+app.post('/app/getTrialUnblindingApplication',appSFGL.getTrialUnblindingApplication);
 
 //404错误
 app.use('/',function (req, res) {

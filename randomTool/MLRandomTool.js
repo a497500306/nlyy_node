@@ -415,13 +415,15 @@ exports.zhijiefa = function (nTrtGrpArray,bupinghen){
         console.log(arrayNuber)
         var jj = 1;
         var id = 0;
+        console.log('有两组以上比例相等,这几组使用完全随机')
         while(jj){
-            id = Math.ceil(Math.random()*10);
+            var suijisu = Math.random();
+            id = Math.ceil(suijisu*10);
             if (id <= fenpeiStrs.length){
+                console.log("随机数是:" + suijisu)
                 jj = 0
             }
         }
-        console.log('有两组以上比例相等,这几组使用完全随机')
         return fenpeiStrs[id]
     }else{
         console.log(arrayNuber)
@@ -434,6 +436,7 @@ exports.zhidinggailv = function (persons) {
     console.log('指定概率法')
     var highProb = persons[0].HighProb.split(",");
     var ntrtGrp = persons[0].NTrtGrp.split(",");
+    console.log('概率:' + highProb)
 
     var ntrts = [];
     for (var i = 0 ; i < highProb.length ; i++){
@@ -445,8 +448,10 @@ exports.zhidinggailv = function (persons) {
     var id = 0;
     var jj = 1;
     while(jj){
-        id = Math.ceil(Math.random()*100);
+        var suijisu = Math.random();
+        id = Math.ceil(suijisu*100);
         if (id <= ntrts.length){
+            console.log("随机数是:" + suijisu)
             jj = 0
         }
     }
@@ -470,9 +475,9 @@ exports.bilifa = function (bupinghen,nTrtGrpArray) {
         for (var j = 0 ; j < id ; j++){
             props.push(nTrtGrpArray[i])
         }
+        console.log("比例:")
         console.log(1 - (bupinghen[i]/daoshuZ))
     }
-
     var fenpeiStr = ''
     var jj = 1;
     while(jj){
@@ -498,15 +503,21 @@ exports.wangquansuiji = function (persons) {
     //随机取数组中的元素
     var id = 0;
     var jj = 1;
+    var ntrtInt = alloRatio[id];
+    var str = null
     while(jj){
-        id = Math.ceil(Math.random()*10);
+        var suijishu = Math.random();
+        id = Math.ceil(suijishu*10);
         if (id <= glArray.length){
-            jj = 0
+            if (ntrtGrp[alloRatio[id]] != null){
+                str = ntrtGrp[alloRatio[id]];
+                console.log("随机数:" + suijishu)
+                jj = 0
+            }
         }
     }
-    var ntrtInt = alloRatio[id];
     //需要放入的治疗组
-    return ntrtGrp[ntrtInt];
+    return str;
 }
 /**
  * JS获取n至m随机整数
@@ -514,5 +525,7 @@ exports.wangquansuiji = function (persons) {
  */
 function rd(n,m){
     var c = m-n+1;
-    return Math.floor(Math.random() * c + n);
+    var suijishu = Math.random();
+    console.log("随机数:" + suijishu)
+    return Math.floor(suijishu * c + n);
 }

@@ -1586,46 +1586,28 @@ exports.getAddFailPatientData = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //搜索新增失败中是否有该用户
-        addFailPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
-            if (persons.length != 0){
+        addFailPatient.create({
+            StudyID:fields.StudyID,
+            SiteID:fields.SiteID,
+            ScreenYN:fields.ScreenYN,
+            ExcludeStandards:fields.ExcludeStandards,
+            SubjectDOB:fields.SubjectDOB,
+            SubjectSex:fields.SubjectSex,
+            SubjectIn:fields.SubjectIn,
+            DSSTDAT:new Date()
+        },function (err,data) {
+            console.log(err)
+            //创建用户号
+            addFailPatient.update({
+                'id' : data.id,
+            },{
+                'USubjectID' : data.SiteID + data.SubjID,
+            },function () {
                 res.send({
-                    'isSucceed' : 200,
-                    'msg' : '该手机已经使用'
+                    'isSucceed' : 400,
+                    'USubjectID' : data.SiteID + data.SubjID
                 });
-            }else{
-                addSuccessPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
-                    if (persons.length != 0){
-                        res.send({
-                            'isSucceed' : 200,
-                            'msg' : '该手机已经被使用'
-                        });
-                    }else{
-                        addFailPatient.create({
-                            StudyID:fields.StudyID,
-                            SiteID:fields.SiteID,
-                            ScreenYN:fields.ScreenYN,
-                            ExcludeStandards:fields.ExcludeStandards,
-                            SubjectDOB:fields.SubjectDOB,
-                            SubjectSex:fields.SubjectSex,
-                            SubjectIn:fields.SubjectIn,
-                            DSSTDAT:new Date()
-                        },function (err,data) {
-                            console.log(err)
-                            //创建用户号
-                            addFailPatient.update({
-                                'id' : data.id,
-                            },{
-                                'USubjectID' : data.SiteID + data.SubjID,
-                            },function () {
-                                res.send({
-                                    'isSucceed' : 400,
-                                    'USubjectID' : data.SiteID + data.SubjID
-                                });
-                            })
-                        })
-                    }
-                })
-            }
+            })
         })
 
     })
@@ -1654,6 +1636,9 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
                             Drug : -1,
                             DrugDate : -1,
                             isSuccess : 1,
+                            isOut : persons[i].isOut == 1 ? 1 : 0,
+                            isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                            Arm : persons[i].Arm,
                             persons : persons[i]
                         })
                     }else{
@@ -1666,6 +1651,9 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
                                 Drug : -1,
                                 DrugDate : -1,
                                 isSuccess : 1,
+                                isOut : persons[i].isOut == 1 ? 1 : 0,
+                                isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                                Arm : persons[i].Arm,
                                 persons : persons[i]
                             })
                         }else {
@@ -1676,6 +1664,9 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
                                 Random : persons[i].Random,//随机号
                                 Drug : persons[i].Drug,
                                 DrugDate : persons[i].DrugDate,
+                                isOut : persons[i].isOut == 1 ? 1 : 0,
+                                isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                                Arm : persons[i].Arm,
                                 isSuccess : 1,
                                 persons : persons[i]
                             })
@@ -1763,7 +1754,10 @@ exports.getVagueBasicsData = function (req, res, next) {
                             USubjID : persons[i].USubjID,
                             Random : -1,//随机号
                             Drug : -1,
-                            isSuccess : 1
+                            isSuccess : 1,
+                            isOut : persons[i].isOut == 1 ? 1 : 0,
+                            isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                            Arm : persons[i].Arm,
                         })
                     }else{
                         if (persons[i].Drug == null){
@@ -1773,6 +1767,9 @@ exports.getVagueBasicsData = function (req, res, next) {
                                 USubjID : persons[i].USubjID,
                                 Random : persons[i].Random,//随机号
                                 Drug : -1,
+                                isOut : persons[i].isOut == 1 ? 1 : 0,
+                                isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                                Arm : persons[i].Arm,
                                 isSuccess : 1
                             })
                         }else {
@@ -1782,6 +1779,9 @@ exports.getVagueBasicsData = function (req, res, next) {
                                 USubjID : persons[i].USubjID,
                                 Random : persons[i].Random,//随机号
                                 Drug : persons[i].Drug,
+                                isOut : persons[i].isOut == 1 ? 1 : 0,
+                                isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                                Arm : persons[i].Arm,
                                 isSuccess : 1
                             })
                         }
@@ -1800,6 +1800,114 @@ exports.getVagueBasicsData = function (req, res, next) {
                             SubjIni : persons[i].SubjectIn,
                             USubjID : persons[i].USubjectID,
                             isSuccess : 0
+                        })
+                    }
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                }
+            });
+        })
+    })
+}
+
+
+//模糊查询受试者User信息
+exports.getVagueBasicsDataUser = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //模糊查询受试者
+        console.log(fields)
+        var data = [];
+        var reg = new RegExp(fields.str, 'i'); //不区分大小写
+        //查找筛选成功受试者
+        var findJson = null;
+        var FailFindJson = null;
+        if (fields.SiteID == null){
+            findJson = {$or:[
+                {'USubjID':{$regex : reg}},
+                {'SubjIni':{$regex : reg}},
+                {'SubjMP':{$regex : reg}},
+                {'SubjSex':{$regex : reg}}
+            ]};
+            FailFindJson = {$or:[
+                {'USubjectID':{$regex : reg}},
+                {'SubjectSex':{$regex : reg}},
+                {'SubjectIn':{$regex : reg}}
+            ]}
+        }else{
+            findJson = {$or:[
+                {'USubjID':{$regex : reg}},
+                {'SubjIni':{$regex : reg}},
+                {'SubjMP':{$regex : reg}},
+                {'SubjSex':{$regex : reg}}
+            ],$and:[
+                {'SiteID' : fields.SiteID},
+                {'StudyID' : fields.StudyID}
+            ]};
+            FailFindJson = {$or:[
+                {'USubjectID':{$regex : reg}},
+                {'SubjectSex':{$regex : reg}},
+                {'SubjectIn':{$regex : reg}}
+            ],$and:[
+                {'SiteID' : fields.SiteID},
+                {'StudyID' : fields.StudyID}
+            ]}
+        }
+        addSuccessPatient.find(findJson).exec((err, persons) => {
+            if (err) {
+                console.log(err);
+            } else {
+                for (var i = 0 ; i < persons.length ; i++){
+                    if (persons[i].Random == null){
+                        data.push({
+                            id : persons[i].id,
+                            SubjIni : persons[i].SubjIni,
+                            USubjID : persons[i].USubjID,
+                            Random : -1,//随机号
+                            Drug : -1,
+                            isSuccess : 1,
+                            users:persons[i]
+                        })
+                    }else{
+                        if (persons[i].Drug == null){
+                            data.push({
+                                id : persons[i].id,
+                                SubjIni : persons[i].SubjIni,
+                                USubjID : persons[i].USubjID,
+                                Random : persons[i].Random,//随机号
+                                Drug : -1,
+                                isSuccess : 1,
+                                users:persons[i]
+                            })
+                        }else {
+                            data.push({
+                                id : persons[i].id,
+                                SubjIni : persons[i].SubjIni,
+                                USubjID : persons[i].USubjID,
+                                Random : persons[i].Random,//随机号
+                                Drug : persons[i].Drug,
+                                isSuccess : 1,
+                                users:persons[i]
+                            })
+                        }
+                    }
+                }
+            }
+            //查找筛选失败受试者
+            addFailPatient.find(FailFindJson).exec((err, persons) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log('查找失败---' + persons.length);
+                    for (var i = 0 ; i < persons.length ; i++){
+                        data.push({
+                            id : persons[i].id,
+                            SubjIni : persons[i].SubjectIn,
+                            USubjID : persons[i].USubjectID,
+                            isSuccess : 0,
+                            users:persons[i]
                         })
                     }
                     res.send({
