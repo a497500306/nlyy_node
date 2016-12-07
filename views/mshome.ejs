@@ -111,7 +111,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary">确定</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="shanchuButton">确定</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -215,10 +215,11 @@
             </thead>
             <tbody>
                 {{ for(var i = 0 ; i < data.length ; i++){ }}
-                <tr>
+                <tr id="neirongTr">
                     {{ for(var j = 0 ; j < resultEn.length ; j++){ }}
                         {{ if(resultEn[j] == '操作' ){ }}
-                             <td><a id = "xiugai" data-toggle="modal" data-target=".quedingshanchuModel" >删除</a></td>
+                            {{ var dataId = data[i].id; }}
+                             <td><a data-toggle="modal" data-target=".quedingshanchuModel" name= {{= dataId}} onclick="t(this.name)">删除</a></td>
                         {{ }else if(resultEn[j] == 'Date'){ }}
                              {{ var date = new Date(data[i][resultEn[j]]); }}
                              {{ var dateStr =  date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();}}

@@ -95,6 +95,47 @@ exports.addSzrwsqhsh = function (req, res, next) {
     console.log("设置申请人和审核人");
     addData(req, res, next, ApplicationAndAudit);
 }
+
+//删除数据
+exports.deleteData = function (req, res, next) {
+    //得到用户填写的东西
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log('点击删除')
+        console.log(fields);
+        if (fields.dianType == 'xzyj'){//删除选择研究
+            shanchuData(study,fields.id,res);
+        }else if (fields.dianType == 'szyjsjhcs') {//删除设置研究随机化参数
+            shanchuData(researchParameter,fields.id,res);
+        }else if (fields.dianType == 'xzyjzx') {//删除新增研究中心
+            shanchuData(site,fields.id,res);
+        }else if (fields.dianType == 'xzck') {//删除新增仓库
+            shanchuData(depot,fields.id,res);
+        }else if (fields.dianType == 'dryjrxpcbz') {//删除导入研究入选排除标准
+            shanchuData(ExcludeStandard,fields.id,res);
+        }else if (fields.dianType == 'gdsjfdrsjh') {//删除固定随机法导入随机号
+            shanchuData(random,fields.id,res);
+        }else if (fields.dianType == 'drywh') {//删除导入药物号
+            shanchuData(drug,fields.id,res);
+        }else if (fields.dianType == 'szsszsfcs') {//删除设置受试者随访参数
+            shanchuData(FollowUpParameter,fields.id,res);
+        }else if (fields.dianType == 'szrwsqhsh') {//删除设置任务申请和审核
+            shanchuData(ApplicationAndAudit,fields.id,res);
+        }else if (fields.dianType == 'dryh') {//删除导入用户数据
+            shanchuData(users,fields.id,res);
+        }else if (fields.dianType == 'nztjssjsywaqkc') {//删除内置统计算式计算药物安全库存
+
+        }
+    })
+}
+function shanchuData(model,id,res) {
+    // 删除数据
+    model.remove({id : id},
+        (err)=>{
+            res.redirect('/home');
+        }
+    )
+}
 //公共方法
 addData = function (req, res, next, name) {
     if(req.session.login!= '1'){

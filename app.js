@@ -169,6 +169,7 @@ app.use(express.static("./public"));
 app.use(express.static("./uploads"));
 //登录界面
 app.get("/admin",login.showAdmin);
+
 //登录请求
 app.post("/nlyy/login",login.doLogin);
 //管理首页
@@ -205,6 +206,8 @@ app.post('/nlyy/addSzsszsfcs',ImportData.addSzsszsfcs);
 app.post('/nlyy/addSzrwsqhsh',ImportData.addSzrwsqhsh);
 
 
+//删除数据
+app.post("/nlyy/deleteData",ImportData.deleteData);
 //登录请求
 app.post("/node/getHome",login.doHome);
 

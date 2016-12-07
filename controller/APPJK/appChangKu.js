@@ -1505,15 +1505,27 @@ exports.getSiteDrugData = function (req, res, next) {
                                                             }
                                                         }
                                                         data.YFQYWL = persons.length;
-                                                        //查找已揭盲药物量
-                                                        data.YJMYWL = '目前还未开发';
                                                         //查找已替换药物量
                                                         data.YTHYWL = sss;
-                                                        res.send({
-                                                            'isSucceed' : 400,
-                                                            'data' : data
-                                                        });
-                                                        return
+                                                        //查询以揭盲药物量
+                                                        addSuccessPatient.find({
+                                                            SiteID : fields.UsedCoreId,
+                                                            StudyID : fields.StudyID,
+                                                            isUnblinding:1
+                                                        },function (err, persons){
+                                                            var  sss = 0;
+                                                            for (var i = 0 ; i < persons.length ; i++){
+                                                                sss = sss + persons[i].Drug.length;
+                                                            }
+                                                            //查找已揭盲药物量
+                                                            // data.YJMYWL = '目前还未开发';
+                                                            data.YJMYWL = sss;
+                                                            res.send({
+                                                                'isSucceed' : 400,
+                                                                'data' : data
+                                                            });
+                                                            return
+                                                        })
                                                     })
                                                 }
                                             })

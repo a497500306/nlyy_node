@@ -92,45 +92,96 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
                             'msg' : '该手机已经使用'
                         });
                     }else{
-                        addSuccessPatient.create({
-                            StudySeq:fields.StudySeq,
-                            StudyID:fields.StudyID,
-                            SiteID:fields.SiteID,
-                            SiteNam:fields.SiteNam,
-                            ScreenYN:fields.ScreenYN,
-                            SubjDOB:fields.SubjDOB,
-                            SubjSex:fields.SubjSex,
-                            SubjIni:fields.SubjIni,
-                            SubjMP:fields.SubjMP,
-                            RandoM:fields.RandoM,
-                            SubjFa:fields.SubjFa,
-                            SubjFb:fields.SubjFb,
-                            SubjFc:fields.SubjFc,
-                            SubjFd:fields.SubjFd,
-                            SubjFe:fields.SubjFe,
-                            SubjFf:fields.SubjFf,
-                            SubjFg:fields.SubjFg,
-                            SubjFh:fields.SubjFh,
-                            SubjFi:fields.SubjFi,
-                            SubjStudYN:fields.SubjStudYN,
-                            Date:new Date()
-                        },function (err,data) {
-                            //创建用户号
-                            addSuccessPatient.update({
-                                'id' : data.id,
-                            },{
-                                'USubjID' : data.SiteID + data.SubjID,
-                            },function () {
-                                res.send({
-                                    'isSucceed' : 400,
-                                    'USubjID' : data.SiteID + data.SubjID,
-                                    'id' : data.id
-                                });
+                        //设置患者SubjID(流水号)
+                        addSuccessPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, spersons) {
+                            addFailPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, fpersons) {
+                                addSuccessPatient.create({
+                                    SubjID:fpersons.length + spersons.length + 1,
+                                    StudySeq:fields.StudySeq,
+                                    StudyID:fields.StudyID,
+                                    SiteID:fields.SiteID,
+                                    SiteNam:fields.SiteNam,
+                                    ScreenYN:fields.ScreenYN,
+                                    SubjDOB:fields.SubjDOB,
+                                    SubjSex:fields.SubjSex,
+                                    SubjIni:fields.SubjIni,
+                                    SubjMP:fields.SubjMP,
+                                    RandoM:fields.RandoM,
+                                    SubjFa:fields.SubjFa,
+                                    SubjFb:fields.SubjFb,
+                                    SubjFc:fields.SubjFc,
+                                    SubjFd:fields.SubjFd,
+                                    SubjFe:fields.SubjFe,
+                                    SubjFf:fields.SubjFf,
+                                    SubjFg:fields.SubjFg,
+                                    SubjFh:fields.SubjFh,
+                                    SubjFi:fields.SubjFi,
+                                    SubjStudYN:fields.SubjStudYN,
+                                    Date:new Date()
+                                },function (err,data) {
+                                    var subjId = data.SubjID;
+                                    for (var i = subjId.length ; i < 4 ; i++){
+                                        subjId = "0" + subjId;
+                                    }
+                                    subjId = data.SiteID + subjId
+                                    //创建用户号
+                                    addSuccessPatient.update({
+                                        'id' : data.id,
+                                    },{
+                                        'USubjID' : subjId,
+                                    },function () {
+                                        res.send({
+                                            'isSucceed' : 400,
+                                            'USubjID' : subjId,
+                                            'id' : data.id
+                                        });
+                                    })
+                                })
                             })
                         })
                     }
                 })
             }
+        })
+    })
+}
+//添加筛选失败受试者基础数据
+exports.getAddFailPatientData = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //设置患者SubjID(流水号)
+        addSuccessPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, spersons) {
+            addFailPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, fpersons) {
+                //搜索新增失败中是否有该用户
+                addFailPatient.create({
+                    SubjID:fpersons.length + spersons.length + 1,
+                    StudyID:fields.StudyID,
+                    SiteID:fields.SiteID,
+                    ScreenYN:fields.ScreenYN,
+                    ExcludeStandards:fields.ExcludeStandards,
+                    SubjectDOB:fields.SubjectDOB,
+                    SubjectSex:fields.SubjectSex,
+                    SubjectIn:fields.SubjectIn,
+                    DSSTDAT:new Date()
+                },function (err,data) {
+                    var subjId = "" + data.SubjID;
+                    for (var i = subjId.length ; i < 4 ; i++){
+                        subjId = "0" + subjId;
+                    }
+                    subjId = data.SiteID + subjId
+                    //创建用户号
+                    addFailPatient.update({
+                        'id' : data.id,
+                    },{
+                        'USubjectID' : subjId,
+                    },function () {
+                        res.send({
+                            'isSucceed' : 400,
+                            'USubjectID' : subjId
+                        });
+                    })
+                })
+            })
         })
     })
 }
@@ -1581,37 +1632,7 @@ function meiyouyaowuhao(persons,randomPersons,RandoM,res) {
         return
     })
 }
-//添加筛选失败受试者基础数据
-exports.getAddFailPatientData = function (req, res, next) {
-    var form = new formidable.IncomingForm();
-    form.parse(req,function (err, fields, files) {
-        //搜索新增失败中是否有该用户
-        addFailPatient.create({
-            StudyID:fields.StudyID,
-            SiteID:fields.SiteID,
-            ScreenYN:fields.ScreenYN,
-            ExcludeStandards:fields.ExcludeStandards,
-            SubjectDOB:fields.SubjectDOB,
-            SubjectSex:fields.SubjectSex,
-            SubjectIn:fields.SubjectIn,
-            DSSTDAT:new Date()
-        },function (err,data) {
-            console.log(err)
-            //创建用户号
-            addFailPatient.update({
-                'id' : data.id,
-            },{
-                'USubjectID' : data.SiteID + data.SubjID,
-            },function () {
-                res.send({
-                    'isSucceed' : 400,
-                    'USubjectID' : data.SiteID + data.SubjID
-                });
-            })
-        })
 
-    })
-}
 //查找所有受试者
 exports.getLookupSuccessBasicsData = function (req, res, next) {
     var form = new formidable.IncomingForm();
