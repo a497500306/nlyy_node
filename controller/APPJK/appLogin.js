@@ -5,6 +5,7 @@ var users = require('../../models/import/users');
 var study = require('../../models/import/study');
 var researchParameter = require('../../models/import/researchParameter');
 var ExcludeStandard = require('../../models/import/ExcludeStandard');
+var ApplicationAndAudit = require('../../models/import/ApplicationAndAudit');
 
 TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
@@ -99,12 +100,30 @@ exports.appStudyAndResearchParameter = function (req, res, next) {
                                                 'msg': '未找到该研究入选排除标准'
                                             });
                                         }else{
-                                            res.send({
-                                                'isSucceed': 400,
-                                                'study': persons[0],
-                                                'ExcludeStandard' : persons2,
-                                                'researchParameter' : persons1[0]
-                                            });
+                                            //查询申请和审核
+                                            ApplicationAndAudit.find({StudyID: fields.StudyID}, function (err, persons3) {
+                                                if (err != null) {
+                                                    res.send({
+                                                        'isSucceed': 200,
+                                                        'msg': '数据库正在维护,请稍后再试'
+                                                    });
+                                                }else{
+                                                    if (persons2.length == 0){
+                                                        res.send({
+                                                            'isSucceed': 200,
+                                                            'msg': '未找到该研究任务申请和审核'
+                                                        });
+                                                    }else {
+                                                        res.send({
+                                                            'isSucceed': 400,
+                                                            'study': persons[0],
+                                                            'ApplicationAndAudit': persons3,
+                                                            'ExcludeStandard': persons2,
+                                                            'researchParameter': persons1[0]
+                                                        });
+                                                    }
+                                                }
+                                            })
                                         }
                                     }
                                 })

@@ -8,10 +8,36 @@ var site = require("../models/import/site");//新增研究中心
 var depot = require("../models/import/depot");//新增仓库
 var researchParameter = require("../models/import/researchParameter");//设置研究的随机化参数
 var ExcludeStandard = require("../models/import/ExcludeStandard");//导入入选排除标准
+var FollowUpParameter = require("../models/import/FollowUpParameter");//导入入选排除标准
 var drug = require("../models/import/drug");//导入药物号
 var random = require("../models/import/random");//导入固定随机法随机号
 var adminUser = require("../models/adminUsers");//管理用户
 var users = require("../models/import/users");//用户表
+var ApplicationAndAudit = require("../models/import/ApplicationAndAudit");//设置申请人和审核人
+
+//测试
+//导入新增研究
+exports.wenjiancheshi = function (req, res, next) {
+        console.log("导入数据");
+        //得到用户填写的东西
+        var form = new formidable.IncomingForm();
+        //配置上传路径
+        form.uploadDir = __dirname + '/../middle/';
+        form.parse(req,function (err, fields, files) {
+            //上传完成移动到文件目录中
+            if (err){
+                next();     //这个中间件不受理这个请求了，往下走
+                return;
+            }
+            res.send({
+                'isSucceed' : 400,
+                'msg' : '数据库正在维护,请稍后再试'
+            });
+            console.log(fields)
+            console.log(files)
+            console.log(files.img.size)
+        })
+}
 
 //导入新增研究
 exports.addYzyj = function (req, res, next) {
@@ -58,6 +84,17 @@ exports.addRxpcbz = function (req, res, next) {
     addData(req, res, next, ExcludeStandard);
 }
 
+//设置受试者随访参数
+exports.addSzsszsfcs = function (req, res, next) {
+    console.log("设置受试者随访参数");
+    addData(req, res, next, FollowUpParameter);
+}
+
+//设置申请人和审核人
+exports.addSzrwsqhsh = function (req, res, next) {
+    console.log("设置申请人和审核人");
+    addData(req, res, next, ApplicationAndAudit);
+}
 //公共方法
 addData = function (req, res, next, name) {
     if(req.session.login!= '1'){
@@ -70,6 +107,9 @@ addData = function (req, res, next, name) {
     //配置上传路径
     form.uploadDir = __dirname + '/../middle/';
     form.parse(req,function (err, fields, files) {
+        console.log("files------");
+        console.log(files);
+        console.log("files------");
         //上传完成移动到文件目录中
         if (err){
             next();     //这个中间件不受理这个请求了，往下走
