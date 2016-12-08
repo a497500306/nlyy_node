@@ -59,7 +59,7 @@ function postData(id,text,page) {
             pageCount : Math.ceil(result.pageCount) - 1,
             importUrl : result.importUrl,
             resultEn : result.keysEn
-        });
+    });
 
         $('#liebiaodiv').append($(html));
 
@@ -142,3 +142,51 @@ $('#modalTianjiaBtn').on('click', function () {
         $("#tianjiaCuowukuang").fadeIn();
     }
 });
+
+var dianjiType = ''
+var dataId = ''
+$('#shanchuButton').on('click', function () {
+    $.post('nlyy/deleteData',{
+        'id' : dataId,
+        "dianType" : dianjiType
+    },function (result) {
+        location.reload()
+    });
+})
+$('#xzyj').on('click', function () {
+    dianjiType = 'xzyj'
+})
+$('#szyjsjhcs').on('click', function () {
+    dianjiType = 'szyjsjhcs'
+})
+$('#xzyjzx').on('click', function () {
+    dianjiType = 'xzyjzx'
+})
+$('#xzck').on('click', function () {
+    dianjiType = 'xzck'
+})
+$('#dryjrxpcbz').on('click', function () {
+    dianjiType = 'dryjrxpcbz'
+})
+$('#gdsjfdrsjh').on('click', function () {
+     dianjiType = 'gdsjfdrsjh'
+})
+$('#drywh').on('click', function () {
+     dianjiType = 'drywh'
+})
+$('#nztjssjsywaqkc').on('click', function () {
+     dianjiType = 'nztjssjsywaqkc'
+})
+$('#szsszsfcs').on('click', function () {
+     dianjiType = 'szsszsfcs'
+})
+$('#szrwsqhsh').on('click', function () {
+     dianjiType = 'szrwsqhsh'
+})
+$('#dryh').on('click', function () {
+     dianjiType = 'dryh'
+})
+
+function t(e){
+    dataId = e;
+}

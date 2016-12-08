@@ -10,7 +10,7 @@ var db = require("./models/db.js");
 var session = require('express-session');
 var login = require('./controller/login');//登录
 var ImportData = require('./controller/ImportData');//导入数据
-
+var fs = require('fs');
 var appLogin = require('./controller/APPJK/appLogin')//app登录相关
 var appTool = require('./controller/APPJK/appTool')//app查询相关
 var appChangKu = require('./controller/APPJK/appChangKu')//app查询相关
@@ -167,8 +167,10 @@ var i = schedule.scheduleJob(rule, function(){
 //路由中间件，静态页面
 app.use(express.static("./public"));
 app.use(express.static("./uploads"));
+app.use(express.static("./assistant"));
 //登录界面
 app.get("/admin",login.showAdmin);
+
 //登录请求
 app.post("/nlyy/login",login.doLogin);
 //管理首页
@@ -205,6 +207,8 @@ app.post('/nlyy/addSzsszsfcs',ImportData.addSzsszsfcs);
 app.post('/nlyy/addSzrwsqhsh',ImportData.addSzrwsqhsh);
 
 
+//删除数据
+app.post("/nlyy/deleteData",ImportData.deleteData);
 //登录请求
 app.post("/node/getHome",login.doHome);
 
@@ -229,6 +233,8 @@ app.post("/app/getAssignYwhgsfp",appChangKu.appGetAssignYwhgsfp);
 app.post("/app/getCancelYwhgsfp",appChangKu.appGetCancelYwhgsfp);
 //按药物号个数分配
 app.post("/app/getYwhgsfp",appChangKu.appGetYwhgsfp);
+//智能分配
+app.post("/app/getZnfp",appChangKu.appGetZnfp);
 //逐个分配
 app.post("/app/getZgfp",appChangKu.appGetZgfp);
 //获取所有药物号
@@ -289,6 +295,12 @@ app.post('/app/getYytx',appSSZSJ.getYytx);
 app.post('/app/getBcywh',appSSZSJ.getBcywh);
 //替换药物号
 app.post('/app/getThywh',appSSZSJ.getThywh);
+//查阅筛选失败例数分布
+app.post('/app/getCysxsblsfb',appSSZSJ.getCysxsblsfb);
+//查阅随机例数分布
+app.post('/app/getCysjlsfb',appSSZSJ.getCysjlsfb);
+//查阅退出或完成例数分布
+app.post('/app/getCytchwclsfb',appSSZSJ.getCytchwclsfb);
 
 //添加筛选失败受试者基础数据
 app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);

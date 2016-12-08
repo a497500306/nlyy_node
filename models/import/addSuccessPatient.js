@@ -50,12 +50,6 @@ addSuccessPatientSchema.plugin(autoIncrement.plugin, {
     startAt: 0,
     incrementBy: 1
 });
-addSuccessPatientSchema.plugin(autoIncrement.plugin, {
-    model: 'Books',
-    field: 'SubjID',
-    startAt: 0,
-    incrementBy: 1
-});
 //索引
 addSuccessPatientSchema.index({ "Date": 1});
 
