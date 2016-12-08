@@ -9,8 +9,158 @@ var drugWL = require('../../models/import/drugWL');
 var YSZDrug = require('../../models/import/YSZDryg');
 var drugCK = require('../../models/import/drugCK');
 var addSuccessPatient = require('../../models/import/addSuccessPatient');
+var researchParameter = require('../../models/import/researchParameter');
 var mongoose = require('mongoose');
 var EMail = require("../../models/EMail");
+
+//智能分配
+exports.appGetZnfp = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        var fenzhu = [];
+        //取出随机化参数
+        //查找研究随机化参数
+        researchParameter.find({StudyID: fields.StudyID}, function (err, persons1) {
+            fenzhu = persons1[0].NTrtGrp.split(",");
+            var drugData = [];
+            var drugs = [];
+            (function iterator(jj){
+                var fenzhuName = fenzhu[jj];
+                if(jj == fenzhu.length){
+                    //把数据放入临时数据库
+                    LSDrug.create({
+                        drugs : drugs,    //药物数据
+                        Users : fields.Users,    //用户数据
+                        Address : fields.Address,    //分配地址数据
+                        Type : fields.Type,    //分配地址数据
+                        Date : new Date(), //导入时间
+                    },function (error,data) {
+                        console.log('保存成功');
+                        if (error == null){
+                            //删除药品库数据
+                            for (var i = 0 ; i < drugs.length ; i++){
+                                drug.remove({id:drugs[i].id},function(err,result){
+                                    if(err){
+                                        console.log(err);
+                                    }else{
+                                        console.log("删除成功");
+                                    }
+                                });
+                            }
+                            var oneSecond = 1000 * 300; // one second = 1000 x 1 ms
+                            setTimeout(function() {
+                                //查找临时数据库中是否还有该数据,如果有则删除临时数据库的这条数据,并添加到药品库中,没有则跳过
+                                LSDrug.find({id : data.id},function (err, persons) {
+                                    if (persons.length != 0){
+                                        //添加到药品库中
+                                        for (var j = 0 ; j < persons[0].drugs.length ; j++){
+                                            console.log(persons[0].drugs[j])
+                                            drug.create({
+                                                StudyID:persons[0].drugs[j].StudyID,
+                                                DrugSeq:persons[0].drugs[j].DrugSeq,
+                                                DrugNum:persons[0].drugs[j].DrugNum,
+                                                DrugDigits:persons[0].drugs[j].DrugDigits,
+                                                ArmCD:persons[0].drugs[j].ArmCD,
+                                                Arm:persons[0].drugs[j].Arm,
+                                                PackSeq:persons[0].drugs[j].PackSeq,
+                                                DrugExpryDTC:persons[0].drugs[j].DrugExpryDTC,
+                                                Date:persons[0].drugs[j].Date,
+                                            },function () {
+                                                console.log('添加到了药品库')
+                                            })
+                                        }
+                                        //删除临时数据
+                                        LSDrug.remove({id:persons[0].id},function(err){
+                                            if(err){
+                                                console.log(err);
+                                            }else{
+                                                console.log("临时数据删除成功");
+                                            }
+                                        });
+                                    }
+                                })
+                            }, oneSecond);
+                            res.send({
+                                'isSucceed' : 400,
+                                'data' : data
+                            });
+                        }else{
+                            res.send({
+                                'isSucceed' : 200,
+                                'msg' : '中间数据错误'
+                            });
+                            return
+                        }
+                    })
+                    return
+                }
+                console.log(fenzhuName)
+                console.log(fields)
+                //查询中心新增成功的受试者的个数
+                addSuccessPatient.find({StudyID:fields.StudyID,SiteID:fields.Address.SiteID,isOut:{$ne:1},Arm:fenzhuName},function (err, addPersons) {
+                    if (addPersons.length == 0){
+                        iterator(jj+1)
+                    }else {
+                        if(fields.DepotGNYN == 1) {
+                            //如果为主仓库
+                            var fenzhuName = fenzhu[jj];
+                            drug.find({StudyID : fields.StudyID,Arm:fenzhu[jj]}).sort({DrugNum : 1}).exec(function (err, persons){
+                                if (err != null){
+                                    if (err.isSucceed == "200"){
+                                        res.send(err);
+                                    }else{
+                                        res.send({
+                                            'isSucceed' : 200,
+                                            'msg' : '数据库正在维护,请稍后再试'
+                                        });
+                                    }
+                                }else{
+                                    if (persons.length < addPersons.length){
+                                        res.send({
+                                            'isSucceed' : 200,
+                                            'msg' : fenzhuName + '药物数量不足,最多为' + persons.length + '个'
+                                        });
+                                    }else{
+                                        for (var yy = 0 ; yy < persons.slice(0,addPersons.length).length ; yy++){
+                                            drugs.push(persons.slice(0,addPersons.length)[yy])
+                                        }
+                                        iterator(jj+1)
+                                    }
+                                }
+                            })
+                        }else if(fields.DepotBrYN == 1){
+                            //如果为分仓库
+                            drugCK.find({UsedAddressId : fields.DepotId , DDrugNumAYN : 1 , Arm:fenzhu[jj]}).sort({DrugNum : 1}).exec(function (err, persons){
+                                if (err != null){
+                                    if (err.isSucceed == "200"){
+                                        res.send(err);
+                                    }else{
+                                        res.send({
+                                            'isSucceed' : 200,
+                                            'msg' : '数据库正在维护,请稍后再试'
+                                        });
+                                    }
+                                }else{
+                                    if (persons.length < addPersons.length){
+                                        res.send({
+                                            'isSucceed' : 200,
+                                            'msg' : '您输入的药物数量过多,最多为' + persons.length + '个'
+                                        });
+                                    }else{
+                                        for (var yy = 0 ; yy < persons.slice(0,addPersons.length).length ; yy++){
+                                            drugs.push(persons.slice(0,addPersons.length)[yy])
+                                        }
+                                        iterator(jj+1)
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+            })(0);
+        })
+    })
+}
 
 //按药物号个数分配
 exports.appGetYwhgsfp = function (req, res, next) {
@@ -342,7 +492,6 @@ exports.appGetCancelYwhgsfp = function (req, res, next) {
     form.parse(req,function (err, fields, files) {
         if (fields.DepotGNYN == 1){
             //主仓库
-
             console.log(fields)
             //把数据到原来地方
             LSDrug.find({id : fields.id},function (err, persons){

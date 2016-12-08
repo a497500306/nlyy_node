@@ -233,6 +233,8 @@ app.post("/app/getAssignYwhgsfp",appChangKu.appGetAssignYwhgsfp);
 app.post("/app/getCancelYwhgsfp",appChangKu.appGetCancelYwhgsfp);
 //按药物号个数分配
 app.post("/app/getYwhgsfp",appChangKu.appGetYwhgsfp);
+//智能分配
+app.post("/app/getZnfp",appChangKu.appGetZnfp);
 //逐个分配
 app.post("/app/getZgfp",appChangKu.appGetZgfp);
 //获取所有药物号
