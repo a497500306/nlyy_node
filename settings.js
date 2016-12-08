@@ -3,6 +3,6 @@
  */
 module.exports = {
     //服务器地址
-    'fwqUrl' : 'http://localhost:3000',
+    'fwqUrl' : 'http://182.254.242.142:3000',
     'lieshu' : 10,
 }
