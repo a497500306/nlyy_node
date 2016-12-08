@@ -6,6 +6,7 @@ var site = require('../../models/import/site');
 var researchParameter = require('../../models/import/researchParameter');
 var addSuccessPatient = require('../../models/import/addSuccessPatient');
 var addFailPatient = require('../../models/import/addFailPatient');
+var addOutPatient = require('../../models/import/addOutPatient');
 var site = require('../../models/import/site');
 var users = require('../../models/import/users');
 var siteStopIt = require('../../models/import/siteStopIt');
@@ -254,8 +255,9 @@ exports.getYcqyjsszls = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //查询子研究受试者例数
-        addSuccessPatient.find({
+        addOutPatient.find({
             'StudyID' : fields.StudyID,
+            'DSCONT_OLE' : "是"
         }).exec((err, persons) => {
             res.send({
                 'isSucceed': 400,

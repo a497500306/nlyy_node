@@ -1405,10 +1405,10 @@ function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
                     msg = msg + "分组信息: " + data.Arm + "\n"
                 }
                 if (persons[0].SubStudYN == 1) {
-                    msg = msg + "随机参加子研究: " + data.Arm + "\n"
+                    msg = msg + "随机参加子研究: " + ((data.RandoNum%2 ==0) ?"是":"否") + "\n"
                 }
                 if (persons[0].CStudyPeYN == 1) {
-                    msg = msg + "研究阶段: " + data.Arm + "\n"
+                    msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
                 }
                 console.log('提示')
                 console.log(msg)
@@ -1451,10 +1451,10 @@ function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
                     msg = msg + "分组信息: " + data.Arm + "\n"
                 }
                 if (persons[0].SubStudYN == 1) {
-                    msg = msg + "随机参加子研究: " + data.Arm + "\n"
+                    msg = msg + "随机参加子研究: " + ((data.RandoNum%2 ==0) ?"是":"否") + "\n"
                 }
                 if (persons[0].CStudyPeYN == 1) {
-                    msg = msg + "研究阶段: " + data.Arm + "\n"
+                    msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
                 }
                 console.log('提示')
                 console.log(msg)
@@ -1566,10 +1566,10 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
                 msg = msg + "分组信息: " + randomPersons[0].Arm + "\n"
             }
             if (persons[0].SubStudYN == 1) {
-                msg = msg + "随机参加子研究: " + randomPersons[0].Arm + "\n"
+                msg = msg + "随机参加子研究: " + ((data.RandoNum%2 ==0) ?"是":"否") + "\n"
             }
             if (persons[0].CStudyPeYN == 1) {
-                msg = msg + "研究阶段: " + randomPersons[0].SubjFa + "\n"
+                msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
             }
             console.log('提示')
             console.log(msg)
@@ -1611,10 +1611,10 @@ function meiyouyaowuhao(persons,randomPersons,RandoM,res) {
         msg = msg + "分组信息: " + randomPersons[0].Arm + "\n"
     }
     if (persons[0].SubStudYN == 1) {
-        msg = msg + "随机参加子研究: " + randomPersons[0].Arm + "\n"
+        msg = msg + "随机参加子研究: " + ((randomPersons[0].RandoNum%2 ==0) ?"是":"否") + "\n"
     }
     if (persons[0].CStudyPeYN == 1) {
-        msg = msg + "研究阶段: " + randomPersons[0].SubjFa + "\n"
+        msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
     }
     //修改随机号已经使用
     random.update({
@@ -1937,6 +1937,85 @@ exports.getVagueBasicsDataUser = function (req, res, next) {
                     });
                 }
             });
+        })
+    })
+}
+//查阅筛选例数分布
+exports.getCysxsblsfb = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询该研究有多少中心
+        site.chazhaozhongxin(fields.StudyID,function (err,persons) {
+            var data = [];
+            (function iterator(i) {
+                var siteData = persons[i];
+                if (i == persons.length) {
+                    console.log(data);
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                    return
+                }
+                addFailPatient.find({StudyID:fields.StudyID ,SiteID:siteData.SiteID}, function (err, FailPersons) {
+                    var dd = [siteData.SiteID,FailPersons.length];
+                    data.push(dd);
+                    iterator(i + 1)
+                })
+            })(0);
+        })
+
+    })
+}
+
+//查阅随机例数分布
+exports.getCysjlsfb = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询该研究有多少中心
+        site.chazhaozhongxin(fields.StudyID,function (err,persons) {
+            var data = [];
+            (function iterator(i) {
+                var siteData = persons[i];
+                if (i == persons.length) {
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                    return
+                }
+                addSuccessPatient.find({StudyID:fields.StudyID ,SiteID:siteData.SiteID ,Random:{$ne:null}}, function (err, FailPersons) {
+                    var dd = [siteData.SiteID,FailPersons.length];
+                    data.push(dd);
+                    iterator(i + 1)
+                })
+            })(0);
+        })
+    })
+}
+
+//查阅退出或完成例数分布
+exports.getCytchwclsfb = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询该研究有多少中心
+        site.chazhaozhongxin(fields.StudyID,function (err,persons) {
+            var data = [];
+            (function iterator(i) {
+                var siteData = persons[i];
+                if (i == persons.length) {
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                    return
+                }
+                addSuccessPatient.find({StudyID:fields.StudyID ,SiteID:siteData.SiteID ,isOut:1}, function (err, FailPersons) {
+                    var dd = [siteData.SiteID,FailPersons.length];
+                    data.push(dd);
+                    iterator(i + 1)
+                })
+            })(0);
         })
     })
 }
