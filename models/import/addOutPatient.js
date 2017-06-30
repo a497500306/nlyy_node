@@ -29,12 +29,6 @@ addOutPatientSchema.plugin(autoIncrement.plugin, {
     startAt: 0,
     incrementBy: 1
 });
-addOutPatientSchema.plugin(autoIncrement.plugin, {
-    model: 'Books',
-    field: 'SubjID',
-    startAt: 0,
-    incrementBy: 1
-});
 //索引
 addOutPatientSchema.index({ "Date": 1});
 

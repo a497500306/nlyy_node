@@ -35,6 +35,10 @@ var studySchema = new mongoose.Schema({
     "StudStopItPhone" : String, //停止入组操作手机号
     "StudStopItDate" : Date,//停止入组时间
 
+
+    "isUnblinding" : String,//是否揭盲
+    "UnblindingDate" : Date, //揭盲时间
+
     "StudIsOffline" : String, //该研究是否下线
     "StudOfflineUsers" : String, //下线操作人
     "StudOfflinePhone" : String, //下线操作手机号

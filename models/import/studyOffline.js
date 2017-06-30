@@ -8,7 +8,7 @@ var studyOfflineSchema = new mongoose.Schema({
     "id" : String,
     "StudyID" : String,    //研究编号
     "UserNam" : String, //申请人名称
-
+    "ToExamineUserData" : Array,//审核用户对象
     "ToExamineUsers" : Array,//审核人
     "ToExaminePhone" : Array,//审核人手机号
     "ToExamineType" : Array,//是通过还是拒绝

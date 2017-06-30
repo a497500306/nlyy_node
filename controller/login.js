@@ -152,7 +152,8 @@ exports.doHome = function (req, res, next) {
     //得到用户填写的东西
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        if (fields.id == "xzyj"){//新增研究
+        if (fields.id == "xzyj"){
+            //新增研究
             var keys = ['研究序列号','研究编号','申办方全称','申办方简称','研究标题全称','研究标题简称','全国PI手机号',
                 '全国PI','全国PI邮箱','治疗领域','研究分期','研究总样本量'
                 ,'受试者入组是否中心之间竞争','中心平均入组例数','研究总招募月数','研究招募信心度','是否有延长期研究','是否有子研究','参加子研究是否是随机抽取',
@@ -163,47 +164,62 @@ exports.doHome = function (req, res, next) {
                 'StudDEMOYN','StudSimuYN','Date','操作'];
             showTable(fields, res , req ,study , keys , keyEn , "/nlyy/addYzyj");
 
-        }else if(fields.id == "szyjsjhcs"){//设置研究随机化参数
-            var keys =  ['研究序列号','研究编号','研究设计','研究阶段个数','随机方法','设盲状态','单盲试验提供药物号','开放试验提供药物号','治疗组数'
-                        ,'受试者分组比例','随机种子数','可查询各组随机例数','是否设置层内例数限制','层内限制例数','是否设置中心最大例数限制'
-                        ,'中心最大例数限制','分层因素的个数','第一个分层因素的标签','第一个分层因素的取值','第二个分层因素的标签','第二个分层因素的取值'
-                        ,'第三个分层因素的标签','第三个分层因素的取值','第四个分层因素的标签','第四个分层因素的取值','第五个分层因素的标签','第五个分层因素的取值'
-                        ,'第六个分层因素的标签','第六个分层因素的取值','第七个分层因素的标签','第七个分层因素的取值','第八个分层因素的标签','第八个分层因素的取值'
-                        ,'是否按中心分层','第九个分层因素的标签','第九个分层因素的取值'
-                        ,'第一个分层因素的权重','第二个分层因素的权重','第三个分层因素的权重','第四个分层因素的权重','第五个分层因素的权重','不平衡分数算法'
-                        ,'第六个分层因素的权重','第七个分层因素的权重','第八个分层因素的权重','第九个分层因素的权重','随机选择治疗方法','指定概率法概率高值'
-                        ,'指定概率法概率低值','是否考虑分层因素完全重复（SIGN RULE）','随机号是否导出治疗分组','取随机号时是否显示随机号','取随机号时是否显示药物号','取随机号时是否显示分组情况'
-                        ,'取随机号时是否显示随机抽中参加子研究','取随机号时是否显示目前研究阶段','添加时间','操作'];
-            var keyEn = ['StudySeq','StudyID','StudyDs','StudyPeNum','RandoM','BlindSta','DrugNSBlind','DrugNOpen','NTrtGrp'
-                        ,'AlloRatio','RandoSeed','SizeInGrp','SizeLInStraYN','SizeLInStra','SizeLInSiteYN'
-                        ,'SizeLInSite','Nstra','LabelStraA','LabelStraAL','LabelStraB','LabelStraBL','LabelStraC','LabelStraCL','LabelStraD','LabelStraDL'
-                        ,'LabelStraE','LabelStraEL','LabelStraF','LabelStraFL','LabelStraG','LabelStraGL'
-                         ,'LabelStraH','LabelStraHL','StraSiteYN','LabelStraI','LabelStraIL','WeightStraA','WeightStraB','WeightStraC','WeightStraD'
-                        ,'WeightStraE','WeightStraF','WeightStraG','WeightStraH','WeightStraI','FormulaImSc','TrtSelMth','HighProb'
-                        ,'LowProb','SignRuleYN','ArmCDYN','RandoNumYN','DrugNumYN','ArmYN'
-                        ,'SubStudYN','CStudyPeYN','Date','操作'];
+        }else if(fields.id == "szyjsjhcs"){
+            //设置研究随机化参数
+            var keys =  [
+                '研究序列号','研究编号','研究设计','研究阶段个数','随机方法',
+                '设盲状态','单盲试验提供药物号','开放试验提供药物号','治疗组数','受试者分组比例',
+                '随机种子数','可查询各组随机例数','是否设置层内例数限制','层内限制例数','是否设置中心最大例数限制',
+                '中心最大例数限制','分层因素的个数','第一个分层因素的标签','第一个分层因素的取值','第二个分层因素的标签',
+                '第二个分层因素的取值','第三个分层因素的标签','第三个分层因素的取值','第四个分层因素的标签','第四个分层因素的取值',
+                '第五个分层因素的标签','第五个分层因素的取值','第六个分层因素的标签','第六个分层因素的取值','第七个分层因素的标签',
+                '第七个分层因素的取值','第八个分层因素的标签','第八个分层因素的取值','是否按中心分层','第九个分层因素的标签',
+                '第九个分层因素的取值','第一个分层因素的权重','第二个分层因素的权重','第三个分层因素的权重','第四个分层因素的权重',
+                '第五个分层因素的权重','第六个分层因素的权重','第七个分层因素的权重','第八个分层因素的权重',
+                '第九个分层因素的权重','不平衡分数算法','随机选择治疗方法','指定概率法概率高值','指定概率法概率低值',
+                '是否考虑分层因素完全重复（SIGN RULE）','随机号是否导出治疗分组','取随机号时是否显示随机号','取随机号时是否显示药物号','取随机号时是否显示分组情况',
+                '取随机号时是否显示随机抽中参加子研究','取随机号时是否显示目前研究阶段','添加时间','操作'];
+            var keyEn = [
+                'StudySeq','StudyID','StudyDs','StudyPeNum','RandoM',
+                'BlindSta','DrugNSBlind','DrugNOpen','NTrtGrp','AlloRatio',
+                'RandoSeed','SizeInGrp','SizeLInStraYN','SizeLInStra','SizeLInSiteYN',
+                'SizeLInSite','Nstra','LabelStraA','LabelStraAL','LabelStraB',
+                'LabelStraBL','LabelStraC','LabelStraCL','LabelStraD','LabelStraDL',
+                'LabelStraE','LabelStraEL','LabelStraF','LabelStraFL','LabelStraG',
+                'LabelStraGL','LabelStraH','LabelStraHL','StraSiteYN','LabelStraI',
+                'LabelStraIL','WeightStraA','WeightStraB','WeightStraC','WeightStraD',
+                'WeightStraE','WeightStraF','WeightStraG','WeightStraH','WeightStraI',
+                'FormulaImSc','TrtSelMth','HighProb','LowProb','SignRuleYN',
+                'ArmCDYN','RandoNumYN','DrugNumYN','ArmYN','SubStudYN',
+                'CStudyPeYN','Date','操作'];
             showTable(fields, res , req ,researchParameter , keys , keyEn , "/nlyy/addSzyjsjhcs");
             console.log('显示设置研究随机化参数');
 
-        }else if(fields.id == "xzyjzx"){//新增研究中心
+        }else if(fields.id == "xzyjzx"){
+
+            //新增研究中心
             var keys =  ['研究编号','中心编号','中心主要研究者','中心所在城市','中心详细地址','中心邮编','中心名称',
                 '添加时间','操作'];
             var keyEn = ['StudyID','SiteID','InvNam','SiteCity','SiteAdd','SiteZipC','SiteNam','Date','操作'];
             showTable(fields, res , req ,site , keys , keyEn , "/nlyy/addXzyjzx");
             console.log('新增研究中心');
 
-        }else if(fields.id == "xzck"){//新增仓库
+        }else if(fields.id == "xzck"){
+
+            //新增仓库
             var keys =  ['研究编号','仓库编号','仓库名称','仓库所在城市','仓库详细地址','仓库邮编','仓管员姓名','仓管员手机','仓管员电子邮箱','是否为总仓库','是否为分仓库',
                 '添加时间','操作'];
             var keyEn = ['StudyID','DepotID','DepotName','DepotCity','DepotAdd','DepotZipC','DepotKper','DepotMP','DepotEmail','DepotGNYN','DepotBrYN','Date','操作'];
             showTable(fields, res , req ,depot , keys , keyEn , "/nlyy/addXzck");
             console.log('新增仓库');
-        }else if(fields.id == "dryjrxpcbz"){//导入研究入选排除标准
+        }else if(fields.id == "dryjrxpcbz"){
+            //导入研究入选排除标准
             var keys =  ['研究编号','入组标准类别','入组标准类别亚分类','入组标准类别的代码','入组标准序号','入组标准内容','添加时间','操作'];
             var keyEn = ['StudyID','IECat','IECatn','IESEQ','IESCat','IETest','Date','操作'];
             showTable(fields, res , req ,ExcludeStandard , keys , keyEn , "/nlyy/addRxpcbz");
             console.log('导入研究入选排除标准');
-        }else if(fields.id == "gdsjfdrsjh"){//固定随机法导入随机号
+        }else if(fields.id == "gdsjfdrsjh"){
+            //固定随机法导入随机号
             var keys =  ['研究编号','分层结果代码','研究设计','研究阶段个数','目前所处研究阶段','层内区组号','区组内序号','随机号','治疗分组代码','治疗分组标签',"分层结果a","分层结果b","分层结果c","分层结果d","分层结果e","分层结果f","分层结果g","分层结果h","分层结果i",'添加时间','操作'];
             var keyEn = ['StudyID','StratumN','StudyDs','StudyPeNum','CStudyPe','BlockSeq','SeqInBlock','RandoNum','ArmCD','Arm','SubjFa','SubjFb','SubjFc','SubjFd','SubjFe','SubjFg','SubjFg','SubjFh','SubjFi','Date','操作'];
             showTable(fields, res , req ,random , keys , keyEn , "/nlyy/addGdsjfdrsjh");
@@ -243,6 +259,15 @@ exports.doHome = function (req, res, next) {
             console.log('导入用户数据111');
         }else if(fields.id == "dcsj") {//导出数据
             console.log("导出数据")
+            var keys = ['研究序列号','研究编号','申办方全称','申办方简称','研究标题全称','研究标题简称','全国PI手机号',
+                '全国PI','全国PI邮箱','治疗领域','研究分期','研究总样本量'
+                ,'受试者入组是否中心之间竞争','中心平均入组例数','研究总招募月数','研究招募信心度','是否有延长期研究','是否有子研究','参加子研究是否是随机抽取',
+                '研究是否在线','属于演示版研究','属于真实研究模拟版','添加时间','操作'];
+            var keyEn = ['StudySeq','StudyID','SponsorF','SponsorS','StudNameF','StudNameS','CoorPIPhone','CoorPI',
+                'CoorPIEMail','TherArea','StudyPh','StudySize','AccrualCmpYN'
+                ,'AccrualPerS','AccrualT','AccrualConf','ExtStudYN','SubStudYN','SubStudInYN','StudOnlineYN',
+                'StudDEMOYN','StudSimuYN','Date','操作'];
+            showTable(fields, res , req ,study , keys , keyEn , "/nlyy/dcsj");
         }
         return;
     });

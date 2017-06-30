@@ -11,21 +11,15 @@ TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
     'appkey' : '23500106' ,
     'appsecret' : '7938816533f3fc698534761d15d8f66b' ,
-    'REST_URL' : 'http://gw.api.tbsandbox.com/router/rest'
+    'REST_URL' : 'http://gw.api.taobao.com/router/rest'
 });
-
 var formidable = require('formidable');
 
 //登录
 exports.appLogin = function (req, res, next) {
     //得到用户填写的东西
-    console.log('登录接口');
-    console.log(req);
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        console.log("post");
-        console.log(fields)
-        console.log(fields.phone);
         //搜索是否存在该用户
         users.chazhaoPhone(fields.phone,function (err, persons) {
             if (err != null){
@@ -158,7 +152,7 @@ exports.appIDCode = function (req, res, next) {
                         'sms_type' : 'normal' ,
                         'sms_free_sign_name' : '诺兰医药科技' ,
                         'sms_param' : {
-                            "text":"idCoed"
+                            "text":idCoed
                         } ,
                         'rec_num' : fields.phone ,
                         'sms_template_code' : "SMS_27335120"
@@ -169,6 +163,7 @@ exports.appIDCode = function (req, res, next) {
                                 'IDCode' : idCoed
                             });
                         }else{
+                            console.log(error)
                             res.send({
                                 'isSucceed' : 200,
                                 'msg' : '验证码发送失败'
@@ -191,6 +186,10 @@ function generateMixed(n) {
     var res = "";
     for(var i = 0; i < n ; i ++) {
         var id = Math.ceil(Math.random()*chars.length);
+        console.log(id)
+        if (id == 10){
+            id = 0;
+        }
         res += chars[id];
     }
     return res;

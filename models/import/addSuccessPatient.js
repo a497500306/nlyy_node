@@ -32,6 +32,7 @@ var addSuccessPatientSchema = new mongoose.Schema({
     "SubjFi" : String,//随机分层因素i
     "Random" : String,//随机号
 
+    "RandoDoer" : String,//完成随机者user id
     "baselineDate":Date,//基线仿视日期
     "stopDrugDate":Date,//停止用药日期
     "Arm" : String, //治疗分组标签
@@ -79,7 +80,7 @@ addSuccessPatientSchema.statics.chazhaomouyanjiumouzhongxin = function (SiteID,S
     }else{
         console.log('获取成功列表')
         //取出该研究中的所有分仓库
-        this.model('addSuccessPatient').find({SiteID : SiteID,StudyID : StudyID}).sort('-Date').exec(callback)
+        this.model('addSuccessPatient').find({SiteID : SiteID,StudyID : StudyID}).sort('-USubjID').exec(callback)
     }
 }
 //model

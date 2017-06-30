@@ -4,10 +4,12 @@
 
 TopClient = require('./topClient').TopClient;
 
+
 var client = new TopClient({
-                            'appkey':'4272',
-                            'appsecret':'0ebbcccfee18d7ad1aebc5b135ffa906',
-                            'REST_URL':'http://api.daily.taobao.net/router/rest'});
+    'appkey' : '23500106' ,
+    'appsecret' : '7938816533f3fc698534761d15d8f66b' ,
+    'REST_URL' : 'http://gw.api.taobao.com/router/rest'
+});
 
 client.execute('taobao.user.get',
               {

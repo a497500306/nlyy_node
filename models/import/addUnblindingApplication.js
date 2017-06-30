@@ -29,12 +29,6 @@ addUnblindingApplicationSchema.plugin(autoIncrement.plugin, {
     startAt: 0,
     incrementBy: 1
 });
-addUnblindingApplicationSchema.plugin(autoIncrement.plugin, {
-    model: 'Books',
-    field: 'SubjID',
-    startAt: 0,
-    incrementBy: 1
-});
 //索引
 addUnblindingApplicationSchema.index({ "Date": 1});
 

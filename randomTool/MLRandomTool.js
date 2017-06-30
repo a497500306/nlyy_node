@@ -2,108 +2,110 @@
 
 /*******************计算不平衡分***********************/
 //极差法
-exports.jichafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons){
+exports.jichafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons,block){
     var bupinghen = [];
     for (var i = 0 ; i < nTrtGrpArray.length ; i++){
         var mou = 0;
         if (addSuccessPersons[0].SubjFa != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][0].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][0][xx]
-                }else{
-                    he = he - qiwangcha[i][0][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][0].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][0][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][0][xx]
+            //     }
+            // }
+            var maxxx = qiwangcha[i][0].max();
+            var minxx = qiwangcha[i][0].min();
+            mou = mou + (Math.abs((qiwangcha[i][0].max() - qiwangcha[i][0].min()))) * parseInt(persons[0].WeightStraA);
         }
         if (addSuccessPersons[0].SubjFb != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][1].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][1][xx]
-                }else{
-                    he = he - qiwangcha[i][1][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][1].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][1][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][1][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][1].max() - qiwangcha[i][1].min()))) * parseInt(persons[0].WeightStraB);
         }
         if (addSuccessPersons[0].SubjFc != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][2].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][2][xx]
-                }else{
-                    he = he - qiwangcha[i][2][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][2].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][2][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][2][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][2].max() - qiwangcha[i][2].min()))) * parseInt(persons[0].WeightStraC);
         }
         if (addSuccessPersons[0].SubjFd != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][3].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][3][xx]
-                }else{
-                    he = he - qiwangcha[i][3][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][3].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][3][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][3][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][3].max() - qiwangcha[i][3].min()))) * parseInt(persons[0].WeightStraD);
         }
         if (addSuccessPersons[0].SubjFe != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][4].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][4][xx]
-                }else{
-                    he = he - qiwangcha[i][4][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][4].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][4][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][4][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][4].max() - qiwangcha[i][4].min()))) * parseInt(persons[0].WeightStraE);
         }
         if (addSuccessPersons[0].SubjFf != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][5].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][5][xx]
-                }else{
-                    he = he - qiwangcha[i][5][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][5].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][5][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][5][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][5].max() - qiwangcha[i][5].min()))) * parseInt(persons[0].WeightStraF);
         }
         if (addSuccessPersons[0].SubjFg != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][6].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][6][xx]
-                }else{
-                    he = he - qiwangcha[i][6][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][6].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][6][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][6][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][6].max() - qiwangcha[i][6].min()))) * parseInt(persons[0].WeightStraG);
         }
         if (addSuccessPersons[0].SubjFh != ""){
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][7].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][7][xx]
-                }else{
-                    he = he - qiwangcha[i][7][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][7].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][7][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][7][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][7].max() - qiwangcha[i][7].min()))) * parseInt(persons[0].WeightStraH);
         }
         if (addSuccessPersons[0].SubjFi != "") {
-            var he = null;
-            for (var xx = 0 ; xx < qiwangcha[i][qiwangcha[i].length - 1].length ; xx++){
-                if (he == null){
-                    he = qiwangcha[i][qiwangcha[1].length - 1][xx]
-                }else{
-                    he = he - qiwangcha[i][qiwangcha[1].length - 1][xx]
-                }
-            }
-            mou = mou + Math.abs(he);
+            // var he = null;
+            // for (var xx = 0 ; xx < qiwangcha[i][qiwangcha[i].length - 1].length ; xx++){
+            //     if (he == null){
+            //         he = qiwangcha[i][qiwangcha[1].length - 1][xx]
+            //     }else{
+            //         he = he - qiwangcha[i][qiwangcha[1].length - 1][xx]
+            //     }
+            // }
+            mou = mou + (Math.abs((qiwangcha[i][qiwangcha[1].length - 1].max() - qiwangcha[i][qiwangcha[1].length - 1].min()))) * parseInt(persons[0].WeightStraI);
         }
         bupinghen.push(mou)
     }
@@ -124,26 +126,26 @@ exports.jichafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons){
     }
     if (isWangquan == 0 ){
         console.log('不平衡得分完全相等,使用完全随机')
-        return this.wangquansuiji(persons)
+        return this.wangquansuiji(persons,block)
     }else{
         //根据4种治疗选择方法进行随机
         if (persons[0].TrtSelMth == 1) {//直接法
-            return this.zhijiefa(nTrtGrpArray,bupinghen)
+            return this.zhijiefa(nTrtGrpArray,bupinghen,block)
 
         }else if (persons[0].TrtSelMth == 2) {//指定概率法
-            return this.zhidinggailv(persons)
+            return this.zhidinggailv(bupinghen,persons,block)
 
         }else if (persons[0].TrtSelMth == 3) {//倒数法,比例法
-            return this.bilifa(bupinghen,nTrtGrpArray)
+            return this.bilifa(bupinghen,nTrtGrpArray,block)
 
         }else {//完全随机法
-            return this.wangquansuiji(persons)
+            return this.wangquansuiji(persons,block)
         }
     }
 }
 
 //方差法
-exports.fangchafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons){
+exports.fangchafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons,block){
     var bupinghen = [];
     for (var i = 0 ; i < nTrtGrpArray.length ; i++){
         var mou = 0;
@@ -152,63 +154,63 @@ exports.fangchafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons){
             for (var xx = 0 ; xx < qiwangcha[i][0].length ; xx++){
                 he = Math.pow(qiwangcha[i][0][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][0].length)
+            mou = mou + ((he/qiwangcha[i][0].length)) * parseInt(persons[0].WeightStraA);
         }
         if (addSuccessPersons[0].SubjFb != ""){
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][1].length ; xx++){
                 he = Math.pow(qiwangcha[i][1][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][1].length)
+            mou = mou + ((he/qiwangcha[i][1].length)) * parseInt(persons[0].WeightStraB);
         }
         if (addSuccessPersons[0].SubjFc != ""){
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][2].length ; xx++){
                 he = Math.pow(qiwangcha[i][2][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][2].length)
+            mou = mou + ((he/qiwangcha[i][2].length)) * parseInt(persons[0].WeightStraC);
         }
         if (addSuccessPersons[0].SubjFd != ""){
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][3].length ; xx++){
                 he = Math.pow(qiwangcha[i][3][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][3].length)
+            mou = mou + ((he/qiwangcha[i][3].length)) * parseInt(persons[0].WeightStraD);
         }
         if (addSuccessPersons[0].SubjFe != ""){
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][4].length ; xx++){
                 he = Math.pow(qiwangcha[i][4][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][4].length)
+            mou = mou + ((he/qiwangcha[i][4].length)) * parseInt(persons[0].WeightStraE);
         }
         if (addSuccessPersons[0].SubjFf != ""){
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][5].length ; xx++){
                 he = Math.pow(qiwangcha[i][5][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][5].length)
+            mou = mou + ((he/qiwangcha[i][5].length)) * parseInt(persons[0].WeightStraF);
         }
         if (addSuccessPersons[0].SubjFg != ""){
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][6].length ; xx++){
                 he = Math.pow(qiwangcha[i][6][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][6].length)
+            mou = mou + ((he/qiwangcha[i][6].length)) * parseInt(persons[0].WeightStraG);
         }
         if (addSuccessPersons[0].SubjFh != ""){
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][7].length ; xx++){
                 he = Math.pow(qiwangcha[i][7][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][7].length)
+            mou = mou + ((he/qiwangcha[i][7].length)) * parseInt(persons[0].WeightStraH);
         }
         if (addSuccessPersons[0].SubjFi != "") {
             var he = 0;
             for (var xx = 0 ; xx < qiwangcha[i][qiwangcha[i].length - 1].length ; xx++){
                 he = Math.pow(qiwangcha[i][qiwangcha[i].length - 1][xx],2) + he;
             }
-            mou = mou + (he/qiwangcha[i][qiwangcha[i].length - 1].length)
+            mou = mou + ((he/qiwangcha[i][qiwangcha[i].length - 1].length)) * parseInt(persons[0].WeightStraI);
         }
         bupinghen.push(mou)
     }
@@ -233,22 +235,22 @@ exports.fangchafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons){
     }else{
         //根据4种治疗选择方法进行随机
         if (persons[0].TrtSelMth == 1) {//直接法
-            return this.zhijiefa(nTrtGrpArray,bupinghen)
+            return this.zhijiefa(nTrtGrpArray,bupinghen,block)
 
         }else if (persons[0].TrtSelMth == 2) {//指定概率法
-            return this.zhidinggailv(persons)
+            return this.zhidinggailv(bupinghen,persons,block)
 
         }else if (persons[0].TrtSelMth == 3) {//倒数法,比例法
-            return this.bilifa(bupinghen,nTrtGrpArray)
+            return this.bilifa(bupinghen,nTrtGrpArray,block)
 
         }else {//完全随机法
-            return this.wangquansuiji(persons)
+            return this.wangquansuiji(persons,block)
         }
     }
 }
 
 //最大值法
-exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons){
+exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons,block){
     var bupinghen = [];
     for (var i = 0 ; i < nTrtGrpArray.length ; i++){
         var mou = 0;
@@ -263,7 +265,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraA);
         }
         if (addSuccessPersons[0].SubjFb != ""){
             var he = 0;
@@ -276,7 +278,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraB);
         }
         if (addSuccessPersons[0].SubjFc != ""){
             var he = 0;
@@ -289,7 +291,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraC);
         }
         if (addSuccessPersons[0].SubjFd != ""){
             var he = 0;
@@ -302,7 +304,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraD);
         }
         if (addSuccessPersons[0].SubjFe != ""){
             var he = 0;
@@ -315,7 +317,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraE);
         }
         if (addSuccessPersons[0].SubjFf != ""){
             var he = 0;
@@ -328,7 +330,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraF);
         }
         if (addSuccessPersons[0].SubjFg != ""){
             var he = 0;
@@ -341,7 +343,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraG);
         }
         if (addSuccessPersons[0].SubjFh != ""){
             var he = 0;
@@ -354,7 +356,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraH);
         }
         if (addSuccessPersons[0].SubjFi != "") {
             var he = 0;
@@ -367,7 +369,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
                     }
                 }
             }
-            mou = mou + he
+            mou = mou + he * parseInt(persons[0].WeightStraI);
         }
         bupinghen.push(mou)
     }
@@ -375,123 +377,152 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
     console.log(bupinghen)
     //根据4种治疗选择方法进行随机
     if (persons[0].TrtSelMth == 1) {//直接法
-        return this.zhijiefa(nTrtGrpArray,bupinghen)
+        return this.zhijiefa(nTrtGrpArray,bupinghen,block)
 
     }else if (persons[0].TrtSelMth == 2) {//指定概率法
-        return this.zhidinggailv(persons)
+        return this.zhidinggailv(bupinghen,persons,block)
 
     }else if (persons[0].TrtSelMth == 3) {//倒数法,比例法
-        return this.bilifa(bupinghen,nTrtGrpArray)
+        return this.bilifa(bupinghen,nTrtGrpArray,block)
 
     }else {//完全随机法
-        return this.wangquansuiji(persons)
+        return this.wangquansuiji(persons,block)
     }
 }
 
 /*******************随机分配***********************/
 //直接法
-exports.zhijiefa = function (nTrtGrpArray,bupinghen){
-    var fenpeiStr = "";
-    var arrayNuber = 0;
+exports.zhijiefa = function (nTrtGrpArray,bupinghen,block){
+    var arrayNuber = null;
     var fenpeiStrs = [];
-    for (var i = 0 ; i < nTrtGrpArray.length ; i++){
-        if (i == 0 ){
-            arrayNuber = bupinghen[i];
-            fenpeiStr = nTrtGrpArray[i]
-        }else {
-            if (arrayNuber == bupinghen[i]){
-                fenpeiStrs.push(nTrtGrpArray[i])
-            }else {
-                if (arrayNuber > bupinghen[i]){
-                    arrayNuber = bupinghen[i]
-                    fenpeiStr = nTrtGrpArray[i]
-                    fenpeiStrs = [nTrtGrpArray[i]]
-                }
-            }
+    var alloRatio = persons[0].AlloRatio.split(",");
+    var newBupinghen = [];
+    for (var xx = 0 ; xx < alloRatio.length ; xx++){
+        newBupinghen.push(bupinghen[xx]/alloRatio[xx]);
+    }
+    bupinghen = newBupinghen;
+    arrayNuber = bupinghen.min()
+    for (var i = 0 ; i < bupinghen.length ; i++){
+        if (arrayNuber == bupinghen[i]){
+            fenpeiStrs.push(nTrtGrpArray[i])
         }
     }
 
     if (fenpeiStrs.length > 1){
-        console.log(arrayNuber)
-        var jj = 1;
-        var id = 0;
         console.log('有两组以上比例相等,这几组使用完全随机')
-        while(jj){
-            var suijisu = Math.random();
-            id = Math.ceil(suijisu*10);
-            if (id <= fenpeiStrs.length){
-                console.log("随机数是:" + suijisu)
-                jj = 0
-            }
-        }
-        return fenpeiStrs[id]
+        //随机取数组中一个元素
+        var n = Math.floor(Math.random() * fenpeiStrs.length + 1)-1;
+        block(fenpeiStrs[n])
     }else{
         console.log(arrayNuber)
-        return fenpeiStr
+        block(fenpeiStrs[0])
     }
 }
 
 //指定概率法
-exports.zhidinggailv = function (persons) {
+exports.zhidinggailv = function (bupinghen,persons,block) {
     console.log('指定概率法')
     var highProb = persons[0].HighProb.split(",");
     var ntrtGrp = persons[0].NTrtGrp.split(",");
-    console.log('概率:' + highProb)
-
+    var alloRatio = persons[0].AlloRatio.split(",");
+    var newBupinghen = [];
+    for (var xx = 0 ; xx < alloRatio.length ; xx++){
+        newBupinghen.push(bupinghen[xx]/alloRatio[xx]);
+    }
+    bupinghen = newBupinghen;
     var ntrts = [];
-    for (var i = 0 ; i < highProb.length ; i++){
-        var aa = highProb[0] * 100;
-        for (var j = 0 ; j < aa ; j++) {
-            ntrts.push(ntrtGrp[i])
+    //不平衡分排序
+    var bupinghenPX = bupinghen.sort(function (a,b) {
+        return a - b
+    });
+    //概率排序
+    var highProbPX = highProb.sort(function (a,b) {
+        return b - a
+    });
+
+    if (bupinghen[0] > bupinghen[1]){
+        //概率排序
+        highProb = highProb.sort(function (a,b) {
+            return b - a
+        });
+        for (var i = 0 ; i < highProb.length ; i++){
+            console.log(ntrtGrp + '不平衡分为:' + bupinghen[i])
+
+            var aa = highProb[0] * 100;
+            for (var j = 0 ; j < aa ; j++) {
+                ntrts.push(ntrtGrp[i])
+            }
         }
-    }
-    var id = 0;
-    var jj = 1;
-    while(jj){
-        var suijisu = Math.random();
-        id = Math.ceil(suijisu*100);
-        if (id <= ntrts.length){
-            console.log("随机数是:" + suijisu)
-            jj = 0
+        var n = Math.floor(Math.random() * ntrts.length + 1)-1;
+        console.log('概率:' + highProb)
+        block(ntrts[n])
+    }else if (bupinghen[0] < bupinghen[1]){
+        //概率排序
+        highProb = highProb.sort(function (a,b) {
+            return a - b
+        });
+        for (var i = 0 ; i < highProb.length ; i++){
+            console.log(ntrtGrp + '不平衡分为:' + bupinghen[i])
+
+            var aa = highProb[0] * 100;
+            for (var j = 0 ; j < aa ; j++) {
+                ntrts.push(ntrtGrp[i])
+            }
         }
+        var n = Math.floor(Math.random() * ntrts.length + 1)-1;
+        console.log('概率:' + highProb)
+        block(ntrts[n])
+
+    }else{
+        //完全随机
+        console.log('完全随机')
+        var n = Math.floor(Math.random() * ntrtGrp.length + 1)-1;
+        block(ntrtGrp[n])
     }
-    return ntrts[id]
+
 }
 
 //比例法
-exports.bilifa = function (bupinghen,nTrtGrpArray) {
+exports.bilifa = function (bupinghen,nTrtGrpArray,block) {
     //取出总数
     var daoshuZ = 0;
-    for (var  i = 0 ; i < bupinghen.length ; i++) {
-        daoshuZ = bupinghen[i] + daoshuZ;
+    var weiling = [];
+    var alloRatio = persons[0].AlloRatio.split(",");
+    var newBupinghen = [];
+    for (var xx = 0 ; xx < alloRatio.length ; xx++){
+        newBupinghen.push(bupinghen[xx]/alloRatio[xx]);
+    }
+    bupinghen = newBupinghen;
+    for (var  x = 0 ; x < bupinghen.length ; x++) {
+        if (bupinghen[x] == 0) {
+            weiling.push(nTrtGrpArray[x])
+        }
+        daoshuZ = (1/bupinghen[x]) + daoshuZ;
+    }
+    if (weiling.length != 0){
+        console.log('有多个不平衡为零:' + weiling);
+        var n = Math.floor(Math.random() * weiling.length + 1)-1;
+        block(weiling[n])
+        return;
     }
     //计算各个分组的比例
     var props = [];
-    console.log('使用比例方法,的比例是')
     for (var i = 0 ; i < nTrtGrpArray.length ; i++){
-        var prop = (1 - (bupinghen[i]/daoshuZ)) * 100
+        var prop = ((1/bupinghen[i])/daoshuZ) * 100
         // id = Math.ceil();
         var id = Math.ceil(prop);
         for (var j = 0 ; j < id ; j++){
             props.push(nTrtGrpArray[i])
         }
         console.log("比例:")
-        console.log(1 - (bupinghen[i]/daoshuZ))
+        console.log(((1/bupinghen[i])/daoshuZ) * 100)
     }
-    var fenpeiStr = ''
-    var jj = 1;
-    while(jj){
-        var ss = rd(0,props.length - 1)
-        if (ss <= props.length){
-            fenpeiStr = props[ss]
-            jj = 0
-        }
-    }
-    return fenpeiStr
+    var n = Math.floor(Math.random() * props.length + 1)-1;
+    block(props[n])
 }
 
 //完全随机法
-exports.wangquansuiji = function (persons) {
+exports.wangquansuiji = function (persons,block) {
     var ntrtGrp = persons[0].NTrtGrp.split(",");
     var alloRatio = persons[0].AlloRatio.split(",");
     var glArray = [];
@@ -517,7 +548,7 @@ exports.wangquansuiji = function (persons) {
         }
     }
     //需要放入的治疗组
-    return str;
+    block(str)
 }
 /**
  * JS获取n至m随机整数

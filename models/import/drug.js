@@ -15,8 +15,8 @@ var drugSchema = new mongoose.Schema({
     "ArmCD" : String,    //治疗分组代码
     "Arm" : String,   //治疗分组标签
     "PackSeq" : String,   //编盲编号批次
-    "DrugSeq" : String,  //药物流水号
-    "DrugExpryDTC" : String, //药物有效期
+    "DrugSeq" : Number,  //药物流水号
+    "DrugExpryDTC" : Date, //药物有效期
     "DrugDigits" : Number, // 药物号位数
     "Date" : Date, //导入时间
 });

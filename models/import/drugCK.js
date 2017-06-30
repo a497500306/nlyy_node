@@ -15,8 +15,8 @@ var drugCKSchema = new mongoose.Schema({
     "ArmCD" : String,    //治疗分组代码
     "Arm" : String,   //治疗分组标签
     "PackSeq" : String,   //编盲编号批次
-    "DrugSeq" : String,  //药物流水号
-    "DrugExpryDTC" : String, //药物有效期
+    "DrugSeq" : Number,  //药物流水号
+    "DrugExpryDTC" : Date, //药物有效期
     "DrugDigits" : Number, // 药物号位数
     "DDrugNumRYN" : Number, // 属于分仓库已接收的药物号
     "DDrugNumAYN" : Number, // 属于分仓库已激活的药物号
@@ -70,7 +70,7 @@ drugCKSchema.statics.chazhaoyousuoYJHYWH = function (DepotId,callback) {
     }else{
         //取出该研究中的所有药物号
         // this.model('drug').find({StudyID : StudyID},callback)
-        this.model('drugCK').find({UsedAddressId : DepotId , DDrugNumAYN : 1}).sort({DrugNum : 1}).exec(callback)
+        this.model('drugCK').find({UsedAddressId : DepotId , DDrugNumAYN : 1, DDrugDMNumYN: {$ne:1}}).sort({DrugNum : 1}).exec(callback)
     }
 }
 //通过ID查找药物号

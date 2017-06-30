@@ -10,11 +10,13 @@ if (localStorage.addUser == 'true'){
 //获得焦点隐藏错误框
 $("input").focus(function(){
     $("#cuowukuang").fadeOut();
+    $("#daochucuowukuang").fadeOut();
     $("#quanxiantishi").fadeOut();
     $("#tianjiaCuowukuang").fadeOut();
 });
 //隐藏修改密码错误提示
 $("#cuowukuang").fadeOut();
+$("#daochucuowukuang").fadeOut();
 $("#tianjiaCuowukuang").fadeOut();
 $("#quanxiantishi").hide();
 
@@ -39,6 +41,55 @@ $(document).ready(function () {
     })
 });
 
+
+//点击导出用户资料
+$('#dcyhzhzz').on('click', function () {
+    $.post('node/addDcyhzhzz',{
+        "id":dataId
+    },function (result) {
+        if (result.isSucceed == 200){
+            $("#daochucuowukuang").html(result.msg);
+            $("#daochucuowukuang").fadeIn();
+            setTimeout("$(\"#daochucuowukuang\").fadeOut();",3000)
+        }else if (result.isSucceed == 400){
+            $("#daochucuowukuang").fadeOut();
+            window.open(window.location.protocol + "//" + window.location.host + '/' + result.ExcelName);
+        }
+    });
+});
+
+//点击导出药物资料
+$('#dcyyywh').on('click', function () {
+    $.post('node/addDcyyywh',{
+        "id":dataId
+    },function (result) {
+        if (result.isSucceed == 200){
+            $("#daochucuowukuang").html(result.msg);
+            $("#daochucuowukuang").fadeIn();
+            setTimeout("$(\"#daochucuowukuang\").fadeOut();",3000)
+        }else if (result.isSucceed == 400){
+            $("#daochucuowukuang").fadeOut();
+            window.open(window.location.protocol + "//" + window.location.host + '/' + result.ExcelName);
+        }
+    });
+});
+
+//点击导出随机资料
+$('#dcyysjh').on('click', function () {
+    $.post('node/addDcyysjh',{
+        "id":dataId
+    },function (result) {
+        if (result.isSucceed == 200){
+            $("#daochucuowukuang").html(result.msg);
+            $("#daochucuowukuang").fadeIn();
+            setTimeout("$(\"#daochucuowukuang\").fadeOut();",3000)
+        }else if (result.isSucceed == 400){
+            $("#daochucuowukuang").fadeOut();
+            window.open(window.location.protocol + "//" + window.location.host + '/' + result.ExcelName);
+        }
+    });
+});
+
 function postData(id,text,page) {
     $('.sub-header')[0].innerHTML = text;
     $.post('node/getHome',{
@@ -58,7 +109,7 @@ function postData(id,text,page) {
             pageNumber : result.pageNumber,
             pageCount : Math.ceil(result.pageCount) - 1,
             importUrl : result.importUrl,
-            resultEn : result.keysEn
+            resultEn : result.keysEn,
     });
 
         $('#liebiaodiv').append($(html));
@@ -70,13 +121,19 @@ function postData(id,text,page) {
         }
          //隐藏添加用户BTN
         $("#tianjiayonghuBtn").hide();
+        $("#daochushujuBtn").hide();
         //如果是设置管理用户则不显示上传
         if (result.importUrl == "/nlyy/addSzhlyh"){
             $("#caozuomokuai").hide();
             //显示添加用户BTN
             $("#tianjiayonghuBtn").show();
         }
-
+        if (result.importUrl == "/nlyy/dcsj"){
+            $("#caozuomokuai").hide();
+            $(".yemaanniu").hide();
+            //显示添加用户BTN
+            $("#daochushujuBtn").show();
+        }
         //高亮
         $(".yemaanniu:eq(" + (nowpage - 1) + ")").addClass("active");
 
@@ -114,8 +171,7 @@ $('#xgmmQD').on('click', function () {
         $("#cuowukuang").html("未填写完成");
         $("#cuowukuang").fadeIn();
     }
-})
-
+});
 //点击添加管理用户
 $('#modalTianjiaBtn').on('click', function () {
     console.log($('#kexie').prop("checked"));
@@ -190,3 +246,7 @@ $('#dryh').on('click', function () {
 function t(e){
     dataId = e;
 }
+
+function daochuFun(e){
+    dataId = e;
+};

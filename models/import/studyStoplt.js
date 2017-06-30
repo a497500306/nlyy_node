@@ -17,6 +17,7 @@ var studyStopItSchema = new mongoose.Schema({
     "ToExaminePhone" : Array,//审核人手机号
     "ToExamineType" : Array,//是通过还是拒绝
     "ToExamineDate" : Array, //审核时间
+    "ToExamineUserData" : Array,//审核用户对象
     "isStopIt" : String,//是否确定停止:0为正常,1为停止,2为取消停止
     "StopItUsers" : String,//停止入组操作人
     "StopItPhone" : String,//停止入组操作手机号

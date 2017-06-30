@@ -18,17 +18,12 @@ var addFailPatientSchema = new mongoose.Schema({
     "SubjectDOB" : String,//受试者出生日期
     "SubjectSex" : String,//受试者性别
     "SubjectIn" : String,//受试者姓名缩写
+    "isOut" : String,//是否完成或退出
     'DSSTDAT' : Date, //导入时间
 });
 addFailPatientSchema.plugin(autoIncrement.plugin, {
     model: 'Books',
     field: 'id',
-    startAt: 0,
-    incrementBy: 1
-});
-addFailPatientSchema.plugin(autoIncrement.plugin, {
-    model: 'Books',
-    field: 'SubjID',
     startAt: 0,
     incrementBy: 1
 });

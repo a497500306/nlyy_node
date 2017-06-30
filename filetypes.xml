@@ -1,8 +1,0 @@
-<application>
-  <component name="FileTypeManager" version="17">
-    <extensionMap>
-      <mapping ext="vue" type="HTML" />
-      <mapping ext="mp4" type="PLAIN_TEXT" />
-    </extensionMap>
-  </component>
-</application>

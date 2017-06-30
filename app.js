@@ -1,9 +1,10 @@
 TopClient = require( './ALYZM/topClient' ).TopClient;
 var client = new TopClient({
-    'appkey' : '23500106' ,
-    'appsecret' : '7938816533f3fc698534761d15d8f66b' ,
-    'REST_URL' : 'http://gw.api.tbsandbox.com/router/rest'
+    'appkey' : '23783814' ,
+    'appsecret' : '63636a89dacc578085f6045bc06d96bc' ,
+    'REST_URL' : 'http://gw.api.taobao.com/router/rest'
 });
+
 var express = require("express");
 var app = express();
 var db = require("./models/db.js");
@@ -18,6 +19,10 @@ var appSSZSJ = require('./controller/APPJK/appSSZSJ')//app查询相关
 var appTzrz = require('./controller/APPJK/appTzrz')//app查询相关
 var appYjxx = require('./controller/APPJK/appYjxx')//app查询相关
 var appSFGL = require('./controller/APPJK/appSFGL')//app查询相关
+var drug = require('./models/import/drug')//药物号
+var drugCK = require('./models/import/drugCK')//药物号
+var drugGQ = require('./models/import/drugGQ')//药物号
+
 var schedule = require("node-schedule");
 var yytx = require('./models/import/yytx')
 //时间操作
@@ -42,29 +47,117 @@ app.use(session({
     saveUninitialized: true
 }));
 
-//定时任务,用于发送用药提醒等
+//每天凌晨两点运行
 var rule = new schedule.RecurrenceRule();
 
-rule.minute = 30;
+rule.dayOfWeek = [0, new schedule.Range(1, 6)];
 
-var j = schedule.scheduleJob(rule, function(){
+rule.hour = 2;
+
+rule.minute = 0;
+
+schedule.scheduleJob(rule, function(){
+    //查询所有药物号
+    var dateStr = moment().subtract(1, 'days').format('YYYY-MM-DD');
+    //取出所有昨天过期药物号
+    drug.find({"DrugExpryDTC" : {$lt : new Date()}}, function (err, persons) {
+        if (err == null){
+            for (var i = 0 ; i < persons.length ; i++){
+                var newDrug = persons[0];
+                //全部移动到过期数据库
+                drugGQ.create({
+                    "StudyID" : newDrug.StudyID,    //研究编号
+                    "DrugNum" : newDrug.DrugNum,    //药物号
+                    "ArmCD" : newDrug.ArmCD,    //治疗分组代码
+                    "Arm" : newDrug.Arm,   //治疗分组标签
+                    "PackSeq" : newDrug.PackSeq,   //编盲编号批次
+                    "DrugSeq" : newDrug.DrugSeq,  //药物流水号
+                    "DrugExpryDTC" : newDrug.DrugExpryDTC, //药物有效期
+                    "DrugDigits" : newDrug.DrugDigits, // 药物号位数
+                },function (error) {
+
+                });
+                //删除drug数据库中过期药物号
+                drug.remove({id:newDrug.id},function(err,result){
+                    if(err){
+                        console.log(err);
+                    }else{
+                        console.log("删除成功");
+                    }
+                });
+            }
+        }
+    })
+    //移动所有仓库中的药物号
+    drugCK.find({"DrugExpryDTC" : dateStr}, function (err, persons) {
+        if (err == null){
+            for (var i = 0 ; i < persons.length ; i++){
+                var newDrug = persons[0];
+                //全部移动到过期数据库
+                drugGQ.create({
+                    "StudyID" : newDrug.StudyID,    //研究编号
+                    "DrugNum" : newDrug.DrugNum,    //药物号
+                    "ArmCD" : newDrug.ArmCD,    //治疗分组代码
+                    "Arm" : newDrug.Arm,   //治疗分组标签
+                    "PackSeq" : newDrug.PackSeq,   //编盲编号批次
+                    "DrugSeq" : newDrug.DrugSeq,  //药物流水号
+                    "DrugExpryDTC" : newDrug.DrugExpryDTC, //药物有效期
+                    "DrugDigits" : newDrug.DrugDigits, // 药物号位数
+                    "DDrugNumRYN" : newDrug.DDrugNumRYN, // 属于分仓库已接收的药物号
+                    "DDrugNumAYN" : newDrug.DDrugNumAYN, // 属于分仓库已激活的药物号
+                    "DDrugDMNumYN" : newDrug.DDrugDMNumYN, // 属于分仓库损坏和遗漏药物号
+                    "DDrugUseAYN" : newDrug.DDrugUseAYN, // 是否使用:1使用
+                    "DDrugUseID" : newDrug.DDrugUseID, // 使用者ID
+                    "DDrugDMNum" : newDrug.DDrugDMNum,//分仓库损坏和遗漏药物号,已激活药物号对应的药物发现损坏或遗漏不见时，则对此药物号进行废弃
+                    "DrugId" : newDrug.DrugId,//确认签收批次ID--对应数据库YSZDryg  id
+                    "DrugDate" : newDrug.DrugDate,//批次时间YSZDryg  Date
+                    "UsedAddressId" : newDrug.UsedAddressId, //是那个仓库
+                    "UsedCoreId" : newDrug.UsedCoreId, //是那个中心
+                },function (error) {
+
+                });
+                //删除drug数据库中过期药物号
+                drugCK.remove({id:newDrug.id},function(err,result){
+                    if(err){
+                        console.log(err);
+                    }else{
+                        console.log("删除成功");
+                    }
+                });
+            }
+        }
+    })
+
+
+});
+
+//定时任务,用于发送用药提醒等
+var rule1 = new schedule.RecurrenceRule();
+rule1.minute = 30;
+schedule.scheduleJob(rule1, function(){
     //搜索所有30分钟的用药提醒
     var shi = moment().format('HH')
     //搜索用药提醒
     yytx.find({tuisong1:shi + ":" + 30,kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
         console.log(randomPersons.length)
         for (var i = 0 ; i < randomPersons.length ; i++){
+            var phone = randomPersons[i].phone
             client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
                 'extend' : '' ,
                 'sms_type' : 'normal' ,
                 'sms_free_sign_name' : '诺兰医药科技' ,
                 'sms_param' : {
-                    "yytx":randomPersons[i].tuisongnr1 ,
+                    studyID:randomPersons[i].StudyID ,
+                    yytx:randomPersons[i].tuisongnr1.replace('研究温馨提示：',''),
+                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                 } ,
-                'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_27540231"
+                'rec_num' :  randomPersons[i].phone  ,
+                'sms_template_code' : "SMS_63885566"
             }, function(error, response) {
-
+                if (error != null){
+                    console.log(error)
+                }
+                console.log(response)
             });
         }
     });
@@ -76,12 +169,16 @@ var j = schedule.scheduleJob(rule, function(){
                 'sms_type' : 'normal' ,
                 'sms_free_sign_name' : '诺兰医药科技' ,
                 'sms_param' : {
-                    "yytx":randomPersons[i].tuisongnr2 ,
+                    studyID:randomPersons[i].StudyID ,
+                    yytx:randomPersons[i].tuisongnr2.replace('研究温馨提示：',''),
+                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_27540231"
+                'sms_template_code' : "SMS_63885566"
             }, function(error, response) {
-
+                if (error != null){
+                    console.log(error)
+                }
             });
         }
     });
@@ -93,38 +190,47 @@ var j = schedule.scheduleJob(rule, function(){
                 'sms_type' : 'normal' ,
                 'sms_free_sign_name' : '诺兰医药科技' ,
                 'sms_param' : {
-                    "yytx":randomPersons[i].tuisongnr3 ,
+                    studyID:randomPersons[i].StudyID,
+                    yytx:randomPersons[i].tuisongnr3.replace('研究温馨提示：',''),
+                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_27540231"
+                'sms_template_code' : "SMS_63885566"
             }, function(error, response) {
-
+                if (error != null){
+                    console.log(error)
+                }
             });
         }
     });
 
 });
 
-rule.minute = 1;
+var rule2 = new schedule.RecurrenceRule();
+rule2.minute = 0;
 
-var i = schedule.scheduleJob(rule, function(){
+var i = schedule.scheduleJob(rule2, function(){
     //搜索所有30分钟的用药提醒
     var shi = moment().format('HH')
     //搜索用药提醒
+
     yytx.find({tuisong1:shi + ":" + "00",kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
-        console.log(randomPersons.length)
         for (var i = 0 ; i < randomPersons.length ; i++){
             client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
                 'extend' : '' ,
                 'sms_type' : 'normal' ,
                 'sms_free_sign_name' : '诺兰医药科技' ,
                 'sms_param' : {
-                    "yytx":randomPersons[i].tuisongnr1 ,
+                    studyID:randomPersons[i].StudyID ,
+                    yytx:randomPersons[i].tuisongnr1.replace('研究温馨提示：',''),
+                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_16250342"
+                'sms_template_code' : "SMS_63885566"
             }, function(error, response) {
-
+                if (error != null){
+                    console.log(error)
+                }
             });
         }
     });
@@ -136,12 +242,16 @@ var i = schedule.scheduleJob(rule, function(){
                 'sms_type' : 'normal' ,
                 'sms_free_sign_name' : '诺兰医药科技' ,
                 'sms_param' : {
-                    "yytx":randomPersons[i].tuisongnr2 ,
+                    studyID:randomPersons[i].StudyID ,
+                    yytx:randomPersons[i].tuisongnr2.replace('研究温馨提示：',''),
+                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_16250342"
+                'sms_template_code' : "SMS_63885566"
             }, function(error, response) {
-
+                if (error != null){
+                    console.log(error)
+                }
             });
         }
     });
@@ -153,12 +263,16 @@ var i = schedule.scheduleJob(rule, function(){
                 'sms_type' : 'normal' ,
                 'sms_free_sign_name' : '诺兰医药科技' ,
                 'sms_param' : {
-                    "yytx":randomPersons[i].tuisongnr3 ,
+                    studyID:randomPersons[i].StudyID ,
+                    yytx:randomPersons[i].tuisongnr3.replace('研究温馨提示：',''),
+                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                 } ,
                 'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_16250342"
+                'sms_template_code' : "SMS_63885566"
             }, function(error, response) {
-
+                if (error != null){
+                    console.log(error)
+                }
             });
         }
     });
@@ -168,6 +282,9 @@ var i = schedule.scheduleJob(rule, function(){
 app.use(express.static("./public"));
 app.use(express.static("./uploads"));
 app.use(express.static("./assistant"));
+app.use(express.static("./images"));
+app.use(express.static("./public/upload/pay/"));
+
 //登录界面
 app.get("/admin",login.showAdmin);
 
@@ -211,6 +328,17 @@ app.post('/nlyy/addSzrwsqhsh',ImportData.addSzrwsqhsh);
 app.post("/nlyy/deleteData",ImportData.deleteData);
 //登录请求
 app.post("/node/getHome",login.doHome);
+
+/**************导出数据*****************/
+
+//点击导出用户资料
+app.post('/node/addDcyhzhzz',ImportData.addDcyhzhzz);
+
+//点击导出药物资料
+app.post('/node/addDcyyywh',ImportData.addDcyyywh);
+
+//点击导出随机资料
+app.post('/node/addDcyysjh',ImportData.addDcyysjh);
 
 /*************APP接口******************/
 //获取验证码接口
@@ -267,6 +395,8 @@ app.post("/app/getSelectedActivation",appChangKu.getSelectedActivation);
 app.post("/app/getSelectedAbandoned",appChangKu.getSelectedAbandoned);
 //中心代签收药物清单
 app.post("/app/getZXDqsywqd",appChangKu.getZXDqsywqd);
+//获取中心仓管员信息
+app.post("/app/getZXCGYData",appChangKu.getZXCGYData);
 //中心已签收药物清单
 app.post("/app/getZXYqsywqd",appChangKu.getZXYqsywqd);
 //中心所有药物(已签收+代签收)清单
@@ -295,12 +425,16 @@ app.post('/app/getYytx',appSSZSJ.getYytx);
 app.post('/app/getBcywh',appSSZSJ.getBcywh);
 //替换药物号
 app.post('/app/getThywh',appSSZSJ.getThywh);
+//中心所有以激活和未使用药物号
+app.post('/app/getZXAllKYYwh',appSSZSJ.getZXAllYwh);
 //查阅筛选失败例数分布
 app.post('/app/getCysxsblsfb',appSSZSJ.getCysxsblsfb);
 //查阅随机例数分布
 app.post('/app/getCysjlsfb',appSSZSJ.getCysjlsfb);
 //查阅退出或完成例数分布
 app.post('/app/getCytchwclsfb',appSSZSJ.getCytchwclsfb);
+//查阅退出或完成例数分布--单个中心
+app.post('/app/getCytchwclsfbZX',appSSZSJ.getCytchwclsfbZX);
 
 //添加筛选失败受试者基础数据
 app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);
@@ -361,10 +495,15 @@ app.post('/app/getSiteUnblindingApplication',appSFGL.getSiteUnblindingApplicatio
 app.post('/app/getStudyUnblindingApplication',appSFGL.getStudyUnblindingApplication);
 //获取待揭盲列表
 app.post('/app/getStayUnblindingApplication',appSFGL.getStayUnblindingApplication);
+//获取待揭盲全部列表
+app.post('/app/getAllStayUnblindingApplication',appSFGL.getAllStayUnblindingApplication);
 //设置是否揭盲
 app.post('/app/getIsUnblindingApplication',appSFGL.getIsUnblindingApplication);
 //设置审批
 app.post('/app/getTrialUnblindingApplication',appSFGL.getTrialUnblindingApplication);
+
+//图片上传
+app.post('/app/imageUpdata',ImportData.imageUpdata);
 
 //404错误
 app.use('/',function (req, res) {

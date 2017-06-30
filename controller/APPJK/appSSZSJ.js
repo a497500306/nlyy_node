@@ -3,16 +3,30 @@
  */
 var formidable = require('formidable');
 var site = require('../../models/import/site');
+var ApplicationAndAuditSchema = require('../../models/import/ApplicationAndAudit');
 var researchParameter = require('../../models/import/researchParameter');
 var addSuccessPatient = require('../../models/import/addSuccessPatient');
 var addFailPatient = require('../../models/import/addFailPatient');
+var addOutPatient = require('../../models/import/addOutPatient');
 var random = require('../../models/import/random');
-var drugCK = require('../../models/import/drugCK')
+var drugCK = require('../../models/import/drugCK');
+var users = require('../../models/import/users');
+var drugWL = require('../../models/import/drugWL');
+var yytx = require('../../models/import/yytx');
+var randomTool = require('../../randomTool/MLRandomTool');
 var EMail = require("../../models/EMail");
-var users = require('../../models/import/users')
-var drugWL = require('../../models/import/drugWL')
-var yytx = require('../../models/import/yytx')
-var randomTool = require('../../randomTool/MLRandomTool')
+var appTool = require("./appTool");
+
+TopClient = require( '../../ALYZM/topClient' ).TopClient;
+var client = new TopClient({
+    'appkey' : '23783814' ,
+    'appsecret' : '63636a89dacc578085f6045bc06d96bc' ,
+    'REST_URL' : 'http://gw.api.taobao.com/router/rest'
+});
+
+//时间操作
+var moment = require('moment');
+moment().format();
 //获取中心数据
 exports.getSite = function (req, res, next) {
     var form = new formidable.IncomingForm();
@@ -94,50 +108,103 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
                     }else{
                         //设置患者SubjID(流水号)
                         addSuccessPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, spersons) {
-                            addFailPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, fpersons) {
-                                addSuccessPatient.create({
-                                    SubjID:fpersons.length + spersons.length + 1,
-                                    StudySeq:fields.StudySeq,
-                                    StudyID:fields.StudyID,
-                                    SiteID:fields.SiteID,
-                                    SiteNam:fields.SiteNam,
-                                    ScreenYN:fields.ScreenYN,
-                                    SubjDOB:fields.SubjDOB,
-                                    SubjSex:fields.SubjSex,
-                                    SubjIni:fields.SubjIni,
-                                    SubjMP:fields.SubjMP,
-                                    RandoM:fields.RandoM,
-                                    SubjFa:fields.SubjFa,
-                                    SubjFb:fields.SubjFb,
-                                    SubjFc:fields.SubjFc,
-                                    SubjFd:fields.SubjFd,
-                                    SubjFe:fields.SubjFe,
-                                    SubjFf:fields.SubjFf,
-                                    SubjFg:fields.SubjFg,
-                                    SubjFh:fields.SubjFh,
-                                    SubjFi:fields.SubjFi,
-                                    SubjStudYN:fields.SubjStudYN,
-                                    Date:new Date()
-                                },function (err,data) {
-                                    var subjId = data.SubjID;
-                                    for (var i = subjId.length ; i < 4 ; i++){
-                                        subjId = "0" + subjId;
-                                    }
-                                    subjId = data.SiteID + subjId
-                                    //创建用户号
-                                    addSuccessPatient.update({
-                                        'id' : data.id,
-                                    },{
-                                        'USubjID' : subjId,
-                                    },function () {
+                            if (err != null){
+                                console.log('addSuccessPatient');
+                                console.log(err);
+                                res.send({
+                                    'isSucceed' : 200,
+                                    'msg' : 'C服务器忙碌,请移步到随机列表'
+                                });
+                            }else {
+                                //判断是否有中心人数限制
+                                researchParameter.find({StudyID : fields.StudyID},function (err, researchData) {
+                                    if (err != null) {
                                         res.send({
-                                            'isSucceed' : 400,
-                                            'USubjID' : subjId,
-                                            'id' : data.id
+                                            'isSucceed': 200,
+                                            'msg': '服务器忙碌,请移步到随机列表'
                                         });
+                                        return;
+                                    }
+                                    if (researchData[0].SizeLInSiteYN == 1){
+                                        if (spersons.length >= researchData[0].SizeLInSite){
+                                            res.send({
+                                                'isSucceed' : 200,
+                                                'msg' : '超过中心最大例数限制。'
+                                            });
+                                            return
+                                        }
+                                    }
+                                    addFailPatient.find({
+                                        StudyID: fields.StudyID,
+                                        SiteID: fields.SiteID
+                                    }, function (err, fpersons) {
+                                        if (err != null) {
+                                            console.log('addFailPatient');
+                                            console.log(err);
+                                            res.send({
+                                                'isSucceed': 200,
+                                                'msg': 'F服务器忙碌,请移步到随机列表'
+                                            });
+                                        } else {
+                                            addSuccessPatient.create({
+                                                SubjID: fpersons.length + spersons.length + 1,
+                                                StudySeq: fields.StudySeq,
+                                                StudyID: fields.StudyID,
+                                                SiteID: fields.SiteID,
+                                                SiteNam: fields.SiteNam,
+                                                ScreenYN: fields.ScreenYN,
+                                                SubjDOB: fields.SubjDOB,
+                                                SubjSex: fields.SubjSex,
+                                                SubjIni: fields.SubjIni,
+                                                SubjMP: fields.SubjMP,
+                                                RandoM: fields.RandoM,
+                                                SubjFa: fields.SubjFa,
+                                                SubjFb: fields.SubjFb,
+                                                SubjFc: fields.SubjFc,
+                                                SubjFd: fields.SubjFd,
+                                                SubjFe: fields.SubjFe,
+                                                SubjFf: fields.SubjFf,
+                                                SubjFg: fields.SubjFg,
+                                                SubjFh: fields.SubjFh,
+                                                SubjFi: fields.SubjFi,
+                                                SubjStudYN: fields.SubjStudYN,
+                                                Date: new Date()
+                                            }, function (err, data) {
+                                                if (err != null) {
+                                                    console.log(err)
+                                                    res.send({
+                                                        'isSucceed': 200,
+                                                        'msg': '添加失败,请重新确定'
+                                                    });
+                                                } else {
+                                                    var subjId = null;
+                                                    if (data.SubjID == null) {
+                                                        subjId = fpersons.length + spersons.length + 1;
+                                                    } else {
+                                                        subjId = data.SubjID;
+                                                    }
+                                                    for (var i = subjId.length; i < 4; i++) {
+                                                        subjId = "0" + subjId;
+                                                    }
+                                                    subjId = data.SiteID + subjId
+                                                    //创建用户号
+                                                    addSuccessPatient.update({
+                                                        'id': data.id,
+                                                    }, {
+                                                        'USubjID': subjId,
+                                                    }, function () {
+                                                        res.send({
+                                                            'isSucceed': 400,
+                                                            'USubjID': subjId,
+                                                            'id': data.id
+                                                        });
+                                                    })
+                                                }
+                                            })
+                                        }
                                     })
                                 })
-                            })
+                            }
                         })
                     }
                 })
@@ -164,22 +231,30 @@ exports.getAddFailPatientData = function (req, res, next) {
                     SubjectIn:fields.SubjectIn,
                     DSSTDAT:new Date()
                 },function (err,data) {
-                    var subjId = "" + data.SubjID;
-                    for (var i = subjId.length ; i < 4 ; i++){
-                        subjId = "0" + subjId;
-                    }
-                    subjId = data.SiteID + subjId
-                    //创建用户号
-                    addFailPatient.update({
-                        'id' : data.id,
-                    },{
-                        'USubjectID' : subjId,
-                    },function () {
+                    if (err != null) {
+                        console.log(err)
                         res.send({
-                            'isSucceed' : 400,
-                            'USubjectID' : subjId
+                            'isSucceed' : 200,
+                            'msg' : '添加失败,请重新确定'
                         });
-                    })
+                    }else {
+                        var subjId = "" + data.SubjID;
+                        for (var i = subjId.length ; i < 4 ; i++){
+                            subjId = "0" + subjId;
+                        }
+                        subjId = data.SiteID + subjId
+                        //创建用户号
+                        addFailPatient.update({
+                            'id' : data.id,
+                        },{
+                            'USubjectID' : subjId,
+                        },[false, true],function () {
+                            res.send({
+                                'isSucceed' : 400,
+                                'USubjectID' : subjId
+                            });
+                        })
+                    }
                 })
             })
         })
@@ -190,6 +265,7 @@ exports.getAddFailPatientData = function (req, res, next) {
 exports.getYytx = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
+        console.log(fields);
         //先查找该研究是否有该手机号码用药提醒,有的话修改,没有的话添加
         yytx.find({StudyID:fields.StudyID,phone:fields.phone}, function (err, persons) {
             if (persons.length == 0){//没有,添加
@@ -250,7 +326,7 @@ exports.getYytx = function (req, res, next) {
                     tuisong3 :  fields.tuisong3,
                     //推送内容
                     tuisongnr3 :  fields.tuisongnr3,
-                },function () {
+                },[false, true],function () {
                     res.send({
                         'isSucceed': 400,
                         'msg': '添加成功'
@@ -265,210 +341,527 @@ exports.getYytx = function (req, res, next) {
 exports.getBcywh = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        //药物号
-        drugCK.find({StudyID:fields.StudyID ,UsedCoreId:fields.SiteID,DDrugNumAYN: 1,DDrugUseAYN:{$ne:1}}).sort('DrugNum').exec(function(err, drugPersons) {
-            if (err != null) {
-                console.log(err)
-                console.log('错误')
-            }
-            console.log('中心已激活药物号个数')
-            console.log(drugPersons.length)
-            if (drugPersons.length < 20) {
-                users.find({
-                    StudyID: fields.StudyID,
-                    UserFun: 'H4',
-                    UserSite: fields.SiteID
-                }, function (err, usersPersons) {
-                    //异步转同步
-                    (function iterator(i) {
-                        console.log('查找仓管员')
-                        if (i == usersPersons.length) {
-                            return
-                        }
-                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
-                            //发送短信提醒
-                            //发送药物号不足提醒
-                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                            EMail.fasongxiujian({
-                                from: "配送清单<k13918446402@qq.com>", // 发件地址
-                                to: usersPersons[i].UserEmail, // 收件列表
-                                subject: "药物号不足提醒", // 标题
-                                html: htmlStr // html 内容
-                            })
-                            iterator(i + 1)
-                        })
-                    })(0);
-                })
-                users.find({StudyID: fields.StudyID, UserFun: 'M6'}, function (err, usersPersons) {
-                    //异步转同步
-                    (function iterator(i) {
-                        console.log('查找总仓管员')
-                        if (i == usersPersons.length) {
-                            return
-                        }
-                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
-                            //发送短信提醒
-                            //发送药物号不足提醒
-                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                            EMail.fasongxiujian({
-                                from: "配送清单<k13918446402@qq.com>", // 发件地址
-                                to: usersPersons[i].UserEmail, // 收件列表
-                                subject: "药物号不足提醒", // 标题
-                                html: htmlStr // html 内容
-                            })
-                            iterator(i + 1)
-                        })
-                    })(0);
-                })
-            }
-            if (drugPersons.length == 0) {
+        //判断改用户是否以揭盲
+        addSuccessPatient.find({'id':fields.userId}, function (err, userPersons) {
+            if (userPersons[0].isUnblinding == 1){
                 res.send({
                     'isSucceed': 200,
-                    'msg': '该中心已激活药物号不足'
+                    'msg': '该受试者已揭盲,不能补充药物号'
                 });
-            } else {
-                //设置为已使用
-                drugCK.update({
-                    'id':drugPersons[0].id
-                },{
-                    DDrugUseAYN:1 ,
-                    DDrugUseID:fields.userId
-                },function () {
-                    console.log("药物号修改成功");
-                })
-                addSuccessPatient.update({
-                    'id':fields.userId
-                },{
-                    $push : {
-                        'Drug' : drugPersons[0].DrugNum,
-                        'DrugDate' : new Date()
-                    } ,
-                },function () {
-                    res.send({
-                        'isSucceed': 200,
-                        'msg': '药物号:' + drugPersons[0].DrugNum
-                    });
+            }else{
+                //药物号
+                researchParameter.find({StudyID: fields.StudyID}, function (err, persons1) {
+                    var fenzhu = persons1[0].NTrtGrp.split(",");
+                    drugCK.find({
+                        StudyID:fields.StudyID ,
+                        Arm : userPersons[0].Arm,
+                        UsedCoreId:fields.SiteID,
+                        DDrugNumAYN: 1,
+                        DDrugDMNumYN: {$ne:1},
+                        DDrugUseAYN:{$ne:1},
+                        DrugExpryDTC : {$gte:new Date()},
+                    }).sort('DrugNum').exec(function(err, drugPersons) {
+                        if (err != null) {
+                            console.log(err)
+                            console.log('错误')
+                        }
+                        var newDrug = null;
+                        if (persons1[0].NTrtGrp.length != 0){
+                            for (var i = 0 ; i < drugPersons.length ; i++){
+                                if (drugPersons[i].Arm == fields.Arm){
+                                    newDrug = drugPersons[i];
+                                    break;
+                                }
+                            }
+                            if (newDrug == null) {
+                                res.send({
+                                    'isSucceed': 200,
+                                    'msg': '该中心某组已激活药物号不足'
+                                });
+                                return
+                            }
+                        }
+                        if (drugPersons.length < 6) {
+                            fasongyoujian(fields)
+                        }
+                        if (drugPersons.length == 0) {
+                            res.send({
+                                'isSucceed': 200,
+                                'msg': '该中心已激活药物号不足'
+                            });
+                        } else {
+                            //设置为已使用
+                            drugCK.update({
+                                'id':newDrug.id
+                            },{
+                                DDrugUseAYN:1 ,
+                                DDrugUseID:fields.userId
+                            },[false, true],function () {
+                                console.log("药物号修改成功");
+                            })
+                            addSuccessPatient.update({
+                                'id':fields.userId
+                            },{
+                                $push : {
+                                    'Drug' : newDrug.DrugNum,
+                                    'DrugDate' : new Date()
+                                } ,
+                            },[false, true],function () {
+                                drugWL.update({
+                                    'StudyID' : fields.StudyID,
+                                    'DrugNum' : newDrug.DrugNum
+                                },{
+                                    $push : {
+                                        'drugStrs' : "药物号经替补发放",
+                                        'drugDate' : new Date()
+                                    } ,
+                                },[false, true],function () {
+                                    console.log("修改成功");
+                                })
+                                res.send({
+                                    'isSucceed': 200,
+                                    'msg': '药物号:' + newDrug.DrugNum
+                                });
+                            })
+                        }
+                    })
                 })
             }
         })
     })
 }
 
-//替换药物号
-exports.getThywh = function (req, res, next) {
+//中心所有以激活和未使用药物号
+exports.getZXAllYwh = function (req, res, next) {
     var form = new formidable.IncomingForm();
-    form.parse(req,function (err, fields, files) {
-        console.log(fields)
-        //药物号
-        drugCK.find({StudyID:fields.StudyID ,UsedCoreId:fields.SiteID,DDrugNumAYN: 1,DDrugUseAYN:{$ne:1}}).sort('DrugNum').exec(function(err, drugPersons) {
-            if (err != null) {
-                console.log(err)
-                console.log('错误')
-            }
-            console.log('中心已激活药物号个数')
-            console.log(drugPersons.length)
-            if (drugPersons.length < 20) {
-                users.find({
-                    StudyID: fields.StudyID,
-                    UserFun: 'H4',
-                    UserSite: fields.SiteID
-                }, function (err, usersPersons) {
-                    //异步转同步
-                    (function iterator(i) {
-                        console.log('查找仓管员')
-                        if (i == usersPersons.length) {
-                            return
-                        }
-                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
-                            //发送短信提醒
-                            //发送药物号不足提醒
-                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                            EMail.fasongxiujian({
-                                from: "配送清单<k13918446402@qq.com>", // 发件地址
-                                to: usersPersons[i].UserEmail, // 收件列表
-                                subject: "药物号不足提醒", // 标题
-                                html: htmlStr // html 内容
-                            })
-                            iterator(i + 1)
-                        })
-                    })(0);
-                })
-                users.find({StudyID: fields.StudyID, UserFun: 'M6'}, function (err, usersPersons) {
-                    //异步转同步
-                    (function iterator(i) {
-                        console.log('查找总仓管员')
-                        if (i == usersPersons.length) {
-                            return
-                        }
-                        site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
-                            //发送短信提醒
-                            //发送药物号不足提醒
-                            var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                            htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                            EMail.fasongxiujian({
-                                from: "配送清单<k13918446402@qq.com>", // 发件地址
-                                to: usersPersons[i].UserEmail, // 收件列表
-                                subject: "药物号不足提醒", // 标题
-                                html: htmlStr // html 内容
-                            })
-                            iterator(i + 1)
-                        })
-                    })(0);
-                })
-            }
+    form.parse(req, function (err, fields, files) {
+        drugCK.find({
+            StudyID:fields.StudyID ,
+            UsedCoreId:fields.SiteID,
+            DDrugNumAYN: 1,
+            DDrugDMNumYN: {$ne:1},
+            DDrugUseAYN:{$ne:1}
+        }).sort('DrugNum').exec(function(err, drugPersons) {
             if (drugPersons.length == 0) {
                 res.send({
                     'isSucceed': 200,
                     'msg': '该中心已激活药物号不足'
                 });
             } else {
-                //设置为已使用
-                drugCK.update({
-                    'id':drugPersons[0].id
-                },{
-                    DDrugUseAYN:1 ,
-                    DDrugUseID:fields.userId
-                },function () {
-                    console.log("药物号修改成功");
-                })
-                drugCK.update({
-                    'StudyID':fields.StudyID,
-                    'DrugNum':fields.DrugNum
-                },{
-                    'DDrugNumAYN' : 0 ,
-                    'DDrugDMNumYN' : 1
-                },function () {
-                    console.log("药物号修改成功");
-                    //修改物流信息
-                    drugWL.update({
-                        'StudyID' : fields.StudyID,
-                        'DrugNum' : fields.DrugNum
-                    },{
-                        $push : {
-                            'drugStrs' : '替换药物号,废弃',
-                            'drugDate' : new Date()
-                        } ,
-                    },function () {
-                        console.log("修改成功");
-                    })
-                })
-                addSuccessPatient.update({
-                    'id':fields.userId
-                },{
-                    $push : {
-                        'Drug' : "替换药物号为" + drugPersons[0].DrugNum,
-                        'DrugDate' : new Date()
-                    } ,
-                },function () {
-                    res.send({
-                        'isSucceed': 200,
-                        'msg': '药物号:' + drugPersons[0].DrugNum
-                    });
+                res.send({
+                    'isSucceed': 400,
+                    'data': drugPersons
+                });
+            }
+        })
+    })
+}
+//替换药物号
+exports.getThywh = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log(fields);
+        //判断改用户是否以揭盲
+        //判断改用户是否以揭盲
+        addSuccessPatient.find({'id':fields.userId}, function (err, userPersons) {
+            if (userPersons[0].isUnblinding == 1) {
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '该受试者已揭盲,不能补充药物号'
+                });
+            } else {
+                //查询改替换的药物号是否废弃
+                drugCK.find({
+                    'DrugNum': fields.DrugNum,
+                    'StudyID': fields.StudyID,
+                    'DDrugDMNumYN': 1
+                }, function (err, isFQPersons) {
+                    if (isFQPersons.length == 0) {
+                        addSuccessPatient.find({'id': fields.userId}, function (err, userPersons) {
+                            if (userPersons.length > 0) {
+                                //药物号
+                                researchParameter.find({StudyID: fields.StudyID}, function (err, persons1) {
+                                    var fenzhu = persons1[0].NTrtGrp.split(",");
+                                    drugCK.find({
+                                        StudyID: fields.StudyID,
+                                        UsedCoreId: fields.SiteID,
+                                        DDrugNumAYN: 1,
+                                        DDrugDMNumYN: {$ne: 1},
+                                        DrugExpryDTC: {$gte: new Date()},
+                                        Arm: userPersons[0].Arm,
+                                        DDrugUseAYN: {$ne: 1}
+                                    }).sort('DrugNum').exec(function (err, drugPersons) {
+                                        if (err != null) {
+                                            console.log(err)
+                                            console.log('错误')
+                                        }
+                                        var newDrug = null;
+                                        if (persons1[0].NTrtGrp.length != 0) {
+                                            for (var i = 0; i < drugPersons.length; i++) {
+                                                if (drugPersons[i].Arm == fields.Arm) {
+                                                    newDrug = drugPersons[i];
+                                                    break;
+                                                }
+                                            }
+                                            if (newDrug == null) {
+                                                res.send({
+                                                    'isSucceed': 200,
+                                                    'msg': '该中心某组已激活药物号不足'
+                                                });
+                                                return
+                                            }
+                                        }
+                                        if (drugPersons.length < 6) {
+                                            fasongyoujian(fields)
+                                        }
+                                        if (drugPersons.length == 0) {
+                                            res.send({
+                                                'isSucceed': 200,
+                                                'msg': '该中心已激活药物号不足'
+                                            });
+                                        } else {
+                                            //设置为已使用
+                                            //查看药物号是否过期
+
+                                            drugCK.update({
+                                                'id': newDrug.id
+                                            }, {
+                                                DDrugUseAYN: 1,
+                                                DDrugUseID: fields.userId
+                                            }, [false, true], function (err) {
+                                                if (err != null) {
+                                                    console.log("替换药物号失败");
+                                                    console.log(err);
+                                                }
+                                            }),
+                                                //替换的药物号设置为已废弃
+                                                drugCK.update({
+                                                    'DrugNum': fields.DrugNum,
+                                                    'StudyID': fields.StudyID,
+                                                }, {
+                                                    DDrugDMNumYN: 1
+                                                }, [false, true], function (err) {
+                                                    if (err != null) {
+                                                        console.log("替换药物号失败");
+                                                        console.log(err);
+                                                    }
+                                                })
+                                            addSuccessPatient.find({
+                                                'id': fields.userId
+                                            }, function (sss, user) {
+                                                addSuccessPatient.update({
+                                                    'id': fields.userId
+                                                }, {
+                                                    $push: {
+                                                        'Drug': "替换药物号为" + newDrug.DrugNum,
+                                                        'DrugDate': new Date()
+                                                    },
+                                                }, [false, true], function (sss, ddd) {
+                                                    console.log(sss, ddd)
+                                                    //这里修改中心替换药物号个数+1
+                                                    site.find({
+                                                        StudyID: fields.StudyID,
+                                                        SiteID: fields.SiteID
+                                                    }, function (err, sitePersons) {
+                                                        var ThywhGS = 0;
+                                                        if (sitePersons[0].ThywhGS != null) {
+                                                            ThywhGS = sitePersons[0].ThywhGS + 1
+                                                        } else {
+                                                            ThywhGS = 1
+                                                        }
+
+                                                        site.update({
+                                                            StudyID: fields.StudyID,
+                                                            SiteID: fields.SiteID
+                                                        }, {
+                                                            ThywhGS: ThywhGS
+                                                        }, [false, true], function (sss, ddd) {
+
+                                                        })
+                                                    })
+                                                    drugWL.update({
+                                                        'DrugNum': fields.DrugNum,
+                                                        'StudyID': fields.StudyID,
+                                                    }, {
+                                                        $push: {
+                                                            'drugStrs': "药物号已废弃",
+                                                            'drugDate': new Date()
+                                                        },
+                                                    }, [false, true], function () {
+                                                        console.log("修改成功");
+                                                    })
+                                                    drugWL.update({
+                                                        'StudyID': fields.StudyID,
+                                                        'DrugNum': newDrug.DrugNum
+                                                    }, {
+                                                        $push: {
+                                                            'drugStrs': "药物号经替补发放",
+                                                            'drugDate': new Date()
+                                                        },
+                                                    }, [false, true], function () {
+                                                        console.log("修改成功");
+                                                    })
+                                                    res.send({
+                                                        'isSucceed': 200,
+                                                        'msg': '替换药物号为:' + newDrug.DrugNum
+                                                    });
+                                                });
+                                            })
+                                        }
+                                    })
+                                })
+                            } else {
+                                res.send({
+                                    'isSucceed': 200,
+                                    'msg': '未找到该用户'
+                                });
+                            }
+                        })
+                    } else {
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '该药物已经被替换过,请勿重复替换'
+                        });
+                    }
                 })
             }
+        })
+    })
+    // var form = new formidable.IncomingForm();
+    // form.parse(req,function (err, fields, files) {
+    //     console.log(fields)
+    //     //药物号
+    //     drugCK.find({StudyID:fields.StudyID ,UsedCoreId:fields.SiteID,DDrugNumAYN: 1,DDrugUseAYN:{$ne:1}}).sort('DrugNum').exec(function(err, drugPersons) {
+    //         if (err != null) {
+    //             console.log(err)
+    //             console.log('错误')
+    //         }
+    //         console.log('中心已激活药物号个数')
+    //         console.log(drugPersons.length)
+    //         if (drugPersons.length < 20) {
+    //             users.find({
+    //                 StudyID: fields.StudyID,
+    //                 UserFun: 'H4',
+    //                 UserSite: fields.SiteID
+    //             }, function (err, usersPersons) {
+    //                 //异步转同步
+    //                 (function iterator(i) {
+    //                     console.log('查找仓管员')
+    //                     if (i == usersPersons.length) {
+    //                         return
+    //                     }
+    //                     site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
+    //                         //发送短信提醒
+    //                         //发送药物号不足提醒
+    //                         var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
+    //                         htmlStr = htmlStr + '<h2>药物号不足</h2>'
+    //                         EMail.fasongxiujian({
+    //                             from: "配送清单<k13918446402@qq.com>", // 发件地址
+    //                             to: usersPersons[i].UserEmail, // 收件列表
+    //                             subject: "药物号不足提醒", // 标题
+    //                             html: htmlStr // html 内容
+    //                         })
+    //                         iterator(i + 1)
+    //                     })
+    //                 })(0);
+    //             })
+    //             users.find({StudyID: fields.StudyID, UserFun: 'M6'}, function (err, usersPersons) {
+    //                 //异步转同步
+    //                 (function iterator(i) {
+    //                     console.log('查找总仓管员')
+    //                     if (i == usersPersons.length) {
+    //                         return
+    //                     }
+    //                     site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
+    //                         //发送短信提醒
+    //                         //发送药物号不足提醒
+    //                         var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
+    //                         htmlStr = htmlStr + '<h2>药物号不足</h2>'
+    //                         EMail.fasongxiujian({
+    //                             from: "配送清单<k13918446402@qq.com>", // 发件地址
+    //                             to: usersPersons[i].UserEmail, // 收件列表
+    //                             subject: "药物号不足提醒", // 标题
+    //                             html: htmlStr // html 内容
+    //                         })
+    //                         iterator(i + 1)
+    //                     })
+    //                 })(0);
+    //             })
+    //         }
+    //         if (drugPersons.length == 0) {
+    //             res.send({
+    //                 'isSucceed': 200,
+    //                 'msg': '该中心已激活药物号不足'
+    //             });
+    //         } else {
+    //             //设置为已使用
+    //             drugCK.update({
+    //                 'id':fields.newDrug.id
+    //             },{
+    //                 DDrugUseAYN:1 ,
+    //                 DDrugUseID:fields.userId
+    //             },function () {
+    //                 console.log("药物号修改成功");
+    //             })
+    //             drugCK.update({
+    //                 'StudyID':fields.StudyID,
+    //                 'DrugNum':fields.DrugNum
+    //             },{
+    //                 'DDrugNumAYN' : 0 ,
+    //                 'DDrugDMNumYN' : 1
+    //             },function () {
+    //                 console.log("药物号修改成功");
+    //                 //修改物流信息
+    //                 drugWL.update({
+    //                     'StudyID' : fields.StudyID,
+    //                     'DrugNum' : fields.DrugNum
+    //                 },{
+    //                     $push : {
+    //                         'drugStrs' : '替换药物号',
+    //                         'drugDate' : new Date()
+    //                     } ,
+    //                 },function () {
+    //                     console.log("修改成功");
+    //                 })
+    //             })
+    //             addSuccessPatient.update({
+    //                 'id':fields.userId
+    //             },{
+    //                 $push : {
+    //                     'Drug' : "替换药物号为" + fields.newDrug.DrugNum,
+    //                     'DrugDate' : new Date()
+    //                 } ,
+    //             },function () {
+    //                 res.send({
+    //                     'isSucceed': 400,
+    //                     'msg': '替换的药物号为:' + fields.newDrug.DrugNum
+    //                 });
+    //             })
+    //         }
+    //     })
+    // })
+}
+
+//发送邮件
+fasongyoujian = function (fields) {
+    users.find({StudyID: fields.StudyID , UserFun: 'M6'}, function (err, usersPersons) {
+        if (err != null){
+            return
+        }
+        if (usersPersons.length == 0){
+            return
+        }
+        var userArray = usersPersons;
+        users.find({StudyID: fields.StudyID , UserSite: fields.SiteID,UserFun: 'H4'}, function (err, NewUsersPersons) {
+            if (err != null){
+                return
+            }
+            if (NewUsersPersons.length == 0){
+                return
+            }
+
+            var usersPersons = [];
+            for (var j = 0; j < userArray.length; j++) {
+                var userModel = userArray[j]
+                if (userModel.UserSiteYN == '1') {
+                    usersPersons.push(userModel)
+                } else {
+                    var siteIDs = userModel.UserSite.split(",");
+                    for (var x = 0; x < siteIDs.length; x++) {
+                        var siteIDStr = siteIDs[x]
+                        if (siteIDStr == fields.SiteID) {
+                            usersPersons.push(userModel)
+                        }
+                    }
+                }
+            }
+            //异步转同步
+            (function iterator(i) {
+                console.log('查找仓管员')
+                if (i == usersPersons.length) {
+                    return
+                }
+                site.find({StudyID: fields.StudyID, SiteID: fields.SiteID}, function (err, sitePersons) {
+                    ApplicationAndAuditSchema.find({StudyID: fields.StudyID}, function (err, ApplicationAndAuditSchemaPersons) {
+                        drugCK.find({
+                            StudyID: fields.StudyID,
+                            UsedCoreId: fields.SiteID,
+                            DDrugUseAYN: 1
+                        }).sort('DrugNum').exec(function (err, sydrugPersons) {
+                            drugCK.find({
+
+                                // StudyID:fields.StudyID ,
+                                // UsedCoreId:fields.SiteID,
+                                // DDrugNumAYN: 1,
+                                // DDrugDMNumYN: {$ne:1},
+                                // DDrugUseAYN:{$ne:1},
+                                // DrugExpryDTC : {$gte:new Date()}
+
+                                UsedCoreId: fields.SiteID,
+                                StudyID: fields.StudyID,
+                                DDrugNumAYN: {$ne: 0},
+                                DDrugDMNumYN: {$ne: 1},
+                                DrugExpryDTC: {$gte: new Date()},
+                                $or: [
+                                    {DDrugUseAYN: 0},
+                                    {DDrugUseAYN: null}
+                                ]
+                            }).sort('DrugNum').exec(function (err, kcdrugPersons) {
+                                //发送短信提醒
+                                //发送药物号不足提醒
+                                var htmlStr = '<h2>研究编号:' + sitePersons[0].StudyID + '</h2>'
+                                htmlStr = htmlStr + '<h2>研究标题全称:' + ApplicationAndAuditSchemaPersons[0].StudNameF + '</h2>'
+                                htmlStr = htmlStr + '<h2>研究标题简称:' + ApplicationAndAuditSchemaPersons[0].StudNameS + '</h2>'
+                                htmlStr = htmlStr + '<h2>研究中心编号:' + sitePersons[0].SiteID + '</h2>'
+                                htmlStr = htmlStr + '<h2>研究中心名称:' + sitePersons[0].SiteNam + '</h2>'
+                                htmlStr = htmlStr + '<h2>研究中心地址:' + sitePersons[0].SiteAdd + '</h2>'
+                                htmlStr = htmlStr + '<h2>研究中心邮编:' + sitePersons[0].SiteZipC + '</h2>'
+                                htmlStr = htmlStr + '<h2>药品管理员姓名:' + NewUsersPersons[0].UserNam + '</h2>'
+                                htmlStr = htmlStr + '<h2>药品管理员手机:' + NewUsersPersons[0].UserMP + '</h2>'
+                                var kcdrugL = kcdrugPersons.length;
+                                // if (kcdrugPersons.length - 1 >= 0){
+                                //     kcdrugL = kcdrugL - 1
+                                // }
+                                htmlStr = htmlStr + '<h2>目前库存量:' + kcdrugL + '</h2>'
+                                htmlStr = htmlStr + '<h2>已使用药物量:' + sydrugPersons.length + '</h2>'
+                                if (kcdrugPersons.length == 0) {
+                                    htmlStr = htmlStr + '<h2>该研究中心已经无药物号可取，请立即补充药物！</h2>'
+                                } else {
+                                    htmlStr = htmlStr + '<h2>该研究中心库存药物量已到临界值/不足，请尽快补充药物！</h2>'
+                                }
+                                EMail.fasongxiujian({
+                                    from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
+                                    to: usersPersons[i].UserEmail, // 收件列表
+                                    subject: fields.StudyID + "药物号不足提醒", // 标题
+                                    html: htmlStr // html 内容
+                                })
+                                var jsonss = {
+                                    studyID: fields.StudyID,
+                                    yytx: fields.StudyID + "药物号不足提醒",
+                                    date: (moment().format('YYYY-MM-DD h:mm:ss a'))
+                                }
+                                client.execute('alibaba.aliqin.fc.sms.num.send', {
+                                    'extend': '',
+                                    'sms_type': 'normal',
+                                    'sms_free_sign_name': '诺兰医药科技',
+                                    'sms_param': {
+                                        studyID: fields.StudyID,
+                                        yytx: fields.StudyID + "药物号不足提醒",
+                                        date: (moment().format('YYYY-MM-DD h:mm:ss a'))
+                                    },
+                                    'rec_num': usersPersons[i].UserMP,
+                                    'sms_template_code': "SMS_63885566"
+                                }, function (error, response) {
+                                    if (error != null) {
+                                        console.log(error)
+                                    }
+                                });
+                            })
+                        })
+                    })
+                    iterator(i + 1)
+                })
+            })(0);
         })
     })
 }
@@ -476,6 +869,7 @@ exports.getThywh = function (req, res, next) {
 exports.getRandomNumber = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
+        console.log(fields);
         //异步转同步
         (function iterator(i) {
             //取出研究随机化参数信息
@@ -490,6 +884,11 @@ exports.getRandomNumber = function (req, res, next) {
                         res.send({
                             'isSucceed': 200,
                             'msg': '未找到该研究随机化信息'
+                        });
+                    }else if (persons[0].Random != null) {
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '该受试者已经获取了随机号,请勿重复获取'
                         });
                     }else{
                         if (persons[0].RandoM == 1){//无分层因素固定随机:先到先得
@@ -509,7 +908,7 @@ exports.getRandomNumber = function (req, res, next) {
                                             //取出随机号和药物号
                                             youyaowuhaoquyaowuhao(persons,fields,randomPersons,persons[0].RandoM,res)
                                         }else{//否
-                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res)
+                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res,fields)
                                         }
                                     }else if (persons[0].BlindSta == 3){//开放
                                         //判断是否提供药物号
@@ -518,7 +917,7 @@ exports.getRandomNumber = function (req, res, next) {
                                             youyaowuhaoquyaowuhao(persons,fields,randomPersons,persons[0].RandoM,res)
                                         }else{//否
                                             //取出随机号不取药物号
-                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res)
+                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res,fields)
                                         }
                                     }else{//双盲实验
                                         //取出随机号和药物号
@@ -556,7 +955,7 @@ exports.getRandomNumber = function (req, res, next) {
                                             youyaowuhaoquyaowuhao(persons,fields,randomPersons,persons[0].RandoM,res)
                                         }else{//否
                                             //取出随机号不取药物号
-                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res)
+                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res,fields)
                                         }
                                     }else if (persons[0].BlindSta == 3){//开放
                                         //判断是否提供药物号
@@ -565,7 +964,7 @@ exports.getRandomNumber = function (req, res, next) {
                                             youyaowuhaoquyaowuhao(persons,fields,randomPersons,persons[0].RandoM,res)
                                         }else{//否
                                             //取出随机号不取药物号
-                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res)
+                                            meiyouyaowuhao(persons,randomPersons,persons[0].RandoM,res,fields)
                                         }
                                     }else{//双盲实验
                                         //取出随机号
@@ -610,69 +1009,44 @@ function dongtaisuijiYouyaowuhao(persons,fields,RandoM,res) {
     //获取0~1中的一个小数
     var rand = Math.random();
     //药物号
-    drugCK.find({StudyID:fields.StudyID ,UsedCoreId:fields.SiteID,DDrugNumAYN: 1,DDrugUseAYN:{$ne:1}}).sort('DrugNum').exec(function(err, drugPersons) {
-        if (err != null){
-            console.log(err)
-            console.log('错误')
-        }
-        console.log('中心已激活药物号个数')
-        console.log(drugPersons.length)
-        if (drugPersons.length < 20){
-            users.find({StudyID:fields.StudyID ,UserFun:'H4',UserSite:fields.SiteID}, function (err, usersPersons) {
-                //异步转同步
-                (function iterator(i){
-                    console.log('查找仓管员')
-                    if(i == usersPersons.length){
-                        return
-                    }
-                    site.find({StudyID:fields.StudyID , SiteID:fields.SiteID}, function (err, sitePersons) {
-                        //发送短信提醒
-                        //发送药物号不足提醒
-                        var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                        htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                        EMail.fasongxiujian({
-                            from: "配送清单<k13918446402@qq.com>", // 发件地址
-                            to: usersPersons[i].UserEmail, // 收件列表
-                            subject: "药物号不足提醒", // 标题
-                            html: htmlStr // html 内容
-                        })
-                        iterator(i+1)
-                    })
-                })(0);
+    researchParameter.find({StudyID: fields.StudyID}, function (err, persons1) {
+        var fenzhu = persons1[0].NTrtGrp.split(",");
+        //异步转同步
+        (function iterator(j){
+            if(j == fenzhu.length){
+                dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,"123")
+                return
+            }
+            //药物号
+            drugCK.find({
+                StudyID:fields.StudyID ,
+                Arm:fenzhu[j],
+                UsedCoreId:fields.SiteID,DDrugNumAYN: 1,
+                DDrugDMNumYN: {$ne:1},
+                DDrugUseAYN:{$ne:1},
+                DrugExpryDTC : {$gte:new Date()},
+            }).sort('DrugNum').exec(function(err, drugPersons) {
+                if (err != null){
+                    console.log(err)
+                    console.log('错误')
+                }
+                console.log('中心已激活药物号个数')
+                console.log(drugPersons.length)
+                if (drugPersons.length < 6){
+                    fasongyoujian(fields)
+                }
+                if (drugPersons.length == 0){
+                    res.send({
+                        'isSucceed': 200,
+                        'msg': '该中心已激活药物号不足'
+                    });
+                    return;
+                }else {
+                    iterator(j+1)
+                }
             })
-            users.find({StudyID:fields.StudyID ,UserFun:'M6'}, function (err, usersPersons) {
-                //异步转同步
-                (function iterator(i){
-                    console.log('查找总仓管员')
-                    if(i == usersPersons.length){
-                        return
-                    }
-                    site.find({StudyID:fields.StudyID , SiteID:fields.SiteID}, function (err, sitePersons) {
-                        //发送短信提醒
-                        //发送药物号不足提醒
-                        var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                        htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                        EMail.fasongxiujian({
-                            from: "配送清单<k13918446402@qq.com>", // 发件地址
-                            to: usersPersons[i].UserEmail, // 收件列表
-                            subject: "药物号不足提醒", // 标题
-                            html: htmlStr // html 内容
-                        })
-                        iterator(i+1)
-                    })
-                })(0);
-            })
-        }
-        if (drugPersons.length == 0){
-            res.send({
-                'isSucceed': 200,
-                'msg': '该中心已激活药物号不足'
-            });
-        }else {
-            dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons)
-        }
+        })(0);
     })
-    //drugPersons
 }
 
 //无药物号动态随机
@@ -699,22 +1073,13 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                 var glArray = [];
                 for (var i = 0 ; i < alloRatio.length ; i++){
                     for (var j = 0 ; j < alloRatio[i] ; j++){
-                        glArray.push(i)
+                        glArray.push(ntrtGrp[i])
                     }
                 }
                 //随机取数组中的元素
-                var id = 0;
-                var jj = 1;
-                while(jj){
-                    id = Math.ceil(Math.random()*10);
-                    if (id <= glArray.length){
-                        jj = 0
-                    }
-                }
-                id = id - 1
+                var n = Math.floor(Math.random() * glArray.length + 1)-1;
                 //需要放入的治疗组
-                var ntrtInt = alloRatio[id];
-                var ntrtGrp = ntrtGrp[id];
+                var ntrtGrp = glArray[n];
                 //在随机号数据库中添加一条随机号数据
                 //搜索该研究中有多少随机号
                 chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields)
@@ -726,9 +1091,15 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                 //创建各组的字典数组
                 var SubjFs = [];
                 var nTrtGrpArray = persons[0].NTrtGrp.split(",");
+                //比例
+                var alloRatio = persons[0].AlloRatio.split(",");
+                var zongBili = 0;
                 for (var i = 0 ; i < nTrtGrpArray.length ; i++){
                     SubjFs[nTrtGrpArray[i]] = [];
+                    zongBili = zongBili + parseInt(alloRatio[i])
                 }
+                console.log(zongBili);
+                console.log(SubjFs);
                 var sss = 0
                 //1.先把所有用户的<随机分层因素>放到对应的数组中:[[[A组分层因素A],[A组分层因素B]],[[B组分层因素A],[B组分层因素B]]]
                 for (var i = 0 ; i < addSuccessPersons.length ; i++) {
@@ -1013,6 +1384,11 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                 console.log('期望人数')
                 console.log(qiwangrenshu)
                 var qiwangcha = [];
+                //计算出比例
+                var bili = [];
+                for (var  x = 0 ; x < nTrtGrpArray.length ; x++){
+                    bili.push(parseInt(alloRatio[x])/zongBili);
+                }
                 //计算出总人数
                 for (var i = 0 ; i < nTrtGrpArray.length ; i++){
                     //算出添加受试者后的受试者期望人数
@@ -1021,7 +1397,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         if (addSuccessPersons[0].SubjFa != ""){
                             if (j == nTrtGrpArray.length - 1){
                                 console.log(zongR[0] + rensus[j][0] + 1)
-                                var iii = (zongR[0] + rensus[j][0] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[0] + rensus[j][0] + 1)
                                 console.log(iii)
                                 console.log("zongR: " + zongR[0] + " rensus[j][0]: " + rensus[j][0])
                                 zongR.splice(0,1,iii)
@@ -1032,7 +1408,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFb != ""){
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[1] + rensus[j][1] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[1] + rensus[j][1] + 1)
                                 zongR.splice(1,1,iii)
                             }else{
                                 var iii = zongR[1] + rensus[j][1]
@@ -1041,7 +1417,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFc != ""){
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[2] + rensus[j][2] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[2] + rensus[j][2] + 1)
                                 zongR.splice(2,1,iii)
                             }else{
                                 var iii = zongR[2] + rensus[j][2]
@@ -1050,7 +1426,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFd != ""){
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[3] + rensus[j][3] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[3] + rensus[j][3] + 1)
                                 zongR.splice(3,1,iii)
                             }else{
                                 var iii = zongR[3] + rensus[j][3]
@@ -1059,7 +1435,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFe != ""){
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[4] + rensus[j][4] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[4] + rensus[j][4] + 1)
                                 zongR.splice(4,1,iii)
                             }else{
                                 var iii = zongR[4] + rensus[j][4]
@@ -1068,7 +1444,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFf != ""){
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[5] + rensus[j][5] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[5] + rensus[j][5] + 1)
                                 zongR.splice(5,1,iii)
                             }else{
                                 var iii = zongR[5] + rensus[j][5]
@@ -1077,7 +1453,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFg != ""){
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[6] + rensus[j][6] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[6] + rensus[j][6] + 1)
                                 zongR.splice(6,1,iii)
                             }else{
                                 var iii = zongR[6] + rensus[j][6]
@@ -1086,7 +1462,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFh != ""){
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[7] + rensus[j][7] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[7] + rensus[j][7] + 1)
                                 zongR.splice(7,1,iii)
                             }else{
                                 var iii = zongR[7] + rensus[j][7]
@@ -1095,7 +1471,7 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         }
                         if (addSuccessPersons[0].SubjFi != "") {
                             if (j == nTrtGrpArray.length - 1){
-                                var iii = (zongR[zongR.length - 1] + rensus[j][rensus[j].length - 1] + 1)/nTrtGrpArray.length
+                                var iii = (zongR[zongR.length - 1] + rensus[j][rensus[j].length - 1] + 1)
                                 zongR.splice(8,1,iii)
                             }else{
                                 var iii = zongR[zongR.length - 1] + rensus[j][rensus[j].length - 1]
@@ -1103,16 +1479,17 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                             }
                         }
                     }
+                    console.log("123123123")
                     console.log(zongR)
                     var array = [];//[[[0,2,2],[3,3,2],[3,1,2]],[假设B],]
                     if (addSuccessPersons[0].SubjFa != ""){
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][0] - zongR[0]
+                                var acj =  qiwangrenshu[i][0] - (zongR[0] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][0] - zongR[0]
+                                var acj =  rensus[y][0] - (zongR[0] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1122,10 +1499,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][1] - zongR[1]
+                                var acj =  qiwangrenshu[i][1] - (zongR[1] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][1] - zongR[1]
+                                var acj =  rensus[y][1] - (zongR[1] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1135,10 +1512,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][2] - zongR[2]
+                                var acj =  qiwangrenshu[i][2] - (zongR[2] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][2] - zongR[2]
+                                var acj =  rensus[y][2] - (zongR[2] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1148,10 +1525,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][3] - zongR[3]
+                                var acj =  qiwangrenshu[i][3] - (zongR[3] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][3] - zongR[3]
+                                var acj =  rensus[y][3] - (zongR[3] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1161,10 +1538,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][4] - zongR[4]
+                                var acj =  qiwangrenshu[i][4] - (zongR[4] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][4] - zongR[4]
+                                var acj =  rensus[y][4] - (zongR[4] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1174,10 +1551,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][5] - zongR[5]
+                                var acj =  qiwangrenshu[i][5] - (zongR[5] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][5] - zongR[5]
+                                var acj =  rensus[y][5] - (zongR[5] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1187,10 +1564,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][6] - zongR[6]
+                                var acj =  qiwangrenshu[i][6] - (zongR[6] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][6] - zongR[6]
+                                var acj =  rensus[y][6] - (zongR[6] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1200,10 +1577,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][7] - zongR[7]
+                                var acj =  qiwangrenshu[i][7] - (zongR[7] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][7] - zongR[7]
+                                var acj =  rensus[y][7] - (zongR[7] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1213,10 +1590,10 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                         var qiwangchaju = [];
                         for (var y = 0 ; y < nTrtGrpArray.length ; y++){
                             if (y == i){
-                                var acj =  qiwangrenshu[i][qiwangrenshu[i].length - 1] - zongR[zongR.length - 1]
+                                var acj =  qiwangrenshu[i][qiwangrenshu[i].length - 1] - (zongR[zongR.length - 1] * bili[y])
                                 qiwangchaju.push(acj)
                             }else {
-                                var acj =  rensus[y][rensus[y].length - 1] - zongR[zongR.length - 1]
+                                var acj =  rensus[y][rensus[y].length - 1] - (zongR[zongR.length - 1] * bili[y])
                                 qiwangchaju.push(acj)
                             }
                         }
@@ -1340,19 +1717,21 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
                  randomTool.wangquansuiji(persons)
                  }*/
                 if (persons[0].FormulaImSc == 1) {//极差法
-                    var ntrgrp = randomTool.jichafa(nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
-                    //存储随机号
-                    chuchunyonghu(RandoM,drugPersons,persons,ntrgrp,res,fields)
+                    randomTool.jichafa(nTrtGrpArray,addSuccessPersons,qiwangcha,persons,function (ntrgrp) {
+                        //存储随机号
+                        chuchunyonghu(RandoM,drugPersons,persons,ntrgrp,res,fields)
+                    })
                 }else if (persons[0].FormulaImSc == 2) {//方差法
-                    var ntrgrp = randomTool.fangchafa(nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
-                    //储存随机号
-                    chuchunyonghu(RandoM,drugPersons,persons,ntrgrp,res,fields)
+                    randomTool.fangchafa(nTrtGrpArray,addSuccessPersons,qiwangcha,persons,function (ntrgrp) {
+                        //储存随机号
+                        chuchunyonghu(RandoM,drugPersons,persons,ntrgrp,res,fields)
+                    })
                 }else {//最大值法
-                    var ntrgrp = randomTool.zuidazhifa(nTrtGrpArray,addSuccessPersons,qiwangcha,persons)
-                    //储存随机号
-                    chuchunyonghu(RandoM,drugPersons,persons,ntrgrp,res,fields)
+                    randomTool.zuidazhifa(nTrtGrpArray,addSuccessPersons,qiwangcha,persons,function (ntrgrp) {
+                        //储存随机号
+                        chuchunyonghu(RandoM,drugPersons,persons,ntrgrp,res,fields)
+                    })
                 }
-                /**************************************************************/
             })
         }
     })
@@ -1361,6 +1740,13 @@ function dongtaisuijiWuyaowuhao(persons,fields,RandoM,res,drugPersons) {
 //储存用户
 function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
     random.find({StudyID:fields.StudyID}, function (err, newRandomPersons) {
+        var rr = newRandomPersons.length + 1 + '';
+        var xxx = 4 - rr.length;
+        var aa = '';
+        for (var kk = 0 ; kk < xxx ; kk ++){
+            aa = aa + '0'
+        }
+        rr = aa + rr;
         random.create({
             StudyID : fields.StudyID,    //研究编号
             // "StratumN" : Number,    //分层结果代码:1=01中心既往未接受化疗者，2=01中心既往已接受化疗者，3=02中心既往未接受化疗者，4=02中心既
@@ -1372,7 +1758,7 @@ function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
             // "ArmCD" : String, //治疗分组代码
             "StudyDs" : persons[0].StudyDs,    //研究设计:1=平行设计；2=交叉设计
             "StudyPeNum" : persons[0].StudyPeNum,   //研究阶段个数:适用于StudyDs=2；StudyDs=1不适用
-            "RandoNum" : newRandomPersons.length + 1, //随机号
+            "RandoNum" : rr, //随机号
             "Arm" : ntrtGrp, //治疗分组标签
             "SubjFa" : fields.SubjFa == '' ? null:fields.SubjFa,
             "SubjFb" :fields.SubjFb == '' ? null:fields.SubjFb,
@@ -1392,78 +1778,155 @@ function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
                 addSuccessPatient.update({
                     'id':fields.userId
                 },{
+                    'RandoDoer' : fields.user.id,
                     'Random':data.RandoNum,
                     'RandoM':RandoM,
                     'Arm' : data.Arm,
-                },function () {
+                },[false, true],function () {
                     console.log("新增联系人修改成功");
+                    addSuccessPatient.find({'id':fields.userId}).exec((err, newPersons) => {
+                        if (persons[0].RandoNumYN == 1) {
+                            msg = msg + "随机号: " + data.RandoNum + "\n"
+                        }
+                        if (persons[0].ArmYN == 1) {
+                            msg = msg + "分组信息: " + data.Arm + "\n"
+                        }
+                        if (persons[0].SubStudYN == 1) {
+                            if (newPersons[0].SubjStudYN == "否"){
+                                msg = msg + "随机参加子研究: " + "否" + "\n"
+                            }else{
+                                var isArray = ["是","否"];
+                                var t = Math.floor(Math.random() * isArray.length + 1)-1;
+                                var isStr = isArray[t];
+                                msg = msg + "随机参加子研究: " + isStr + "\n"
+                                addSuccessPatient.update({
+                                    'id':fields.userId
+                                },{
+                                    'SubjStudYN' : isStr
+                                },function () {})
+                            }
+                        }
+                        if (persons[0].CStudyPeYN == 1) {
+                            msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
+                        }
+                        console.log('提示')
+                        console.log(msg)
+
+                        suijiyoujian(fields, persons, [data], "无");
+                        //输出
+                        res.send({
+                            'isSucceed': 400,
+                            'msg': msg
+                        });
+                        return
+                    })
                 })
-                if (persons[0].RandoNumYN == 1){
-                    msg = msg + "随机号: " + data.RandoNum + "\n"
-                }
-                if (persons[0].ArmYN == 1) {
-                    msg = msg + "分组信息: " + data.Arm + "\n"
-                }
-                if (persons[0].SubStudYN == 1) {
-                    msg = msg + "随机参加子研究: " + ((data.RandoNum%2 ==0) ?"是":"否") + "\n"
-                }
-                if (persons[0].CStudyPeYN == 1) {
-                    msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
-                }
-                console.log('提示')
-                console.log(msg)
-                //输出
-                res.send({
-                    'isSucceed': 400,
-                    'msg': msg
-                });
-                return
             }else{
-                //设置为已使用
-                drugCK.update({
-                    'id':drugPersons[0].id
-                },{
-                    DDrugUseAYN:1 ,
-                    DDrugUseID:fields.userId
-                },function () {
-                    console.log("药物号修改成功");
+                drugCK.find({
+                    StudyID:fields.StudyID ,
+                    Arm : ntrtGrp,
+                    UsedCoreId:fields.SiteID,
+                    DDrugNumAYN: 1,
+                    DDrugDMNumYN: {$ne:1},
+                    DDrugUseAYN:{$ne:1},
+                    DrugExpryDTC : {$gte:new Date()},
+                }).sort('DrugNum').exec(function(err, drugPersons) {
+                    if (drugPersons.length == 0) {
+                        //输出
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '网络异常,请重试!'
+                        });
+                        //删除刚刚保存的数据
+                        random.remove({id:data.id},function(err){
+                            if(err){
+                                console.log(err);
+                            }else{
+                                console.log("删除成功");
+                            }
+                        });
+                        //删除用户
+                        addSuccessPatient.remove({id:fields.userId},function(err){
+
+                        });
+                        return;
+                    }
+                    //设置为已使用
+                    drugCK.update({
+                        'id':drugPersons[0].id
+                    },{
+                        DDrugUseAYN:1 ,
+                        DDrugUseID:fields.userId
+                    },[false, true],function () {
+                        console.log("药物号修改成功");
+                    })
+                    addSuccessPatient.update({
+                        'id':fields.userId
+                    },{
+
+                        'RandoDoer' : fields.user.id,
+                        'Random':data.RandoNum,
+                        'RandoM':RandoM,
+                        'Arm' : data.Arm,
+                        $push : {
+                            'Drug' : drugPersons[0].DrugNum,
+                            'DrugDate' : new Date()
+                        } ,
+                    },[false, true],function () {
+                        addSuccessPatient.find({'id':fields.userId}).exec((err, newPersons) => {
+                            if (persons[0].RandoNumYN == 1) {
+                                msg = msg + "随机号: " + data.RandoNum + "\n"
+                            }
+                            if (persons[0].DrugNumYN == 1) {
+                                msg = msg + "药物号: " + drugPersons[0].DrugNum + "\n"
+                            }
+                            if (persons[0].ArmYN == 1) {
+                                msg = msg + "分组信息: " + data.Arm + "\n"
+                            }
+                            if (persons[0].SubStudYN == 1) {
+                                if (newPersons[0].SubjStudYN == "否") {
+                                    msg = msg + "随机参加子研究: " + "否" + "\n"
+                                } else {
+                                    var isArray = ["是", "否"];
+                                    var t = Math.floor(Math.random() * isArray.length + 1) - 1;
+                                    var isStr = isArray[t];
+                                    msg = msg + "随机参加子研究: " + isStr + "\n"
+                                    addSuccessPatient.update({
+                                        'id': fields.userId
+                                    }, {
+                                        'SubjStudYN': isStr
+                                    }, function () {
+                                    })
+                                }
+                            }
+                            if (persons[0].CStudyPeYN == 1) {
+                                msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
+                            }
+                            console.log('提示')
+                            console.log(msg)
+
+
+                            suijiyoujian(fields, persons, [data], drugPersons[0].DrugNum);
+                            drugWL.update({
+                                'StudyID': fields.StudyID,
+                                'DrugNum': drugPersons[0].DrugNum
+                            }, {
+                                $push: {
+                                    'drugStrs': "药物号已正常发放",
+                                    'drugDate': new Date()
+                                },
+                            }, [false, true], function () {
+                                console.log("修改成功");
+                            })
+                            //输出
+                            res.send({
+                                'isSucceed': 400,
+                                'msg': msg
+                            });
+                            return
+                        })
+                    })
                 })
-                addSuccessPatient.update({
-                    'id':fields.userId
-                },{
-                    'Random':data.RandoNum,
-                    'RandoM':RandoM,
-                    'Arm' : data.Arm,
-                    $push : {
-                        'Drug' : drugPersons[0].DrugNum,
-                        'DrugDate' : new Date()
-                    } ,
-                },function () {
-                    console.log("新增联系人修改成功");
-                })
-                if (persons[0].RandoNumYN == 1){
-                    msg = msg + "随机号: " + data.RandoNum + "\n"
-                }
-                if (persons[0].DrugNumYN == 1) {
-                    msg = msg + "药物号: " + drugPersons[0].DrugNum + "\n"
-                }
-                if (persons[0].ArmYN == 1) {
-                    msg = msg + "分组信息: " + data.Arm + "\n"
-                }
-                if (persons[0].SubStudYN == 1) {
-                    msg = msg + "随机参加子研究: " + ((data.RandoNum%2 ==0) ?"是":"否") + "\n"
-                }
-                if (persons[0].CStudyPeYN == 1) {
-                    msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
-                }
-                console.log('提示')
-                console.log(msg)
-                //输出
-                res.send({
-                    'isSucceed': 400,
-                    'msg': msg
-                });
-                return
             }
         })
     })
@@ -1472,61 +1935,26 @@ function chuchunyonghu(RandoM,drugPersons,persons,ntrtGrp,res,fields) {
 //有药物号公共方法
 function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
     var msg = '操作成功\n';
-    console.log(persons)
+    console.log(fields)
     //取出随机号和药物号
     //药物号
-    drugCK.find({StudyID:fields.StudyID ,UsedCoreId:fields.SiteID,DDrugNumAYN: 1,DDrugUseAYN:{$ne:1}}).sort('DrugNum').exec(function(err, drugPersons) {
+    drugCK.find({
+        StudyID:fields.StudyID ,
+        UsedCoreId:fields.SiteID,
+        DDrugNumAYN: 1,
+        Arm:randomPersons[0].Arm,
+        DDrugDMNumYN: {$ne:1},
+        DDrugUseAYN:{$ne:1},
+        DrugExpryDTC : {$gte:new Date()},
+    }).sort('DrugNum').exec(function(err, drugPersons) {
         if (err != null){
             console.log(err)
             console.log('错误')
         }
         console.log('中心已激活药物号个数')
         console.log(drugPersons.length)
-        if (drugPersons.length < 20){
-            users.find({StudyID:fields.StudyID ,UserFun:'H4',UserSite:fields.SiteID}, function (err, usersPersons) {
-                //异步转同步
-                (function iterator(i){
-                    console.log('查找仓管员')
-                    if(i == usersPersons.length){
-                        return
-                    }
-                    site.find({StudyID:fields.StudyID , SiteID:fields.SiteID}, function (err, sitePersons) {
-                        //发送短信提醒
-                        //发送药物号不足提醒
-                        var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                        htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                        EMail.fasongxiujian({
-                            from: "配送清单<k13918446402@qq.com>", // 发件地址
-                            to: usersPersons[i].UserEmail, // 收件列表
-                            subject: "药物号不足提醒", // 标题
-                            html: htmlStr // html 内容
-                        })
-                        iterator(i+1)
-                    })
-                })(0);
-            })
-            users.find({StudyID:fields.StudyID ,UserFun:'M6'}, function (err, usersPersons) {
-                //异步转同步
-                (function iterator(i){
-                    console.log('查找总仓管员')
-                    if(i == usersPersons.length){
-                        return
-                    }
-                    site.find({StudyID:fields.StudyID , SiteID:fields.SiteID}, function (err, sitePersons) {
-                        //发送短信提醒
-                        //发送药物号不足提醒
-                        var htmlStr = '<h2>中心:' + sitePersons[0].SiteNam + '</h2>'
-                        htmlStr = htmlStr + '<h2>药物号不足</h2>'
-                        EMail.fasongxiujian({
-                            from: "配送清单<k13918446402@qq.com>", // 发件地址
-                            to: usersPersons[i].UserEmail, // 收件列表
-                            subject: "药物号不足提醒", // 标题
-                            html: htmlStr // html 内容
-                        })
-                        iterator(i+1)
-                    })
-                })(0);
-            })
+        if (drugPersons.length < 6){
+            fasongyoujian(fields)
         }
         if (drugPersons.length == 0){
             res.send({
@@ -1540,12 +1968,13 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
             },{
                 DDrugUseAYN:1 ,
                 DDrugUseID:fields.userId
-            },function () {
+            },[false, true],function () {
                 console.log("药物号修改成功");
             })
             addSuccessPatient.update({
                 'id':fields.userId
             },{
+                'RandoDoer' : fields.user.id,
                 'Random':randomPersons[0].RandoNum,
                 'RandoM':RandoM,
                 'Arm' : randomPersons[0].Arm,
@@ -1553,26 +1982,110 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
                     'Drug' : drugPersons[0].DrugNum,
                     'DrugDate' : new Date()
                 } ,
-            },function () {
-                console.log("新增联系人修改成功");
+            },[false, true],function () {
+                addSuccessPatient.find({'id':fields.userId}).exec((err, newPersons) => {
+                    console.log("新增联系人修改成功");
+                    if (persons[0].RandoNumYN == 1) {
+                        msg = msg + "随机号: " + randomPersons[0].RandoNum + "\n"
+                    }
+                    if (persons[0].DrugNumYN == 1) {
+                        msg = msg + "药物号: " + drugPersons[0].DrugNum + "\n"
+                    }
+                    if (persons[0].ArmYN == 1) {
+                        msg = msg + "分组信息: " + randomPersons[0].Arm + "\n"
+                    }
+                    if (persons[0].SubStudYN == 1) {
+                        if (newPersons[0].SubjStudYN == "否") {
+                            msg = msg + "随机参加子研究: " + "否" + "\n"
+                        } else {
+                            var isArray = ["是", "否"];
+                            var t = Math.floor(Math.random() * isArray.length + 1) - 1;
+                            var isStr = isArray[t];
+                            msg = msg + "随机参加子研究: " + isStr + "\n"
+                            addSuccessPatient.update({
+                                'id': fields.userId
+                            }, {
+                                'SubjStudYN': isStr
+                            }, function () {
+                            })
+                        }
+                    }
+                    if (persons[0].CStudyPeYN == 1) {
+                        msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
+                    }
+                    suijiyoujian(fields, persons, randomPersons, drugPersons[0].DrugNum);
+                    console.log('提示')
+                    console.log(msg)
+                    drugWL.update({
+                        'StudyID': fields.StudyID,
+                        'DrugNum': drugPersons[0].DrugNum
+                    }, {
+                        $push: {
+                            'drugStrs': '药物号已正常发放',
+                            'drugDate': new Date()
+                        },
+                    }, function () {
+                        console.log("修改成功");
+                    })
+                    //修改随机号已经使用
+                    random.update({
+                        'id': randomPersons[0].id
+                    }, {
+                        isUse: 1,
+                        UseUserId: fields.userId
+                    }, function () {
+                        console.log("随机号修改成功");
+                        //输出
+                        res.send({
+                            'isSucceed': 400,
+                            'msg': msg
+                        });
+                        return
+                    })
+                })
             })
+        }
+    })
+}
+//没有药物号公共方法
+function meiyouyaowuhao(persons,randomPersons,RandoM,res,fields) {
+    var msg = '';
+    addSuccessPatient.update({
+        'id':fields.userId
+    },{
+        'RandoDoer' : fields.user.id,
+        'Random':randomPersons[0].RandoNum,
+        'RandoM':RandoM,
+        'Arm' : randomPersons[0].Arm,
+    },function () {
+        console.log("新增联系人修改成功");
+        addSuccessPatient.find({'id':fields.userId}).exec((err, newPersons) => {
+            //取出随机号不取药物号
             if (persons[0].RandoNumYN == 1){
                 msg = msg + "随机号: " + randomPersons[0].RandoNum + "\n"
-            }
-            if (persons[0].DrugNumYN == 1) {
-                msg = msg + "药物号: " + drugPersons[0].DrugNum + "\n"
             }
             if (persons[0].ArmYN == 1) {
                 msg = msg + "分组信息: " + randomPersons[0].Arm + "\n"
             }
             if (persons[0].SubStudYN == 1) {
-                msg = msg + "随机参加子研究: " + ((data.RandoNum%2 ==0) ?"是":"否") + "\n"
+                if (newPersons[0].SubjStudYN == "否"){
+                    msg = msg + "随机参加子研究: " + "否" + "\n"
+                }else{
+                    var isArray = ["是","否"];
+                    var t = Math.floor(Math.random() * isArray.length + 1)-1;
+                    var isStr = isArray[t];
+                    msg = msg + "随机参加子研究: " + isStr + "\n"
+                    addSuccessPatient.update({
+                        'id':fields.userId
+                    },{
+                        'SubjStudYN' : isStr
+                    },function () {})
+                }
             }
             if (persons[0].CStudyPeYN == 1) {
                 msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
             }
-            console.log('提示')
-            console.log(msg)
+            suijiyoujian(fields,persons,randomPersons,"无");
             //修改随机号已经使用
             random.update({
                 'id':randomPersons[0].id
@@ -1588,48 +2101,190 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
                 });
                 return
             })
-        }
+        })
     })
 }
-//没有药物号公共方法
-function meiyouyaowuhao(persons,randomPersons,RandoM,res) {
-    var msg = '';
-    addSuccessPatient.update({
-        'id':fields.userId
-    },{
-        'Random':randomPersons[0].RandoNum,
-        'RandoM':RandoM,
-        'Arm' : randomPersons[0].Arm,
-    },function () {
-        console.log("新增联系人修改成功");
-    })
-    //取出随机号不取药物号
-    if (persons[0].RandoNumYN == 1){
-        msg = msg + "随机号: " + randomPersons[0].RandoNum + "\n"
+
+//发送邮件
+suijiyoujian = function(fields,persons,randomPersons,DrugNum){
+    //发送邮件
+    var emas = [];
+    var phones = [];
+    emas.push(fields.czzUser.UserEmail)
+    phones.push(fields.czzUser.UserMP)
+    var htmlStr = ''
+    var duanxinStr = fields.sjzUser.USubjID + '受试者随机成功' + '；' + ((persons[0].BlindSta == 1) ? '' : ('分组为：' + randomPersons[0].Arm + '，') )
+    if (persons[0].BlindSta == 1){//双盲
+        if (fields.SubjFa == ''){//无分层
+            htmlStr = htmlStr + "<h2>" + fields.StudyID + "研究温馨提示：受试者" + fields.sjzUser.USubjID + "</h2>"
+            htmlStr = htmlStr + "<h2>" + fields.sjzUser.SubjIni + "已经于"+ (moment().format('YYYY-MM-DD h:mm:ss a'))  + "成功完成随机</h2>"
+            htmlStr = htmlStr + "<h2>随机号为" + randomPersons[0].RandoNum + "</h2>"
+            htmlStr = htmlStr + "<h2>首次分配药物号为" + DrugNum + "</h2>"
+            duanxinStr = duanxinStr + '随机号为：' + randomPersons[0].RandoNum + '；' +  '首次分配药物号为：' + DrugNum
+        }else{//有分层
+            htmlStr = htmlStr + "<h2>" + fields.StudyID + "研究温馨提示：受试者" + fields.sjzUser.USubjID + "</h2>"
+            htmlStr = htmlStr + "<h2>" + fields.sjzUser.SubjIni + "已经于"+ (moment().format('YYYY-MM-DD h:mm:ss a'))  + "成功完成随机</h2>"
+            htmlStr = htmlStr + "<h2>随机号为" + randomPersons[0].RandoNum + "</h2>"
+            htmlStr = htmlStr + "<h2>首次分配药物号为" + DrugNum + "</h2>"
+            htmlStr = htmlStr + '<h2>分层因素如下：' + '</h2>'
+            duanxinStr = duanxinStr + '随机号为：' + randomPersons[0].RandoNum + '；' +  '首次分配药物号为：' + DrugNum
+            duanxinStr = duanxinStr + '分层因素如下：'
+            if (fields.SubjFa != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraA + '：' + fields.SubjFa + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraA + '：' + fields.SubjFa + '，'
+            }
+            if (fields.SubjFb != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraB + '：' + fields.SubjFb + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraB + '：' + fields.SubjFb + '，'
+            }
+            if (fields.SubjFc != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraC + '：' + fields.SubjFc + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraC + '：' + fields.SubjFc + '，'
+            }
+            if (fields.SubjFd != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraD + '：' + fields.SubjFd + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraD + '：' + fields.SubjFd + '，'
+            }
+            if (fields.SubjFe != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraE + '：' + fields.SubjFe + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraE + '：' + fields.SubjFe + '，'
+            }
+            if (fields.SubjFf != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraF + '：' + fields.SubjFf + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraF + '：' + fields.SubjFf + '，'
+            }
+            if (fields.SubjFg != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraG + '：' + fields.SubjFg + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraG + '：' + fields.SubjFg + '，'
+            }
+            if (fields.SubjFh != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraH + '：' + fields.SubjFh + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraH + '：' + fields.SubjFh + '，'
+            }
+            if (fields.SubjFi != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraI + '：' + fields.SubjFi + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraI + '：' + fields.SubjFi
+            }
+        }
+    }else{//非双盲
+        if (fields.SubjFa == ''){//无分层
+            htmlStr = htmlStr + "<h2>" + fields.StudyID + "研究温馨提示:受试者" + fields.sjzUser.USubjID + "</h2>"
+            htmlStr = htmlStr + "<h2>" + fields.sjzUser.SubjIni + "已经于"+ (moment().format('YYYY-MM-DD h:mm:ss a'))  + "成功完成随机</h2>"
+            htmlStr = htmlStr + "<h2>随机号为" + randomPersons[0].RandoNum + "</h2>"
+            htmlStr = htmlStr + "<h2>分组为" + randomPersons[0].Arm +"</h2>"
+            duanxinStr = duanxinStr + '随机号为：' + randomPersons[0].RandoNum + '、'
+        }else{//有分层
+            htmlStr = htmlStr + "<h2>" + fields.StudyID + "研究温馨提示:受试者" + fields.sjzUser.USubjID + "</h2>"
+            htmlStr = htmlStr + "<h2>" + fields.sjzUser.SubjIni + "已经于"+ (moment().format('YYYY-MM-DD h:mm:ss a'))  + "成功完成随机</h2>"
+            htmlStr = htmlStr + "<h2>随机号为" + randomPersons[0].RandoNum + "</h2>"
+            htmlStr = htmlStr + "<h2>分组为" + randomPersons[0].Arm +"</h2>"
+            htmlStr = htmlStr + '<h2>分层因素如下：' + '</h2>'
+            duanxinStr = duanxinStr + '随机号为：' + randomPersons[0].RandoNum + '、'
+            duanxinStr = duanxinStr + '分层因素如下：'
+            if (fields.SubjFa != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraA + '：' + fields.SubjFa + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraA + '：' + fields.SubjFa + '，'
+            }
+            if (fields.SubjFb != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraB + '：' + fields.SubjFb + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraB + '：' + fields.SubjFb + '，'
+            }
+            if (fields.SubjFc != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraC + '：' + fields.SubjFc + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraC + '：' + fields.SubjFc + '，'
+            }
+            if (fields.SubjFd != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraD + '：' + fields.SubjFd + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraD + '：' + fields.SubjFd + '，'
+            }
+            if (fields.SubjFe != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraE + '：' + fields.SubjFe + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraE + '：' + fields.SubjFe + '，'
+            }
+            if (fields.SubjFf != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraF + '：' + fields.SubjFf + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraF + '：' + fields.SubjFf + '，'
+            }
+            if (fields.SubjFg != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraG + '：' + fields.SubjFg + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraG + '：' + fields.SubjFg + '，'
+            }
+            if (fields.SubjFh != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraF + '：' + fields.SubjFh + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraF + '：' + fields.SubjFh + '，'
+            }
+            if (fields.SubjFi != ''){
+                htmlStr = htmlStr + '<h2>' + persons[0].LabelStraI + '：' + fields.SubjFi + '</h2>'
+                duanxinStr = duanxinStr +  persons[0].LabelStraI + '：' + fields.SubjFi
+            }
+        }
     }
-    if (persons[0].ArmYN == 1) {
-        msg = msg + "分组信息: " + randomPersons[0].Arm + "\n"
-    }
-    if (persons[0].SubStudYN == 1) {
-        msg = msg + "随机参加子研究: " + ((randomPersons[0].RandoNum%2 ==0) ?"是":"否") + "\n"
-    }
-    if (persons[0].CStudyPeYN == 1) {
-        msg = msg + "研究阶段: " + persons[0].StudyPeNum + "\n"
-    }
-    //修改随机号已经使用
-    random.update({
-        'id':randomPersons[0].id
-    },{
-        isUse:1 ,
-        UseUserId:fields.userId
-    },function () {
-        console.log("随机号修改成功");
-        //输出
-        res.send({
-            'isSucceed': 400,
-            'msg': msg
-        });
-        return
+    users.find({
+        $or:[
+            {
+                UserFun: 'H2',
+                StudyID: fields.StudyID,
+                UserSite: fields.SiteID,
+            },
+            {
+                StudyID:fields.StudyID,
+                UserFun: 'C1',
+            }
+        ]}, function (err, usersPersons) {
+        for (var j = 0 ; j < usersPersons.length ; j++){
+            if (usersPersons[j].UserEmail != emas[0]){
+                var isEmasID = false;
+                var isPhoneID = false;
+                for (var x = 0 ; x < emas.length ; x++){
+                    if (emas[x] == usersPersons[j].UserEmail){
+                        isEmasID = true;
+                    }
+                }
+                for (var y = 0 ; y < phones.length ; y++){
+                    if (phones[y] == usersPersons[j].UserMP){
+                        isPhoneID = true;
+                    }
+                }
+                if (isEmasID == false){
+                    emas.push(usersPersons[j].UserEmail);
+                }
+                if (isPhoneID == false){
+                    phones.push(usersPersons[j].UserMP)
+                }
+            }
+        }
+        var jsonss = {
+            studyID:fields.StudyID ,
+            yytx:"受试者" + fields.sjzUser.USubjID + "完成随机",
+            date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+        }
+        for (var i = 0 ; i < emas.length ; i++){
+            EMail.fasongxiujian({
+                from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
+                to: emas[i], // 收件列表
+                subject: fields.StudyID + "随机成功", // 标题
+                html: htmlStr // html 内容
+            })
+        }
+        //短信内容
+        for (var i = 0 ; i < phones.length ; i++){
+            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                'extend' : '' ,
+                'sms_type' : 'normal' ,
+                'sms_free_sign_name' : '诺兰医药科技' ,
+                'sms_param' : {
+                    studyID:fields.StudyID ,
+                    yytx:duanxinStr,
+                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                } ,
+                'rec_num' : phones[i] ,
+                'sms_template_code' : "SMS_63885566"
+            }, function(error, response) {
+                if (error != null){
+                    console.log(error)
+                }
+            });
+        }
     })
 }
 
@@ -1638,37 +2293,23 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         console.log(fields)
-        var data = [];
-        //查找筛选成功受试者
-        addSuccessPatient.chazhaomouyanjiumouzhongxin(fields.SiteID,fields.StudyID,function (err, persons) {
-            if (err != null){
-                res.send({
-                    'isSucceed' : 200,
-                    'msg' : '数据库错误'
-                });
-            }else {
-                for (var i = 0 ; i < persons.length ; i++){
-                    if (persons[i].Random == null){
-                        data.push({
-                            id : persons[i].id,
-                            SubjIni : persons[i].SubjIni,
-                            USubjID : persons[i].USubjID,
-                            Random : -1,//随机号
-                            Drug : -1,
-                            DrugDate : -1,
-                            isSuccess : 1,
-                            isOut : persons[i].isOut == 1 ? 1 : 0,
-                            isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
-                            Arm : persons[i].Arm,
-                            persons : persons[i]
-                        })
-                    }else{
-                        if (persons[i].Drug == null){
+        appTool.addSuccessUpdate(fields.StudyID,fields.SiteID,function () {
+            var data = [];
+            //查找筛选成功受试者
+            addSuccessPatient.chazhaomouyanjiumouzhongxin(fields.SiteID,fields.StudyID,function (err, persons) {
+                if (err != null){
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '数据库错误'
+                    });
+                }else {
+                    for (var i = 0 ; i < persons.length ; i++){
+                        if (persons[i].Random == null){
                             data.push({
                                 id : persons[i].id,
                                 SubjIni : persons[i].SubjIni,
                                 USubjID : persons[i].USubjID,
-                                Random : persons[i].Random,//随机号
+                                Random : -1,//随机号
                                 Drug : -1,
                                 DrugDate : -1,
                                 isSuccess : 1,
@@ -1677,46 +2318,62 @@ exports.getLookupSuccessBasicsData = function (req, res, next) {
                                 Arm : persons[i].Arm,
                                 persons : persons[i]
                             })
-                        }else {
-                            data.push({
-                                id : persons[i].id,
-                                SubjIni : persons[i].SubjIni,
-                                USubjID : persons[i].USubjID,
-                                Random : persons[i].Random,//随机号
-                                Drug : persons[i].Drug,
-                                DrugDate : persons[i].DrugDate,
-                                isOut : persons[i].isOut == 1 ? 1 : 0,
-                                isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
-                                Arm : persons[i].Arm,
-                                isSuccess : 1,
-                                persons : persons[i]
-                            })
+                        }else{
+                            if (persons[i].Drug == null){
+                                data.push({
+                                    id : persons[i].id,
+                                    SubjIni : persons[i].SubjIni,
+                                    USubjID : persons[i].USubjID,
+                                    Random : persons[i].Random,//随机号
+                                    Drug : -1,
+                                    DrugDate : -1,
+                                    isSuccess : 1,
+                                    isOut : persons[i].isOut == 1 ? 1 : 0,
+                                    isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                                    Arm : persons[i].Arm,
+                                    persons : persons[i]
+                                })
+                            }else {
+                                data.push({
+                                    id : persons[i].id,
+                                    SubjIni : persons[i].SubjIni,
+                                    USubjID : persons[i].USubjID,
+                                    Random : persons[i].Random,//随机号
+                                    Drug : persons[i].Drug,
+                                    DrugDate : persons[i].DrugDate,
+                                    isOut : persons[i].isOut == 1 ? 1 : 0,
+                                    isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                                    Arm : persons[i].Arm,
+                                    isSuccess : 1,
+                                    persons : persons[i]
+                                })
+                            }
                         }
                     }
+                    //查找筛选失败受试者
+                    addFailPatient.chazhaomouyanjiumouzhongxin(fields.SiteID, fields.StudyID, function (err, persons) {
+                        if (err != null) {
+                            res.send({
+                                'isSucceed': 200,
+                                'msg': '数据库错误'
+                            });
+                        } else {
+                            for (var i = 0 ; i < persons.length ; i++){
+                                data.push({
+                                    id : persons[i].id,
+                                    SubjIni : persons[i].SubjectIn,
+                                    USubjID : persons[i].USubjectID,
+                                    isSuccess : 0
+                                })
+                            }
+                            res.send({
+                                'isSucceed': 400,
+                                'data': data
+                            });
+                        }
+                    })
                 }
-                //查找筛选失败受试者
-                addFailPatient.chazhaomouyanjiumouzhongxin(fields.SiteID, fields.StudyID, function (err, persons) {
-                    if (err != null) {
-                        res.send({
-                            'isSucceed': 200,
-                            'msg': '数据库错误'
-                        });
-                    } else {
-                        for (var i = 0 ; i < persons.length ; i++){
-                            data.push({
-                                id : persons[i].id,
-                                SubjIni : persons[i].SubjectIn,
-                                USubjID : persons[i].USubjectID,
-                                isSuccess : 0
-                            })
-                        }
-                        res.send({
-                            'isSucceed': 400,
-                            'data': data
-                        });
-                    }
-                })
-            }
+            })
         })
     })
 }
@@ -1776,8 +2433,10 @@ exports.getVagueBasicsData = function (req, res, next) {
                             Random : -1,//随机号
                             Drug : -1,
                             isSuccess : 1,
+                            phone:persons[i].SubjMP,
                             isOut : persons[i].isOut == 1 ? 1 : 0,
                             isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                            persons:persons[i],
                             Arm : persons[i].Arm,
                         })
                     }else{
@@ -1788,9 +2447,11 @@ exports.getVagueBasicsData = function (req, res, next) {
                                 USubjID : persons[i].USubjID,
                                 Random : persons[i].Random,//随机号
                                 Drug : -1,
+                                phone:persons[i].SubjMP,
                                 isOut : persons[i].isOut == 1 ? 1 : 0,
                                 isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
                                 Arm : persons[i].Arm,
+                                persons:persons[i],
                                 isSuccess : 1
                             })
                         }else {
@@ -1801,6 +2462,8 @@ exports.getVagueBasicsData = function (req, res, next) {
                                 Random : persons[i].Random,//随机号
                                 Drug : persons[i].Drug,
                                 isOut : persons[i].isOut == 1 ? 1 : 0,
+                                phone:persons[i].SubjMP,
+                                persons:persons[i],
                                 isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
                                 Arm : persons[i].Arm,
                                 isSuccess : 1
@@ -1820,7 +2483,8 @@ exports.getVagueBasicsData = function (req, res, next) {
                             id : persons[i].id,
                             SubjIni : persons[i].SubjectIn,
                             USubjID : persons[i].USubjectID,
-                            isSuccess : 0
+                            isSuccess : 0,
+                            persons:persons[i]
                         })
                     }
                     res.send({
@@ -2010,12 +2674,27 @@ exports.getCytchwclsfb = function (req, res, next) {
                     });
                     return
                 }
-                addSuccessPatient.find({StudyID:fields.StudyID ,SiteID:siteData.SiteID ,isOut:1}, function (err, FailPersons) {
+                addOutPatient.find({StudyID:fields.StudyID ,SiteID:siteData.SiteID}, function (err, FailPersons) {
                     var dd = [siteData.SiteID,FailPersons.length];
                     data.push(dd);
                     iterator(i + 1)
                 })
             })(0);
+        })
+    })
+}
+
+//查阅退出或完成例数分布--单个中心
+exports.getCytchwclsfbZX = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        addOutPatient.find({StudyID:fields.StudyID ,SiteID:fields.SiteID}, function (err, FailPersons) {
+            var dd = [fields.SiteID,FailPersons.length];
+            var data = [dd];
+            res.send({
+                'isSucceed': 400,
+                'data': data
+            });
         })
     })
 }

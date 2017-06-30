@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var adminUser = require('./adminUsers');
 
-mongoose.connect('mongodb://localhost/nlyy');
+// mongoose.connect('mongodb://localhost/nlyy');
+mongoose.connect('mongodb://182.254.242.142:40000/nlyy');
 
 var db = mongoose.connection;
 db.once('open', function (callback) {

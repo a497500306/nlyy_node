@@ -7,12 +7,12 @@ var researchParameter = require('../../models/import/researchParameter');
 var addSuccessPatient = require('../../models/import/addSuccessPatient');
 var addFailPatient = require('../../models/import/addFailPatient');
 var addOutPatient = require('../../models/import/addOutPatient');
-var site = require('../../models/import/site');
+var ApplicationAndAudit = require('../../models/import/ApplicationAndAudit');
 var users = require('../../models/import/users');
-var siteStopIt = require('../../models/import/siteStopIt');
 var EMail = require("../../models/EMail");
-var study = require('../../models/import/study')
-var studyOffline = require('../../models/import/studyOffline')
+var study = require('../../models/import/study');
+var studyOffline = require('../../models/import/studyOffline');
+var addOutPatientSchema = require('../../models/import/addOutPatient');
 
 //研究下线--获取研究下线申请时相关数据
 exports.getYjxxApplyData = function (req, res, next) {
@@ -101,7 +101,8 @@ exports.getYjxxApplyWaitForAudit = function (req, res, next) {
     form.parse(req,function (err, fields, files) {
         //列表
         studyOffline.find({
-            StudyID : fields.StudyID
+            StudyID : fields.StudyID,
+            isOffline:0
         }).exec((err, persons) => {
             if (persons.length > 0){
                 gitData(fields.StudyID,function (data) {
@@ -124,48 +125,232 @@ exports.getYjxxApplyWaitForAudit = function (req, res, next) {
 exports.getYjxxToExamine = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        //查看该用户是否已经审核
-        studyOffline.find({
-            id : fields.id,
-            ToExaminePhone : fields.ToExaminePhone
-        }).exec((err, persons) => {
-            if (err != null){
+        //取出审批数据
+        //取出申请和审核
+        ApplicationAndAudit.find({
+            "StudyID": fields.StudyID,
+            'EventApp': '4',
+            'EventRev': '4'
+        }, function (err, persons) {
+            var applaa = null;
+            for (var i = 0; i < persons.length; i++) {
+                if (persons[i].EventRev == '4') {
+                    applaa = persons[i];
+                    break;
+                }
+            }
+            if (applaa == null) {
                 res.send({
-                    'isSucceed': 200,
-                    'msg': '数据库错误'
+                    'isSucceed': 400,
+                    'msg': '未找到相关数据,请联系服务商'
                 });
-            }else{
-                studyOffline.find({
-                    id : fields.id
-                }).exec((err, persons1) => {
-                    if (persons1[0].isOffline == 1){
-                        res.send({
-                            'isSucceed': 400,
-                            'msg': '该研究已经下线'
-                        });
-                        return
-                    }
-                    if (persons.length == 0){
-                        studyOffline.update({
-                            'id' : fields.id,
-                        },{
-                            $push : {
-                                'ToExamineUsers' : fields.ToExamineUsers,
-                                'ToExaminePhone' : fields.ToExaminePhone,
-                                'ToExamineType' : fields.ToExamineType,
-                                'ToExamineDate' : new Date()
-                            } ,
-                        },function () {
-                            res.send({
-                                'isSucceed': 400,
-                                'msg': '操作成功'
-                            });
+                return;
+            }
+            //判断是否需要按顺序
+            if (applaa.EventRevOrd == '3'){//需要按顺序
+                //取出该研究中的审核身份的所有人
+                users.find({"StudyID": fields.StudyID}, function (err, persons) {
+                    studyOffline.find({"id": fields.id}, function (err, UnblindingPersons) {
+                        var shUsers = persons;
+                        var splits = applaa.EventRevUsers.split(",");
+                        //判断该用户是否审核
+                        for (var i = 0 ; i < UnblindingPersons[0].ToExamineUsers.length ; i++){
+                            if (UnblindingPersons[0].ToExamineUsers[i] == fields.ToExaminePhone){
+                                res.send({
+                                    'isSucceed': 400,
+                                    'msg': '请勿重复操作'
+                                });
+                                return
+                            }
+                        }
+                        //查找该用户的所有身份
+                        users.find({"StudyID": fields.StudyID, 'UserMP' : fields.ToExaminePhone}, function (err, persons) {
+                            //判断该用户的最低身份
+                            var shenfen = null;
+                            for (var i = 0 ; i < splits.length ; i++){
+                                for (var j = 0 ; j < persons.length ; j++){
+                                    if (persons[j].UserFun == splits[i]){
+                                        shenfen = i;
+                                        break;
+                                    }
+                                }
+                                if (shenfen != null){
+                                    break;
+                                }
+                            }
+                            //判断是不是最低身份
+                            if (shenfen == 0){//是最低身份直接保存
+                                //查看该用户是否已经审核
+                                studyOffline.find({
+                                    id : fields.id,
+                                    ToExaminePhone : fields.ToExaminePhone
+                                }).exec((err, persons) => {
+                                    if (err != null){
+                                        res.send({
+                                            'isSucceed': 200,
+                                            'msg': '数据库错误'
+                                        });
+                                    }else{
+                                        studyOffline.find({
+                                            id : fields.id
+                                        }).exec((err, persons1) => {
+                                            if (persons1[0].isOffline == 1){
+                                                res.send({
+                                                    'isSucceed': 400,
+                                                    'msg': '该研究已经下线'
+                                                });
+                                                return
+                                            }
+                                            if (persons.length == 0){
+                                                studyOffline.update({
+                                                    'id' : fields.id,
+                                                },{
+                                                    $push : {
+                                                        'ToExamineUserData' : fields.ToExamineUserData,
+                                                        'ToExamineUsers' : fields.ToExamineUsers,
+                                                        'ToExaminePhone' : fields.ToExaminePhone,
+                                                        'ToExamineType' : fields.ToExamineType,
+                                                        'ToExamineDate' : new Date()
+                                                    } ,
+                                                },function () {
+                                                    res.send({
+                                                        'isSucceed': 400,
+                                                        'msg': '操作成功'
+                                                    });
+                                                })
+                                            }else{
+                                                res.send({
+                                                    'isSucceed': 400,
+                                                    'msg': '您已经审核过该申请'
+                                                });
+                                            }
+                                        })
+                                    }
+                                })
+                            }else{//判断之前身份是否完成
+                                for (var i = 0 ; i < shenfen ; i++){
+                                    //查看所有用户有多少具有该权限
+                                    var dataU = [];
+                                    var unDataU = [];
+                                    for (var j = 0 ; j < shUsers.length ; j++){
+                                        if (shUsers[j].UserFun == splits[i]){
+                                            dataU.push(shUsers[j].UserMP)
+                                        }
+                                    }
+                                    for (var x = 0 ; x < dataU.length ; x++){
+                                        for (var y = 0 ; y < UnblindingPersons[0].ToExamineUserData.length ; y++){
+                                            console.log(UnblindingPersons[0].ToExamineUserData)
+                                            var sss = UnblindingPersons[0].ToExamineUserData[y];
+                                            if (UnblindingPersons[0].ToExamineUserData[y].UserMP == dataU[x]){
+                                                unDataU.push(UnblindingPersons[0].ToExamineUserData[y].UserMP)
+                                            }
+                                        }
+                                    }
+                                    if (dataU.length != unDataU.length){
+                                        res.send({
+                                            'isSucceed': 400,
+                                            'msg': '前面还有用户未审核完成'
+                                        });
+                                        return;
+                                    }
+                                }
+                                //查看该用户是否已经审核
+                                studyOffline.find({
+                                    id : fields.id,
+                                    ToExaminePhone : fields.ToExaminePhone
+                                }).exec((err, persons) => {
+                                    if (err != null){
+                                        res.send({
+                                            'isSucceed': 200,
+                                            'msg': '数据库错误'
+                                        });
+                                    }else{
+                                        studyOffline.find({
+                                            id : fields.id
+                                        }).exec((err, persons1) => {
+                                            if (persons1[0].isOffline == 1){
+                                                res.send({
+                                                    'isSucceed': 400,
+                                                    'msg': '该研究已经下线'
+                                                });
+                                                return
+                                            }
+                                            if (persons.length == 0){
+                                                studyOffline.update({
+                                                    'id' : fields.id,
+                                                },{
+                                                    $push : {
+                                                        'ToExamineUserData' : fields.ToExamineUserData,
+                                                        'ToExamineUsers' : fields.ToExamineUsers,
+                                                        'ToExaminePhone' : fields.ToExaminePhone,
+                                                        'ToExamineType' : fields.ToExamineType,
+                                                        'ToExamineDate' : new Date()
+                                                    } ,
+                                                },function () {
+                                                    res.send({
+                                                        'isSucceed': 400,
+                                                        'msg': '操作成功'
+                                                    });
+                                                })
+                                            }else{
+                                                res.send({
+                                                    'isSucceed': 400,
+                                                    'msg': '您已经审核过该申请'
+                                                });
+                                            }
+                                        })
+                                    }
+                                })
+                            }
                         })
-                    }else{
+                    })
+                })
+            }else{
+                //查看该用户是否已经审核
+                studyOffline.find({
+                    id : fields.id,
+                    ToExaminePhone : fields.ToExaminePhone
+                }).exec((err, persons) => {
+                    if (err != null){
                         res.send({
-                            'isSucceed': 400,
-                            'msg': '您已经审核过该申请'
+                            'isSucceed': 200,
+                            'msg': '数据库错误'
                         });
+                    }else{
+                        studyOffline.find({
+                            id : fields.id
+                        }).exec((err, persons1) => {
+                            if (persons1[0].isOffline == 1){
+                                res.send({
+                                    'isSucceed': 400,
+                                    'msg': '该研究已经下线'
+                                });
+                                return
+                            }
+                            if (persons.length == 0){
+                                studyOffline.update({
+                                    'id' : fields.id,
+                                },{
+                                    $push : {
+                                        'ToExamineUserData' : fields.ToExamineUserData,
+                                        'ToExamineUsers' : fields.ToExamineUsers,
+                                        'ToExaminePhone' : fields.ToExaminePhone,
+                                        'ToExamineType' : fields.ToExamineType,
+                                        'ToExamineDate' : new Date()
+                                    } ,
+                                },function () {
+                                    res.send({
+                                        'isSucceed': 400,
+                                        'msg': '操作成功'
+                                    });
+                                })
+                            }else{
+                                res.send({
+                                    'isSucceed': 400,
+                                    'msg': '您已经审核过该申请'
+                                });
+                            }
+                        })
                     }
                 })
             }
@@ -178,57 +363,162 @@ exports.getYjxxToExamine = function (req, res, next) {
 exports.getDetermineYjxxOffline = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        //查看该用户是否已经审核
-        console.log('研究下线--整个研究确定/拒绝下线')
-        studyOffline.find({
-            'id' : fields.id,
-        }).exec((err, persons) => {
-            if (persons[0].isOffline == 2 || persons[0].isOffline == 1){
-                res.send({
-                    'isSucceed': 400,
-                    'msg': '该申请已经操作完成'
-                });
-            }else{
-                if (fields.isOffline == 1){
-                    study.update({
-                        'StudyID' : persons[0].StudyID,
-                    },{
-                        'StudIsOffline' : 1,
-                        "StudOfflineUsers" : fields.StudOfflineUsers, //停止入组操作人
-                        "StudOfflinePhone" : fields.StudOfflinePhone, //停止入组操作手机号
-                        'StudOfflineDate' : new Date()
-                    },function () {
-                        // //把该研究的所有中心全部停止入组
-                        // console.log(persons[0].StudyID)
-                        // site.find({
-                        //     'StudyID' : persons[0].StudyID,
-                        // }).exec((err, persons22) => {
-                        //     for (var i = 0 ; i < persons22.length ; i++) {
-                        //         site.update({
-                        //             'id' : persons22[i].id,
-                        //         },{
-                        //             'isStopIt' : 1,
-                        //         },function (err,ddd) {
-                        //             console.log('所有中心停止入组')
-                        //         })
-                        //     }
-                        // })
-                    })
-                }
-                studyOffline.update({
-                    'id' : fields.id,
-                },{
-                    'OfflineUsers' : fields.StudOfflineUsers,
-                    'OfflinePhone' : fields.StudOfflineUsers,
-                    'isOffline' : fields.isOffline,
-                    'OfflineDate' : new Date()
-                },function () {
-                    res.send({
-                        'isSucceed': 400,
-                        'msg': '操作成功'
-                    });
-                })
+        console.log(fields);
+        //取出申请和审核
+        ApplicationAndAudit.find({"StudyID": fields.StudyID ,'EventApp' : '4','EventRev' : '4'}, function (err, persons) {
+            var applaa = null;
+            for(var i = 0 ; i < persons.length ; i++){
+                // if (persons[i].EventUnbRev == '3'){
+                    applaa = persons[0];
+                //     break;
+                // }
             }
+            if (applaa == null){
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '未找到相关数据,请联系服务商'
+                });
+                return;
+            }
+            users.find({"StudyID": fields.StudyID}, function (err, persons) {
+                studyOffline.find({"id": fields.id}, function (err, UnblindingPersons) {
+                    //取出符合符合条件的用户
+                    var shUsers = [];
+                    var splits = applaa.EventRevUsers.split(",");
+                    for (var i = 0 ; i < persons.length ; i++){
+                        for (var j = 0 ; j < splits.length ; j++){
+                            if (persons[i].UserFun == splits[j]){
+                                shUsers.push(persons[i]);
+                                break;
+                            }
+                        }
+                    }
+                    //判断审核次序
+                    /*1=单个审核人；2=全部审核人；3=逐步审核*/
+                    var isWC = false;
+                    if (applaa.EventRevOrd == '1'){
+                        for (var i = 0 ; i < splits.length ; i++){
+                            //查看所有用户有多少具有该权限
+                            var dataU = [];
+                            var unDataU = [];
+                            for (var j = 0 ; j < shUsers.length ; j++){
+                                if (shUsers[j].UserFun == splits[i]){
+                                    dataU.push(shUsers[j].UserMP)
+                                }
+                            }
+                            for (var x = 0 ; x < dataU.length ; x++){
+                                for (var y = 0 ; y < UnblindingPersons[0].ToExamineUserData.length ; y++){
+                                    if (UnblindingPersons[0].ToExamineUserData[y].UserMP == dataU[x]){
+                                        unDataU.push(UnblindingPersons[0].ToExamineUserData[y].UserMP)
+                                    }
+                                }
+                            }
+                            if (unDataU.length != 0){
+                                isWC = true;
+                            }
+                        }
+                        if (isWC == false){
+                            res.send({
+                                'isSucceed': 200,
+                                'msg': '未审核完成,不能进行研究下线操作'
+                            });
+                            return;
+                        }
+                    }else{
+                        //取出符合符合条件的用户
+                        var xySHUsers = [];
+                        var splits = applaa.EventRevUsers.split(",");
+                        for (var i = 0 ; i < persons.length ; i++){
+                            for (var j = 0 ; j < splits.length ; j++){
+                                if (persons[i].UserFun == splits[j]){
+                                    xySHUsers.push(persons[i]);
+                                    break;
+                                }
+                            }
+                        }
+                        var shUsers = [];
+                        for (var i = 0 ; i < xySHUsers.length ; i++){
+                            if (i == 0 ){
+                                shUsers.push(xySHUsers[i])
+                            }else{
+                                var isAdd = true;
+                                for (var j = 0 ; j < shUsers.length ; j++){
+                                    if (xySHUsers[i].UserMP == shUsers[j].UserMP){
+                                        isAdd = false;
+                                        break;
+                                    }
+                                }
+                                if (isAdd == true){
+                                    shUsers.push(xySHUsers[i])
+                                    console.log(xySHUsers[i].UserMP)
+                                }
+                            }
+                        }
+                        if (shUsers.length == UnblindingPersons[0].ToExamineUsers.length){
+                            isWC = true;
+                        }
+                    }
+                    if (isWC == false){
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '未审核完成,不能进行研究下线操作'
+                        });
+                        return;
+                    }
+                    //查看该用户是否已经审核
+                    console.log('研究下线--整个研究确定/拒绝下线')
+                    studyOffline.find({
+                        'id' : fields.id,
+                    }).exec((err, persons) => {
+                        if (persons[0].isOffline == 2 || persons[0].isOffline == 1){
+                            res.send({
+                                'isSucceed': 400,
+                                'msg': '该申请已经操作完成'
+                            });
+                        }else{
+                            if (fields.isOffline == 1){
+                                study.update({
+                                    'StudyID' : persons[0].StudyID,
+                                },{
+                                    'StudIsOffline' : 1,
+                                    "StudOfflineUsers" : fields.StudOfflineUsers, //停止入组操作人
+                                    "StudOfflinePhone" : fields.StudOfflinePhone, //停止入组操作手机号
+                                    'StudOfflineDate' : new Date()
+                                },function () {
+                                    // //把该研究的所有中心全部停止入组
+                                    // console.log(persons[0].StudyID)
+                                    // site.find({
+                                    //     'StudyID' : persons[0].StudyID,
+                                    // }).exec((err, persons22) => {
+                                    //     for (var i = 0 ; i < persons22.length ; i++) {
+                                    //         site.update({
+                                    //             'id' : persons22[i].id,
+                                    //         },{
+                                    //             'isStopIt' : 1,
+                                    //         },function (err,ddd) {
+                                    //             console.log('所有中心停止入组')
+                                    //         })
+                                    //     }
+                                    // })
+                                })
+                            }
+                            studyOffline.update({
+                                'id' : fields.id,
+                            },{
+                                'OfflineUsers' : fields.StudOfflineUsers,
+                                'OfflinePhone' : fields.StudOfflineUsers,
+                                'isOffline' : fields.isOffline,
+                                'OfflineDate' : new Date()
+                            },function () {
+                                res.send({
+                                    'isSucceed': 400,
+                                    'msg': '操作成功'
+                                });
+                            })
+                        }
+                    })
+                })
+            })
         })
     })
 }
@@ -240,7 +530,7 @@ exports.getZyjsszls = function (req, res, next) {
         //查询子研究受试者例数
         addSuccessPatient.find({
             'StudyID' : fields.StudyID,
-            'SubjStudYN' : 1,
+            'SubjStudYN' : "是",
         }).exec((err, persons) => {
             res.send({
                 'isSucceed': 400,
@@ -296,26 +586,34 @@ var gitData = function (StudyID,block) {
                     }
                 }
             }
-            //获取总随机例数
-            // data.AllRandomNumber = ssss;
-            data.AllRandomNumber = '还为开发';
-            //总完成数
-            data.AllCompleteNumber = '还为开发'
-            //总脱落例数
-            data.AllFallOffNumber =  '还未开发'
-
-            //判断是否停止入组
-            study.find({
+            //查询总随机例数
+            addSuccessPatient.find({
                 StudyID : StudyID,
-            }).exec((err, persons) => {
-                if (persons[0].StudIsStopIt != 1){
-                    //是否停止入组--没有停止入组
-                    data.IsStudyStopIt = '否'
-                }else{
-                    //是否停止入组--停止入组
-                    data.IsStudyStopIt = '是'
-                }
-                block(data)
+                Random:{$ne:null}
+            }).exec((err, persons2) => {
+                // data.AllRandomNumber = ssss;
+                data.AllRandomNumber = persons2.length;
+                addOutPatientSchema.find({StudyID:StudyID ,DSDE:'完成研究'}, function (err, FailPersons) {
+                    //总完成数
+                    data.AllCompleteNumber = FailPersons.length
+                    //总脱落例数
+                    addOutPatientSchema.find({StudyID:StudyID ,DSDE:{$ne:'完成研究'}}, function (err, OutPersons) {
+                        data.AllFallOffNumber = OutPersons.length
+                        //判断是否停止入组
+                        study.find({
+                            StudyID : StudyID,
+                        }).exec((err, persons) => {
+                            if (persons[0].StudIsStopIt != 1){
+                                //是否停止入组--没有停止入组
+                                data.IsStudyStopIt = '否'
+                            }else{
+                                //是否停止入组--停止入组
+                                data.IsStudyStopIt = '是'
+                            }
+                            block(data)
+                        })
+                    })
+                })
             })
         })
     })

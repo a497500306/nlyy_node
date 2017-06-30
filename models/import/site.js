@@ -8,6 +8,8 @@ var siteSchema = new mongoose.Schema({
     "id":Number,           //研究ID
     "StudyID" : String,    //研究编号
     "SiteID" : String,    //中心编号
+    "isUnblinding" : String,//是否揭盲
+    "UnblindingDate" : Date, //揭盲时间
     "InvNam" : String,    //中心主要研究者
     "SiteCity" : String,   //中心所在城市
     "SiteAdd" : String,   //中心详细地址
@@ -15,6 +17,7 @@ var siteSchema = new mongoose.Schema({
     "SiteNam"  : String,   //中心名称
     "isStopIt"  : String,   //是否停止入组:1为停止
     "StopItDate"  : Date,   //停止入组时间
+    "ThywhGS"  : Number,   //替换药物号的个数
     "Date" : Date, //导入时间
 });
 siteSchema.plugin(autoIncrement.plugin, {
@@ -38,8 +41,8 @@ siteSchema.statics.chazhaozhongxin = function (StudyID,callback) {
         return;
     }else{
         //取出该研究中的所有分仓库
-        this.model('site').find({StudyID : StudyID},callback)
-    }
+        this.model('site').find({StudyID : StudyID}).sort({SiteID : 1}).exec(callback)
+        }
 }
 //查找某个研究的某个中心中心
 siteSchema.statics.chazhaomougezhongxin = function (StudyID,SiteID,callback) {
@@ -52,7 +55,7 @@ siteSchema.statics.chazhaomougezhongxin = function (StudyID,SiteID,callback) {
         return;
     }else{
         //取出该研究中的所有分仓库
-        this.model('site').find({StudyID : StudyID,SiteID:SiteID},callback)
+        this.model('site').find({StudyID : StudyID,SiteID:SiteID}).sort({SiteID : 1}).exec(callback)
     }
 }
 //model

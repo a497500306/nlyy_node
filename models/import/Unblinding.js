@@ -16,6 +16,8 @@ var UnblindingSchema = new mongoose.Schema({
     "study" : Object,//研究信息
     "UserNam" : Array, //申请人名称
     "UserMP" : Array, // 申请人手机号
+    "UserEmail" : Array,//申请人邮箱
+    "User" : Array,//申请人
     'Reason' : Array, // 揭盲原因
     'Causal' : Array, //因果关系
     'UnblindingType' : String,//揭盲类型
@@ -23,6 +25,7 @@ var UnblindingSchema = new mongoose.Schema({
     "UnblCoplDTC" : Date, //揭盲完成日期
     "ToExamineUsers" : Array,//审核人
     "ToExaminePhone" : Array,//审核人手机号
+    "ToExamineUserData" : Array,//审核人数据
     "ToExamineType" : Array,//是通过还是拒绝
     "ToExamineDate" : Array, //审核时间
     "isStopIt" : String,//是否确定停止:0为正常,1为停止,2为取消停止
