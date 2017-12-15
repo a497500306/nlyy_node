@@ -18,7 +18,9 @@ var users = require("../models/import/users");//用户表
 var addSuccess = require("../models/import/addSuccessPatient");//筛选成功的用户
 var random = require("../models/import/random");//随机号
 var ApplicationAndAudit = require("../models/import/ApplicationAndAudit");//设置申请人和审核人
+var ImageData = require("../models/import/imageData");//图片保存
 var Unblinding = require("../models/import/Unblinding");//揭盲表
+var settings = require('../settings');
 const uuidV1 = require('uuid/v1');
 //测试
 //导入新增研究
@@ -68,7 +70,21 @@ exports.addDcyhzhzz = function (req, res, next) {
     ];
     daochuExcel(req, res, conf, 'YHZL')
 }
-
+//点击导出图片资料
+exports.addDctpzl = function (req, res, next) {
+    var conf = {};
+    conf.cols = [
+        {caption:'StudyID', type:'string'},
+        {caption:'imageUrl', type:'string'},
+        {caption:'isAbandoned', type:'string'},
+        {caption:'successPatientPhone', type:'string'},
+        {caption:'successUSubjID', type:'string'},
+        {caption:'uploadUserPhone', type:'string'},
+        {caption:'uploadName', type:'string'},
+        {caption:'date', type:'string'},
+    ];
+    daochuExcel(req, res, conf, 'DCTP')
+}
 //点击导出药物资料
 exports.addDcyyywh = function (req, res, next) {
     var conf = {};
@@ -91,6 +107,10 @@ exports.addDcyyywh = function (req, res, next) {
         {caption:'DrugSeq', type:'string'},
         {caption:'DrugExpryDTC', type:'string'},
         {caption:'PackSeq', type:'string'},
+        {caption:'DrugDose', type:'string'},
+        {caption:'StudyDCross', type:'string'},
+        {caption:'Study', type:'string'},
+        {caption:'Dose', type:'string'},
     ];
     daochuExcel(req, res, conf, 'YWZL')
 }
@@ -130,6 +150,7 @@ exports.addDcyysjh = function (req, res, next) {
         {caption:'UnblAppl', type:'string'},
         {caption:'UnblApplDTC', type:'string'},
         {caption:'UnblCoplDTC', type:'string'},
+        {caption:'CrossCode', type:'string'},
     ];
     daochuExcel(req, res, conf, 'SJZL')
 }
@@ -169,12 +190,16 @@ daochuExcel = function (req, res, conf, name) {
                         var dataArray = [];
                         for (var j = 0; j < userPersons.length; j++) {
                             dataArray.push(
-                                [userPersons[j].StudySeq, userPersons[j].StudyID, userPersons[j].SponsorF, userPersons[j].SponsorS, userPersons[j].StudNameF
+                                [
+                                    userPersons[j].StudySeq, userPersons[j].StudyID, userPersons[j].SponsorF, userPersons[j].SponsorS, userPersons[j].StudNameF
                                     , userPersons[j].StudNameS, userPersons[j].CoorPI, userPersons[j].UserNam, userPersons[j].UserTyp
-                                    , userPersons[j].UserFun,
-                                    ((userPersons[j].UserSiteYN == "1" ? "1" : userPersons[j].UserSite) == null ? "" : (userPersons[j].UserSiteYN == "1" ? "1" : "2")),
-                                    ((userPersons[j].UserDepotYN == "1" ? "1" : userPersons[j].UserDepot) == null ? "" : (userPersons[j].UserDepotYN == "1" ? "1" : "2"))
-                                    , userPersons[j].UserEmail, userPersons[j].UserMP, userPersons[j].Date, new Date()]
+                                    , userPersons[j].UserFun
+                                    , ((userPersons[j].UserSiteYN == "1" ? "1" : userPersons[j].UserSite) == null ? "" : (userPersons[j].UserSiteYN == "1" ? "1" : "2"))
+                                    , ((userPersons[j].UserDepotYN == "1" ? "1" : userPersons[j].UserDepot) == null ? "" : (userPersons[j].UserDepotYN == "1" ? "1" : "2"))
+                                    , userPersons[j].UserEmail
+                                    , userPersons[j].UserMP
+                                    , userPersons[j].Date
+                                    , new Date()]
                             )
                         }
                         conf.rows = dataArray;
@@ -277,7 +302,9 @@ daochuExcel = function (req, res, conf, name) {
                                                         "0",
                                                         "",
                                                         "",
-                                                        ""]
+                                                        "",
+                                                        randomPerssos[0].CrossCode
+                                                    ]
                                                 )
                                                 iterator(i + 1);
                                             } else {
@@ -352,7 +379,9 @@ daochuExcel = function (req, res, conf, name) {
                                                             (soushizhe.UnblindingType == "4" ? "1" : "0"),
                                                             jiemang.UserNam[0],
                                                             jiemang.UnblApplDTC,
-                                                            jiemang.UnblindingDate]
+                                                            jiemang.UnblindingDate,
+                                                            ""
+                                                        ]
                                                     )
                                                     iterator(i + 1);
                                                 })
@@ -423,6 +452,52 @@ daochuExcel = function (req, res, conf, name) {
                         })
                     })
                 })
+            }else if (name == "DCTP"){
+                study.find({"id" : fields.id}, function (err, studyPersons) {
+                    ImageData.find({"StudyID": studyPersons[0].StudyID},function (err, imagedatas) {
+                        var dataArray = [];
+                        (function iterator(i) {
+                            if (i == imagedatas.length){
+                                conf.rows = dataArray;
+                                var result = excelPort.execute(conf);
+
+
+                                var ttt = sd.format(new Date(), 'YYYYMMDDHHmmss');
+                                var ran = parseInt(Math.random() * 89999 + 10000);
+
+                                var uploadDir = 'public/upload/pay/';
+                                var filePath = uploadDir + ran + ttt + name + ".xlsx";
+
+                                fs.writeFile(filePath, result, 'binary', function (err) {
+                                    if (err) {
+                                        res.send({
+                                            'isSucceed': 200,
+                                            'msg': '导出错误,请联系开发人员'
+                                        });
+                                    } else {
+                                        res.send({
+                                            'isSucceed': 400,
+                                            'ExcelName': ran + ttt + name + ".xlsx"
+                                        });
+                                    }
+                                });
+                                return;
+                            }else{
+                                dataArray.push([
+                                    imagedatas[i].StudyID,
+                                    imagedatas[i].imageUrl,
+                                    imagedatas[i].isAbandoned.toString(),
+                                    (imagedatas[i].successPatientPhone == null ? '' : imagedatas[i].successPatientPhone),
+                                    imagedatas[i].successUSubjID,
+                                    (imagedatas[i].uploadUserPhone == null ? '' : imagedatas[i].uploadUserPhone),
+                                    (imagedatas[i].uploadName == null ? '' : imagedatas[i].uploadName),
+                                    imagedatas[i].Date,
+                                ])
+                                iterator(i + 1);
+                            }
+                        })(0);
+                    })
+                })
             }
         })
     })
@@ -434,11 +509,24 @@ tongbucaozuo = function (suijihao,soushizhe,researchPerssons,studyPersons,dataAr
                 shuchu(dataArray);
                 return;
             }else{
-                drugCK.find({
-                    "StudyID": studyPersons[0].StudyID,
-                    "DrugNum": soushizhe.Drug[yy]
-                }, function (err, drugckPerssos) {
-                    if (drugckPerssos.length == 0){
+                //判断是否为替换的药物号
+                var DrugNumx = soushizhe.Drug[yy]
+                if (soushizhe.Drug[yy].indexOf("替换药物号为")>= 0){
+                    var items=DrugNumx.split("替换药物号为")
+                    DrugNumx = items.join("");
+                }
+
+                users.find({
+                    "id": soushizhe.DrugDoer[yy],
+                }, function (err, xxusersPerssos) {
+                    drugCK.find({
+                        "StudyID": studyPersons[0].StudyID,
+                        "DrugNum": DrugNumx
+                    }, function (err, drugckPerssos) {
+                        if (drugckPerssos.length == 0) {
+                            if (drugckPerssos[0] == null) {
+                                console.log('11111')
+                            }
                             dataArray.push(
                                 [
                                     suijihao.StudyID,
@@ -449,49 +537,58 @@ tongbucaozuo = function (suijihao,soushizhe,researchPerssons,studyPersons,dataAr
                                     soushizhe.SubjDOB,
                                     soushizhe.SubjSex,
                                     soushizhe.SubjIni,
-                                    yisheng.UserNam,
+                                    xxusersPerssos.length == 0 ?  yisheng.UserNam : xxusersPerssos[0].UserNam,
                                     soushizhe.DrugDate[yy],
-                                    soushizhe.Drug[yy],
+                                    DrugNumx,
                                     0,
                                     researchPerssons[0].ArmCDYN + "",
                                     (researchPerssons[0].ArmCDYN + "" == "1" ? drugckPerssos[0].ArmCD : ""),
                                     (researchPerssons[0].ArmCDYN + "" == "1" ? soushizhe.Arm : ""),
-                                    drugckPerssos[0].DrugSeq+"",
+                                    drugckPerssos[0].DrugSeq + "",
                                     drugckPerssos[0].DrugExpryDTC,
                                     drugckPerssos[0].PackSeq,
+                                    (typeof(drugckPerssos[0].DrugDose)=="undefined" ? '' : drugckPerssos[0].DrugDose),
+                                    (typeof(drugckPerssos[0].StudyDCross)=="undefined" ? '' : drugckPerssos[0].StudyDCross),
+                                    (soushizhe.StudyDCross.length == 0 ? '' : soushizhe.StudyDCross[yy]),
+                                    (soushizhe.DrugDose.length == 0 ? '' : soushizhe.DrugDose[yy])
                                 ]
                             )
                             iterator(yy + 1);
-                    }else {
-                        drugWL.find({
-                            "StudyID": studyPersons[0].StudyID,
-                            "DrugNum": drugckPerssos[0].DrugNum
-                        }, function (err, drugwlPerssos) {
-                            dataArray.push(
-                                [
-                                    suijihao.StudyID,
-                                    soushizhe.SiteID,
-                                    soushizhe.SiteNam,
-                                    soushizhe.SubjID,
-                                    soushizhe.USubjID,
-                                    soushizhe.SubjDOB,
-                                    soushizhe.SubjSex,
-                                    soushizhe.SubjIni,
-                                    yisheng.UserNam,
-                                    soushizhe.DrugDate[yy],
-                                    soushizhe.Drug[yy],
-                                    drugwlPerssos[0].drugStrs[drugwlPerssos[0].drugStrs.length - 1],
-                                    researchPerssons[0].ArmCDYN + "",
-                                    (researchPerssons[0].ArmCDYN + "" == "1" ? drugckPerssos[0].ArmCD : ""),
-                                    (researchPerssons[0].ArmCDYN + "" == "1" ? soushizhe.Arm : ""),
-                                    drugckPerssos[0].DrugSeq+"",
-                                    drugckPerssos[0].DrugExpryDTC,
-                                    drugckPerssos[0].PackSeq,
-                                ]
-                            )
-                            iterator(yy + 1);
-                        })
-                    }
+                        } else {
+                            drugWL.find({
+                                "StudyID": studyPersons[0].StudyID,
+                                "DrugNum": drugckPerssos[0].DrugNum
+                            }, function (err, drugwlPerssos) {
+                                dataArray.push(
+                                    [
+                                        suijihao.StudyID,
+                                        soushizhe.SiteID,
+                                        soushizhe.SiteNam,
+                                        soushizhe.SubjID,
+                                        soushizhe.USubjID,
+                                        soushizhe.SubjDOB,
+                                        soushizhe.SubjSex,
+                                        soushizhe.SubjIni,
+                                        xxusersPerssos.length == 0 ?  yisheng.UserNam : xxusersPerssos[0].UserNam,
+                                        soushizhe.DrugDate[yy],
+                                        DrugNumx,
+                                        drugwlPerssos[0].drugStrs[drugwlPerssos[0].drugStrs.length - 1],
+                                        researchPerssons[0].ArmCDYN + "",
+                                        (researchPerssons[0].ArmCDYN + "" == "1" ? drugckPerssos[0].ArmCD : ""),
+                                        (researchPerssons[0].ArmCDYN + "" == "1" ? soushizhe.Arm : ""),
+                                        drugckPerssos[0].DrugSeq + "",
+                                        drugckPerssos[0].DrugExpryDTC,
+                                        drugckPerssos[0].PackSeq,
+                                        (typeof(drugckPerssos[0].DrugDose)=="undefined" ? '' : drugckPerssos[0].DrugDose),
+                                        (typeof(drugckPerssos[0].StudyDCross)=="undefined" ? '' : drugckPerssos[0].StudyDCross),
+                                        (soushizhe.StudyDCross.length == 0 ? '' : soushizhe.StudyDCross[yy]),
+                                        (soushizhe.DrugDose.length == 0 ? '' : soushizhe.DrugDose[yy])
+                                    ]
+                                )
+                                iterator(yy + 1);
+                            })
+                        }
+                    })
                 })
             }
         })(0);
@@ -555,6 +652,78 @@ exports.addSzrwsqhsh = function (req, res, next) {
     addData(req, res, next, ApplicationAndAudit);
 }
 
+//激活研究
+exports.activationStudy = function (req, res, next) {
+    if(req.session.login!= '1'){
+        res.render("./login");
+        return;
+    }
+    //得到用户填写的东西
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        study.find({
+            'id' : fields.id,
+            'activationStudyYN' : 1
+        },function (err,studyData) {
+            if (studyData.length != 0){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '该研究已经激活'
+                });
+                return
+            }
+            study.update({
+                'id' : fields.id,
+            },{
+                'activationStudyYN' : 1,
+            },{multi:true},function (err,data) {
+                res.send({
+                    'isSucceed' : 400,
+                    'msg' : '研究激活成功'
+                });
+                return
+            })
+        })
+    })
+}
+
+//删除研究
+exports.deleteStudy = function (req, res, next) {
+    if(req.session.login!= '1'){
+        res.render("./login");
+        return;
+    }
+    //得到用户填写的东西
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        study.remove({StudyID : fields.StudyID}, (err)=>{//删除研究数据
+            researchParameter.remove({StudyID : fields.StudyID}, (err)=>{//删除随机化参数数据
+                site.remove({StudyID : fields.StudyID}, (err)=>{//删除研究中心数据
+                    depot.remove({StudyID : fields.StudyID}, (err)=>{//删除仓库数据
+                        ExcludeStandard.remove({StudyID : fields.StudyID}, (err)=> {//删除入选排除标准
+                            random.remove({StudyID : fields.StudyID}, (err)=> {//删除随机号
+                                drug.remove({StudyID : fields.StudyID}, (err)=> {//删除药物号
+                                    FollowUpParameter.remove({StudyID : fields.StudyID}, (err)=> {//删除随访参数
+                                        ApplicationAndAudit.remove({StudyID : fields.StudyID}, (err)=> {//删除任务申请和审核
+                                            users.remove({StudyID : fields.StudyID}, (err)=> {//删除导入用户
+                                                res.send({
+                                                    'isSucceed' : 400,
+                                                    'msg' : '删除成功'
+                                                });
+                                                return
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    })
+}
+
 //删除数据
 exports.deleteData = function (req, res, next) {
     //得到用户填写的东西
@@ -596,6 +765,7 @@ function shanchuData(model,id,res) {
     )
 }
 //公共方法
+var StudyID = '';
 addData = function (req, res, next, name) {
     if(req.session.login!= '1'){
         res.render("login");
@@ -634,9 +804,12 @@ addData = function (req, res, next, name) {
             var list = xlsx.parse(newpath);
             for (var i = 1 ; i < list[0].data.length ; i++){
                 var model = {};
-                console.log(list[0].data[i]);
+                var isStudyID = 0;
                 for (var j = 0 ; j < list[0].data[i].length ; j++){
                     model[list[0].data[0][j]] = list[0].data[i][j]
+                    if (typeof(model.StudyID)!="undefined"){
+                        StudyID = model.StudyID
+                    }
                 }
                 model['Date'] = new Date();
                 if (list[0].data[i].length != 0){
@@ -649,7 +822,7 @@ addData = function (req, res, next, name) {
                     });
                 }
             }
-            res.redirect('/home');
+            res.redirect('/home?' + 'StudyID='+StudyID);
         });
     });
 }
@@ -680,7 +853,57 @@ exports.imageUpdata = function (req, res, next) {
         }
         var oldpath = files.images.path;
         var extname = path.extname(files.images.name);
-        var newpath = path.normalize(__dirname + "/../images/" + uuidV1() + extname);
+        var uuid = uuidV1();
+        var newpath = path.normalize(__dirname + "/../images/" + uuid + extname);
+        fs.rename(oldpath,newpath,function(err){
+            if(err){
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '上传失败。'
+                });
+                return;
+            }
+            var imageUrl = settings.fwqUrl + uuid + extname;
+            //保存到数据库中
+            res.send({
+                'isSucceed' : 400,
+                'url':imageUrl,
+                'msg' : '上传成功。'
+            });
+            return;
+        })
+    })
+}
+
+
+//音频上传
+exports.voiceUpdata = function (req, res, next) {
+    //得到用户填写的东西
+    var form = new formidable.IncomingForm();
+    //配置上传路径
+    form.uploadDir = __dirname + '/../middle/';
+    form.parse(req,function (err, fields, files) {
+        //改名
+        //上传完成移动到文件目录中
+        if (err){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '上传失败！'
+            });
+            return;
+        }
+        if (files.voice.size == 0){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '上传失败~'
+            });
+            return;
+        }
+        var oldpath = files.voice.path;
+        var extname = path.extname(files.voice.name);
+        var uuid = uuidV1();
+        var newpath = path.normalize(__dirname + "/../voices/" + uuid + extname);
+        var dishi = settings.fwqUrl + uuid + extname;
         fs.rename(oldpath,newpath,function(err){
             if(err){
                 res.send({
@@ -692,6 +915,7 @@ exports.imageUpdata = function (req, res, next) {
             //保存到数据库中
             res.send({
                 'isSucceed' : 400,
+                'url':settings.fwqUrl + uuid + extname,
                 'msg' : '上传成功。'
             });
             return;

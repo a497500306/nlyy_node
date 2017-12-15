@@ -17,3 +17,10 @@ exports.unique = function (arr) {
     return result;
 
 }
+//code from http://caibaojian.com/js-splice-element.html
+exports.remove = function(val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};

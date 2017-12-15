@@ -30,6 +30,5 @@ exports.fasongxiujian = function (mailOptions) {
         }else{
             console.log("Message sent: " + response.message);
         }
-        smtpTransport.close(); // 如果没用，关闭连接池
     });
 }

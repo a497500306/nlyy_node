@@ -29,19 +29,48 @@ exports.appLogin = function (req, res, next) {
                     'msg' : '数据库正在维护,请稍后再试'
                 });
             }else{
-                console.log('登陆');
-                if (persons.length > 0){//登录
-                    console.log(persons);
-                    res.send({
-                        'isSucceed' : 400,
-                        'data' : persons
-                    });
-                }else{
-                    res.send({
-                        'isSucceed' : 200,
-                        'msg' : '未找到该用户'
-                    });
-                }
+                var personsData = [];
+                (function iterator(i) {
+                    if (i == persons.length){
+                        if (personsData.length > 0){//登录
+                            console.log(fields)
+                            res.send({
+                                'isSucceed' : 400,
+                                'data' : personsData
+                            });
+                            //保存registrationId到对应的用户
+                            users.update({
+                                UserMP : fields.phone,
+                            },{
+                                platform:fields.platform,
+                                registrationId:fields.registrationId,
+                            },{multi:true},function (err,data) {
+                                console.log("修改成功");
+                            })
+                            return;
+                        }else{
+                            res.send({
+                                'isSucceed' : 200,
+                                'msg' : '未找到该用户的任何研究'
+                            });
+                            return;
+                        }
+                    }
+                    study.find({
+                        StudyID:persons[i].StudyID
+                    },function (err, studyData) {
+                        if (studyData[0].activationStudyYN == null){
+                            console.log('未激活');
+
+                        }else if (studyData[0].activationStudyYN == 1){
+                            personsData.push(persons[i])
+                        }else{
+                            console.log('123123')
+                        }
+                        iterator(i + 1)
+                    })
+                })(0);
+
             }
         })
     })
@@ -137,7 +166,7 @@ exports.appIDCode = function (req, res, next) {
     form.parse(req,function (err, fields, files) {
         console.log(fields,files);
         //搜索数据库中是否有该用户
-        users.chazhaoPhone(fields.phone,function (err, persons) {
+        users.find({'UserAcc':fields.phone},function (err, persons) {
             var idCoed = generateMixed(4);
             if (err != null){
                 console.log(error);
@@ -166,7 +195,7 @@ exports.appIDCode = function (req, res, next) {
                             console.log(error)
                             res.send({
                                 'isSucceed' : 200,
-                                'msg' : '验证码发送失败'
+                                'msg' : '验证码发送失败' + error.toString()
                             });
                         }
                     });

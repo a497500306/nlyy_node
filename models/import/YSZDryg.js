@@ -107,7 +107,21 @@ YSZDrugSchema.statics.chazhaosuoyouZXDQS = function (StudyID,UserSiteYN,UserSite
     if (UserSiteYN == 1){//是否负责全部中心
         this.model('YSZDrug').find({'Address.StudyID' : StudyID, 'isSign' : 0 , 'Type' : 2}).sort('-id').exec(callback)
     }else{
-        this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'isSign' : 0 , 'Type' : 2}).sort('-id').exec(callback)
+        if (UserSite.indexOf(',') != -1){
+
+            var siteIDs = UserSite.split(",");
+            var findJson = {$or:[]};
+            for (var i = 0 ; i < siteIDs.length ; i++){
+                findJson.$or.push(
+                    {
+                        'Address.StudyID' : StudyID,'Address.SiteID': siteIDs[i],'isSign' : 0 , 'Type' : 2
+                    }
+                )
+            }
+            this.model('YSZDrug').find(findJson).sort('-id').exec(callback)
+        }else{
+            this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'isSign' : 0 , 'Type' : 2}).sort('-id').exec(callback)
+        }
     }
 }
 //取出某研究某用户的所有已签收列表
@@ -123,7 +137,21 @@ YSZDrugSchema.statics.chazhaosuoyouZXYQS = function (StudyID,UserSiteYN,UserSite
     if (UserSiteYN == 1){//是否负责全部中心
         this.model('YSZDrug').find({'Address.StudyID' : StudyID, 'isSign' : 1 , 'Type' : 2}).sort('-id').exec(callback)
     }else{
-        this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'isSign' : 1 , 'Type' : 2}).sort('-id').exec(callback)
+        if (UserSite.indexOf(',') != -1){
+
+            var siteIDs = UserSite.split(",");
+            var findJson = {$or:[]};
+            for (var i = 0 ; i < siteIDs.length ; i++){
+                findJson.$or.push(
+                    {
+                        'Address.StudyID' : StudyID,'Address.SiteID': siteIDs[i],'isSign' : 1 , 'Type' : 2
+                    }
+                )
+            }
+            this.model('YSZDrug').find(findJson).sort('-id').exec(callback)
+        }else{
+            this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'isSign' : 1 , 'Type' : 2}).sort('-id').exec(callback)
+        }
     }
 }
 
@@ -140,7 +168,21 @@ YSZDrugSchema.statics.chazhaosuoyouZXQD = function (StudyID,UserSiteYN,UserSite,
     if (UserSiteYN == 1){//是否负责全部中心
         this.model('YSZDrug').find({'Address.StudyID' : StudyID, 'Type' : 2}).sort('-id').exec(callback)
     }else{
-        this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'Type' : 2}).sort('-id').exec(callback)
+        if (UserSite.indexOf(',') != -1){
+
+            var siteIDs = UserSite.split(",");
+            var findJson = {$or:[]};
+            for (var i = 0 ; i < siteIDs.length ; i++){
+                findJson.$or.push(
+                    {
+                        'Address.StudyID' : StudyID,'Address.SiteID': siteIDs[i] , 'Type' : 2
+                    }
+                )
+            }
+            this.model('YSZDrug').find(findJson).sort('-id').exec(callback)
+        }else{
+            this.model('YSZDrug').find({'Address.StudyID' : StudyID,'Address.SiteID': UserSite, 'Type' : 2}).sort('-id').exec(callback)
+        }
     }
 }
 //model

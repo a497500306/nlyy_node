@@ -54,7 +54,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">诺兰医药管理平台</a>
+            <a class="navbar-brand" href="/selectStudy">点击返回选择研究</a>
         </div>
 
         <ul class="nav navbar-nav navbar-right">
@@ -172,6 +172,9 @@
                     <br>
                     <br>
                     <button type="button" class="btn btn-primary" id="dcyhzhzz">导出用户账号资料</button>
+                    <br>
+                    <br>
+                    <button type="button" class="btn btn-primary" id="dctpzl">导出图片资料</button>
                 </div>
                 <div class="alert alert-danger" role="alert" id="daochucuowukuang">账号或者密码错误</div>
             </div><!-- /.modal-content -->
@@ -200,9 +203,6 @@
             </ul>
             <ul class="nav nav-sidebar" id="dcshUi">
                 <li id="szhlyhLi"><a href="#" id="dcsj">导出数据</a></li>
-            </ul>
-            <ul class="nav nav-sidebar" id="szhlyhUi">
-                <li id="szhlyhLi"><a href="#" id="szhlyh">设置管理用户</a></li>
             </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" >
@@ -260,7 +260,7 @@
                     {{ for(var j = 0 ; j < resultEn.length ; j++){ }}
                     {{ if(resultEn[j] == '操作' ){ }}
                     {{ var dataId = data[i].id; }}
-                    <td><a data-toggle="modal" data-target=".daochushujuModel" name= {{= dataId}} onclick="daochuFun(this.name)">选择</a></td>
+                    <td><a data-toggle="modal" data-target=".daochushujuModel" name= {{= dataId}} onclick="daochuFun(this.name)">操作</a></td>
                     {{ }else if(resultEn[j] == 'Date'){ }}
                     {{ var date = new Date(data[i][resultEn[j]]); }}
                     {{ var dateStr =  date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();}}

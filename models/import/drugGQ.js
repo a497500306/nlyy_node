@@ -14,6 +14,8 @@ var drugGQSchema = new mongoose.Schema({
     "DrugSeq" : Number,  //药物流水号
     "DrugExpryDTC" : Date, //药物有效期
     "DrugDigits" : Number, // 药物号位数
+    "StudyDCross" : String,//交叉设计数据
+    "DrugDose" : String,//药物剂量数据
     "DDrugNumRYN" : Number, // 属于分仓库已接收的药物号
     "DDrugNumAYN" : Number, // 属于分仓库已激活的药物号
     "DDrugDMNumYN" : Number, // 属于分仓库损坏和遗漏药物号

@@ -26,6 +26,8 @@ var usersSchema = new mongoose.Schema({
     "UserDepot" : String,  //具体负责仓库的编号
     "UserEmail" : String,  //用户邮箱
     "UserMP"  : String,    //用户手机号
+    "platform"  : String,    //ios和安卓
+    "registrationId"  : String,    //推送id
     "Date" : Date, //导入时间
 });
 usersSchema.plugin(autoIncrement.plugin, {
@@ -42,7 +44,7 @@ usersSchema.index({ "StudyID": 1});
 
 //查找是否有该手机号的用户
 usersSchema.statics.chazhaoPhone = function (phone, callback) {
-    this.model('users').find({UserMP : phone},callback)
+    this.model('users').find({UserAcc : phone},callback)
 }
 
 //model

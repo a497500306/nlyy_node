@@ -24,7 +24,11 @@ var yytxSchema = new mongoose.Schema({
     //推送内容
     'tuisongnr3' : String,
     //研究ID
-    "StudyID" : String,    //研究编号
+    "StudyID" : String,
+    //用户信息
+    "patient" : Object,
+    //添加这信息
+    "users" : Object,
     //用户手机
     "phone" : String,//用户手机
 });

@@ -66,6 +66,11 @@ var researchParameterSchema = new mongoose.Schema({
     "ArmYN" : Number, //取随机号时是否显示分组情况
     "SubStudYN" : Number, //取随机号时是否显示随机抽中参加子研究
     "CStudyPeYN" : Number, //取随机号时是否显示目前研究阶段
+    "CRFMaxNum" : String, //页码最大数量
+    "CRFModeules" : String,//模块名
+    "CRFReviewPhones" : String,//图片审核用户手机号数组,有图片操作时必须有值逗号隔开
+    "StudyDCross" : String,//交叉设计数据
+    "DrugDose" : String,//药物剂量数据
     "Date" : Date, //导入时间
 });
 researchParameterSchema.plugin(autoIncrement.plugin, {

@@ -18,6 +18,8 @@ var drugSchema = new mongoose.Schema({
     "DrugSeq" : Number,  //药物流水号
     "DrugExpryDTC" : Date, //药物有效期
     "DrugDigits" : Number, // 药物号位数
+    "StudyDCross" : String,//交叉设计数据
+    "DrugDose" : String,//药物剂量数据
     "Date" : Date, //导入时间
 });
 drugSchema.plugin(autoIncrement.plugin, {

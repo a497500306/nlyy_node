@@ -136,7 +136,20 @@ exports.addSuccessUpdate = function (StudyID, SiteID,block) {
                 block();
             })
         }else{
-            site.find({StudyID:StudyID,SiteID:SiteID},function (err, sitep) {
+            var siteJson = {};
+            if (SiteID.indexOf(',') != -1 ) {
+                siteJson = {$or:[]};
+                var sites = SiteID.split(",");
+                for (var i = 0 ; i < sites.length ; i++){
+                    siteJson.$or.push({
+                        'StudyID' : StudyID,
+                        'SiteID' : sites[i]
+                    })
+                }
+            }else{
+                siteJson = {StudyID:StudyID,SiteID:SiteID};
+            }
+            site.find(siteJson,function (err, sitep) {
                 if (sitep[0].isUnblinding == "1") {
                     addSuccess.update({
                         "StudyID": StudyID,

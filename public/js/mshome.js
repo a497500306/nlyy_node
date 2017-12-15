@@ -57,6 +57,21 @@ $('#dcyhzhzz').on('click', function () {
         }
     });
 });
+//点击导出图片资料
+$('#dctpzl').on('click', function () {
+    $.post('node/addDctpzl',{
+        "id":dataId
+    },function (result) {
+        if (result.isSucceed == 200){
+            $("#daochucuowukuang").html(result.msg);
+            $("#daochucuowukuang").fadeIn();
+            setTimeout("$(\"#daochucuowukuang\").fadeOut();",3000)
+        }else if (result.isSucceed == 400){
+            $("#daochucuowukuang").fadeOut();
+            window.open(window.location.protocol + "//" + window.location.host + '/' + result.ExcelName);
+        }
+    });
+});
 
 //点击导出药物资料
 $('#dcyyywh').on('click', function () {
@@ -89,14 +104,46 @@ $('#dcyysjh').on('click', function () {
         }
     });
 });
-
+function getQueryString()
+{
+    var url = window.location.href;
+    var num = url.indexOf("?");
+    var str = url.substr(num + 1);
+    var arr = str.split("&");
+    var name = "";
+    var value = "";
+    for(var i = 0; i < arr.length; i++)
+    {
+        num = arr[i].indexOf("=");
+        if(num > 0)
+        {
+            name = arr[i].substring(0, num);
+            value = arr[i].substr(num + 1);
+            this[name] = value;
+        }
+    }
+}
 function postData(id,text,page) {
+    var url = window.location.href;
+    var json = {}
+    if(url.indexOf("?")!=-1){
+        var request = new getQueryString();
+        json = {
+            "id":id,
+            "text":text,
+            "page":page,
+            "StudyID" : request.StudyID
+        }
+    }else{
+        json = {
+            "id":id,
+            "text":text,
+            "page":page,
+            "StudyID" : ''
+        }
+    }
     $('.sub-header')[0].innerHTML = text;
-    $.post('node/getHome',{
-        "id":id,
-        "text":text,
-        "page":page
-    },function (result) {
+    $.post('node/getHome',json,function (result) {
         console.log(result);
         //    显示模板
         //得到模板，弄成模板函数
@@ -130,7 +177,6 @@ function postData(id,text,page) {
         }
         if (result.importUrl == "/nlyy/dcsj"){
             $("#caozuomokuai").hide();
-            $(".yemaanniu").hide();
             //显示添加用户BTN
             $("#daochushujuBtn").show();
         }
@@ -201,12 +247,38 @@ $('#modalTianjiaBtn').on('click', function () {
 
 var dianjiType = ''
 var dataId = ''
+var StudyID = ''
 $('#shanchuButton').on('click', function () {
     $.post('nlyy/deleteData',{
         'id' : dataId,
         "dianType" : dianjiType
     },function (result) {
         location.reload()
+    });
+})
+
+$('#shanchuYanjiuButton').on('click', function () {
+    $.post('nlyy/deleteStudy',{
+        'StudyID' : StudyID
+    },function (result) {
+        alert(result.msg)
+        location.reload()
+    });
+})
+$('#jinruButton').on('click', function () {
+    $.post('nlyy/enterStudy',{
+        'StudyID' : StudyID
+    },function (result) {
+        localStorage.addUser = result.addUser;
+        location.href = result.url;
+    });
+})
+$('#jihuoyanjiuButton').on('click', function () {
+    $.post('nlyy/activationStudy',{
+        'id' : dataId,
+        "dianType" : dianjiType
+    },function (result) {
+        alert(result.msg)
     });
 })
 $('#xzyj').on('click', function () {
@@ -244,9 +316,21 @@ $('#dryh').on('click', function () {
 })
 
 function t(e){
-    dataId = e;
+    if (e.indexOf(',') != -1){
+        var array = e.split(",");
+        dataId = array[0];
+        StudyID = array[1];
+    }else{
+        dataId = e;
+    }
 }
 
 function daochuFun(e){
-    dataId = e;
+    if (e.indexOf(',') != -1){
+        var array = e.split(",");
+        dataId = array[0];
+        StudyID = array[1];
+    }else{
+        dataId = e;
+    }
 };

@@ -19,12 +19,17 @@ var appSSZSJ = require('./controller/APPJK/appSSZSJ')//app查询相关
 var appTzrz = require('./controller/APPJK/appTzrz')//app查询相关
 var appYjxx = require('./controller/APPJK/appYjxx')//app查询相关
 var appSFGL = require('./controller/APPJK/appSFGL')//app查询相关
+var appHeartbeat = require('./controller/APPJK/appHeartbeat')//app查询相关
+var appImageData = require('./controller/APPJK/appImageData')//图片管理模块
 var drug = require('./models/import/drug')//药物号
 var drugCK = require('./models/import/drugCK')//药物号
 var drugGQ = require('./models/import/drugGQ')//药物号
 
 var schedule = require("node-schedule");
-var yytx = require('./models/import/yytx')
+var yytx = require('./models/import/yytx');
+var study = require('./models/import/study');
+var recordingSMS = require('./models/import/recordingSMS')
+
 //时间操作
 var moment = require('moment');
 moment().format();
@@ -63,7 +68,7 @@ schedule.scheduleJob(rule, function(){
     drug.find({"DrugExpryDTC" : {$lt : new Date()}}, function (err, persons) {
         if (err == null){
             for (var i = 0 ; i < persons.length ; i++){
-                var newDrug = persons[0];
+                var newDrug = persons[i];
                 //全部移动到过期数据库
                 drugGQ.create({
                     "StudyID" : newDrug.StudyID,    //研究编号
@@ -74,6 +79,8 @@ schedule.scheduleJob(rule, function(){
                     "DrugSeq" : newDrug.DrugSeq,  //药物流水号
                     "DrugExpryDTC" : newDrug.DrugExpryDTC, //药物有效期
                     "DrugDigits" : newDrug.DrugDigits, // 药物号位数
+                    "StudyDCross" : newDrug.StudyDCross,//交叉设计数据
+                    "DrugDose" : newDrug.StudyDCross,//药物剂量数据
                 },function (error) {
 
                 });
@@ -82,17 +89,17 @@ schedule.scheduleJob(rule, function(){
                     if(err){
                         console.log(err);
                     }else{
-                        console.log("删除成功");
+
                     }
                 });
             }
         }
     })
     //移动所有仓库中的药物号
-    drugCK.find({"DrugExpryDTC" : dateStr}, function (err, persons) {
+    drugCK.find({"DrugExpryDTC" : {$lt : new Date()}}, function (err, persons) {
         if (err == null){
             for (var i = 0 ; i < persons.length ; i++){
-                var newDrug = persons[0];
+                var newDrug = persons[i];
                 //全部移动到过期数据库
                 drugGQ.create({
                     "StudyID" : newDrug.StudyID,    //研究编号
@@ -101,6 +108,8 @@ schedule.scheduleJob(rule, function(){
                     "Arm" : newDrug.Arm,   //治疗分组标签
                     "PackSeq" : newDrug.PackSeq,   //编盲编号批次
                     "DrugSeq" : newDrug.DrugSeq,  //药物流水号
+                    "StudyDCross" : newDrug.StudyDCross,//交叉设计数据
+                    "DrugDose" : newDrug.StudyDCross,//药物剂量数据
                     "DrugExpryDTC" : newDrug.DrugExpryDTC, //药物有效期
                     "DrugDigits" : newDrug.DrugDigits, // 药物号位数
                     "DDrugNumRYN" : newDrug.DDrugNumRYN, // 属于分仓库已接收的药物号
@@ -121,7 +130,7 @@ schedule.scheduleJob(rule, function(){
                     if(err){
                         console.log(err);
                     }else{
-                        console.log("删除成功");
+
                     }
                 });
             }
@@ -139,69 +148,154 @@ schedule.scheduleJob(rule1, function(){
     var shi = moment().format('HH')
     //搜索用药提醒
     yytx.find({tuisong1:shi + ":" + 30,kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
-        console.log(randomPersons.length)
-        for (var i = 0 ; i < randomPersons.length ; i++){
-            var phone = randomPersons[i].phone
-            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-                'extend' : '' ,
-                'sms_type' : 'normal' ,
-                'sms_free_sign_name' : '诺兰医药科技' ,
-                'sms_param' : {
-                    studyID:randomPersons[i].StudyID ,
-                    yytx:randomPersons[i].tuisongnr1.replace('研究温馨提示：',''),
-                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-                } ,
-                'rec_num' :  randomPersons[i].phone  ,
-                'sms_template_code' : "SMS_63885566"
-            }, function(error, response) {
-                if (error != null){
-                    console.log(error)
+        //异步转同步
+        (function iterator(i){
+            if (i == randomPersons.length){
+                return;
+            }
+            study.find({'StudyID' : randomPersons[i].StudyID},function (err, studyData) {
+                if (err != null){
+                    iterator(i+1)
+                }else if (studyData.length == 0){
+                    iterator(i+1)
+                }else if (studyData[0].StudDEMOYN == 1){
+                    var phone = randomPersons[i].phone
+                    client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                        'extend' : '' ,
+                        'sms_type' : 'normal' ,
+                        'sms_free_sign_name' : '诺兰医药科技' ,
+                        'sms_param' : {
+                            studyID:randomPersons[i].StudyID ,
+                            yytx:randomPersons[i].tuisongnr1.replace('研究温馨提示：',''),
+                            date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                        } ,
+                        'rec_num' :  randomPersons[i].phone  ,
+                        'sms_template_code' : "SMS_63885566"
+                    }, function(error, response) {
+                        if (error != null){
+                            console.log(error)
+                            iterator(i+1)
+                        }else{
+                            //发送成功,添加到数据库
+                            recordingSMS.create({
+                                "StudyID" : randomPersons[i].StudyID,    //研究编号
+                                "content" : "【诺兰医药科技】" + randomPersons[i].StudyID +  randomPersons[i].tuisongnr1 + '，' + "完成时间" + (moment().format('YYYY-MM-DD h:mm:ss a')),    //内容
+
+                                "patient" : randomPersons[i].patient,    //用户信息
+
+                                "users" : randomPersons[i].users,      //添加这信息
+                                "type" : 1,       //1:药物推送短信,2:随访短信
+                                "Date" : new Date(), //导入时间
+                            },function () {
+                                iterator(i+1)
+                            })
+                        }
+                    });
+                }else{
+                    iterator(i+1)
                 }
-                console.log(response)
-            });
-        }
+            })
+        })(0);
     });
     yytx.find({tuisong2:shi + ":" + 30,kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
-        console.log(randomPersons.length)
-        for (var i = 0 ; i < randomPersons.length ; i++){
-            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-                'extend' : '' ,
-                'sms_type' : 'normal' ,
-                'sms_free_sign_name' : '诺兰医药科技' ,
-                'sms_param' : {
-                    studyID:randomPersons[i].StudyID ,
-                    yytx:randomPersons[i].tuisongnr2.replace('研究温馨提示：',''),
-                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-                } ,
-                'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_63885566"
-            }, function(error, response) {
-                if (error != null){
-                    console.log(error)
+        //异步转同步
+        (function iterator(i){
+            if (i == randomPersons.length){
+                return;
+            }
+            study.find({'StudyID' : randomPersons[i].StudyID},function (err, studyData) {
+                if (err != null){
+                    iterator(i+1)
+                }else if (studyData.length == 0){
+                    iterator(i+1)
+                }else if (studyData[0].StudDEMOYN == 1){
+                    var phone = randomPersons[i].phone
+                    client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                        'extend' : '' ,
+                        'sms_type' : 'normal' ,
+                        'sms_free_sign_name' : '诺兰医药科技' ,
+                        'sms_param' : {
+                            studyID:randomPersons[i].StudyID ,
+                            yytx:randomPersons[i].tuisongnr2.replace('研究温馨提示：',''),
+                            date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                        } ,
+                        'rec_num' :  randomPersons[i].phone  ,
+                        'sms_template_code' : "SMS_63885566"
+                    }, function(error, response) {
+                        if (error != null){
+                            console.log(error)
+                            iterator(i+1)
+                        }else{
+                            //发送成功,添加到数据库
+                            recordingSMS.create({
+                                "StudyID" : randomPersons[i].StudyID,    //研究编号
+                                "content" : "【诺兰医药科技】" + randomPersons[i].StudyID + randomPersons[i].tuisongnr2 + '，' + "完成时间" + (moment().format('YYYY-MM-DD h:mm:ss a')),    //内容
+
+                                "patient" : randomPersons[i].patient,    //用户信息
+
+                                "users" : randomPersons[i].users,      //添加这信息
+                                "type" : 1,       //1:药物推送短信,2:随访短信
+                                "Date" : new Date(), //导入时间
+                            },function () {
+                                iterator(i+1)
+                            })
+                        }
+                    });
+                }else{
+                    iterator(i+1)
                 }
-            });
-        }
+            })
+        })(0);
     });
     yytx.find({tuisong3:shi + ":" + 30,kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
-        console.log(randomPersons.length)
-        for (var i = 0 ; i < randomPersons.length ; i++){
-            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-                'extend' : '' ,
-                'sms_type' : 'normal' ,
-                'sms_free_sign_name' : '诺兰医药科技' ,
-                'sms_param' : {
-                    studyID:randomPersons[i].StudyID,
-                    yytx:randomPersons[i].tuisongnr3.replace('研究温馨提示：',''),
-                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-                } ,
-                'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_63885566"
-            }, function(error, response) {
-                if (error != null){
-                    console.log(error)
+        //异步转同步
+        (function iterator(i){
+            if (i == randomPersons.length){
+                return;
+            }
+            study.find({'StudyID' : randomPersons[i].StudyID},function (err, studyData) {
+                if (err != null){
+                    iterator(i+1)
+                }else if (studyData.length == 0){
+                    iterator(i+1)
+                }else if (studyData[0].StudDEMOYN == 1){
+                    var phone = randomPersons[i].phone
+                    client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                        'extend' : '' ,
+                        'sms_type' : 'normal' ,
+                        'sms_free_sign_name' : '诺兰医药科技' ,
+                        'sms_param' : {
+                            studyID:randomPersons[i].StudyID ,
+                            yytx:randomPersons[i].tuisongnr3.replace('研究温馨提示：',''),
+                            date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                        } ,
+                        'rec_num' :  randomPersons[i].phone  ,
+                        'sms_template_code' : "SMS_63885566"
+                    }, function(error, response) {
+                        if (error != null){
+                            console.log(error)
+                            iterator(i+1)
+                        }else{
+                            //发送成功,添加到数据库
+                            recordingSMS.create({
+                                "StudyID" : randomPersons[i].StudyID,    //研究编号
+                                "content" : "【诺兰医药科技】" + randomPersons[i].StudyID +  randomPersons[i].tuisongnr3 + '，' + "完成时间" + (moment().format('YYYY-MM-DD h:mm:ss a')),    //内容
+
+                                "patient" : randomPersons[i].patient,    //用户信息
+
+                                "users" : randomPersons[i].users,      //添加这信息
+                                "type" : 1,       //1:药物推送短信,2:随访短信
+                                "Date" : new Date(), //导入时间
+                            },function () {
+                                iterator(i+1)
+                            })
+                        }
+                    });
+                }else{
+                    iterator(i+1)
                 }
-            });
-        }
+            })
+        })(0);
     });
 
 });
@@ -213,68 +307,155 @@ var i = schedule.scheduleJob(rule2, function(){
     //搜索所有30分钟的用药提醒
     var shi = moment().format('HH')
     //搜索用药提醒
-
     yytx.find({tuisong1:shi + ":" + "00",kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
-        for (var i = 0 ; i < randomPersons.length ; i++){
-            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-                'extend' : '' ,
-                'sms_type' : 'normal' ,
-                'sms_free_sign_name' : '诺兰医药科技' ,
-                'sms_param' : {
-                    studyID:randomPersons[i].StudyID ,
-                    yytx:randomPersons[i].tuisongnr1.replace('研究温馨提示：',''),
-                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-                } ,
-                'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_63885566"
-            }, function(error, response) {
-                if (error != null){
-                    console.log(error)
+        //异步转同步
+        (function iterator(i){
+            if (i == randomPersons.length){
+                return;
+            }
+            study.find({'StudyID' : randomPersons[i].StudyID},function (err, studyData) {
+                if (err != null){
+                    iterator(i+1)
+                }else if (studyData.length == 0){
+                    iterator(i+1)
+                }else if (studyData[0].StudDEMOYN == 1){
+                    var phone = randomPersons[i].phone
+                    client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                        'extend' : '' ,
+                        'sms_type' : 'normal' ,
+                        'sms_free_sign_name' : '诺兰医药科技' ,
+                        'sms_param' : {
+                            studyID:randomPersons[i].StudyID ,
+                            yytx:randomPersons[i].tuisongnr1.replace('研究温馨提示：',''),
+                            date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                        } ,
+                        'rec_num' :  randomPersons[i].phone  ,
+                        'sms_template_code' : "SMS_63885566"
+                    }, function(error, response) {
+                        if (error != null){
+                            console.log(error)
+                            iterator(i+1)
+                        }else{
+                            //发送成功,添加到数据库
+                            recordingSMS.create({
+                                "StudyID" : randomPersons[i].StudyID,    //研究编号
+                                "content" : "【诺兰医药科技】" + randomPersons[i].StudyID + randomPersons[i].tuisongnr1 + '，' + "完成时间" + (moment().format('YYYY-MM-DD h:mm:ss a')),    //内容
+
+                                "patient" : randomPersons[i].patient,    //用户信息
+
+                                "users" : randomPersons[i].users,      //添加这信息
+                                "type" : 1,       //1:药物推送短信,2:随访短信
+                                "Date" : new Date(), //导入时间
+                            },function () {
+                                iterator(i+1)
+                            })
+                        }
+                    });
+                }else{
+                    iterator(i+1)
                 }
-            });
-        }
+            })
+        })(0);
     });
     yytx.find({tuisong2:shi + ":" + "00",kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
-        console.log(randomPersons.length)
-        for (var i = 0 ; i < randomPersons.length ; i++){
-            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-                'extend' : '' ,
-                'sms_type' : 'normal' ,
-                'sms_free_sign_name' : '诺兰医药科技' ,
-                'sms_param' : {
-                    studyID:randomPersons[i].StudyID ,
-                    yytx:randomPersons[i].tuisongnr2.replace('研究温馨提示：',''),
-                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-                } ,
-                'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_63885566"
-            }, function(error, response) {
-                if (error != null){
-                    console.log(error)
+        //异步转同步
+        (function iterator(i){
+            if (i == randomPersons.length){
+                return;
+            }
+            study.find({'StudyID' : randomPersons[i].StudyID},function (err, studyData) {
+                if (err != null){
+                    iterator(i+1)
+                }else if (studyData.length == 0){
+                    iterator(i+1)
+                }else if (studyData[0].StudDEMOYN == 1){
+                    var phone = randomPersons[i].phone
+                    client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                        'extend' : '' ,
+                        'sms_type' : 'normal' ,
+                        'sms_free_sign_name' : '诺兰医药科技' ,
+                        'sms_param' : {
+                            studyID:randomPersons[i].StudyID ,
+                            yytx:randomPersons[i].tuisongnr2.replace('研究温馨提示：',''),
+                            date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                        } ,
+                        'rec_num' :  randomPersons[i].phone  ,
+                        'sms_template_code' : "SMS_63885566"
+                    }, function(error, response) {
+                        if (error != null){
+                            console.log(error)
+                            iterator(i+1)
+                        }else{
+                            //发送成功,添加到数据库
+                            recordingSMS.create({
+                                "StudyID" : randomPersons[i].StudyID,    //研究编号
+                                "content" : "【诺兰医药科技】" + randomPersons[i].StudyID + randomPersons[i].tuisongnr2 + '，' + "完成时间" + (moment().format('YYYY-MM-DD h:mm:ss a')),    //内容
+
+                                "patient" : randomPersons[i].patient,    //用户信息
+
+                                "users" : randomPersons[i].users,      //添加这信息
+                                "type" : 1,       //1:药物推送短信,2:随访短信
+                                "Date" : new Date(), //导入时间
+                            },function () {
+                                iterator(i+1)
+                            })
+                        }
+                    });
+                }else{
+                    iterator(i+1)
                 }
-            });
-        }
+            })
+        })(0);
     });
     yytx.find({tuisong3:shi + ":" + "00",kaishiStr:{$lte:new Date()},jiesuStr:{$gte:new Date()}}).exec(function(err, randomPersons) {
-        console.log(randomPersons.length)
-        for (var i = 0 ; i < randomPersons.length ; i++){
-            client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-                'extend' : '' ,
-                'sms_type' : 'normal' ,
-                'sms_free_sign_name' : '诺兰医药科技' ,
-                'sms_param' : {
-                    studyID:randomPersons[i].StudyID ,
-                    yytx:randomPersons[i].tuisongnr3.replace('研究温馨提示：',''),
-                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-                } ,
-                'rec_num' : randomPersons[i].phone ,
-                'sms_template_code' : "SMS_63885566"
-            }, function(error, response) {
-                if (error != null){
-                    console.log(error)
+        //异步转同步
+        (function iterator(i){
+            if (i == randomPersons.length){
+                return;
+            }
+            study.find({'StudyID' : randomPersons[i].StudyID},function (err, studyData) {
+                if (err != null){
+                    iterator(i+1)
+                }else if (studyData.length == 0){
+                    iterator(i+1)
+                }else if (studyData[0].StudDEMOYN == 1){
+                    var phone = randomPersons[i].phone
+                    client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
+                        'extend' : '' ,
+                        'sms_type' : 'normal' ,
+                        'sms_free_sign_name' : '诺兰医药科技' ,
+                        'sms_param' : {
+                            studyID:randomPersons[i].StudyID ,
+                            yytx:randomPersons[i].tuisongnr3.replace('研究温馨提示：',''),
+                            date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                        } ,
+                        'rec_num' :  randomPersons[i].phone  ,
+                        'sms_template_code' : "SMS_63885566"
+                    }, function(error, response) {
+                        if (error != null){
+                            console.log(error)
+                            iterator(i+1)
+                        }else{
+                            //发送成功,添加到数据库
+                            recordingSMS.create({
+                                "StudyID" : randomPersons[i].StudyID,    //研究编号
+                                "content" : "【诺兰医药科技】" + randomPersons[i].StudyID + randomPersons[i].tuisongnr3 + '，' + "完成时间" + (moment().format('YYYY-MM-DD h:mm:ss a')),    //内容
+
+                                "patient" : randomPersons[i].patient,    //用户信息
+
+                                "users" : randomPersons[i].users,      //添加这信息
+                                "type" : 1,       //1:药物推送短信,2:随访短信
+                                "Date" : new Date(), //导入时间
+                            },function () {
+                                iterator(i+1)
+                            })
+                        }
+                    });
+                }else{
+                    iterator(i+1)
                 }
-            });
-        }
+            })
+        })(0);
     });
 });
 
@@ -283,13 +464,21 @@ app.use(express.static("./public"));
 app.use(express.static("./uploads"));
 app.use(express.static("./assistant"));
 app.use(express.static("./images"));
+app.use(express.static("./voices"));
 app.use(express.static("./public/upload/pay/"));
+
+//测试界面
+app.get("/cheshi",login.cheshi);
 
 //登录界面
 app.get("/admin",login.showAdmin);
 
 //登录请求
 app.post("/nlyy/login",login.doLogin);
+//进入研究
+app.post("/nlyy/enterStudy",login.enterStudy);
+//选择研究列表
+app.get("/selectStudy",login.showSelectStudy);
 //管理首页
 app.get('/home',login.showHome);
 //修改密码
@@ -324,21 +513,32 @@ app.post('/nlyy/addSzsszsfcs',ImportData.addSzsszsfcs);
 app.post('/nlyy/addSzrwsqhsh',ImportData.addSzrwsqhsh);
 
 
+//删除研究
+app.post("/nlyy/deleteStudy",ImportData.deleteStudy);
 //删除数据
 app.post("/nlyy/deleteData",ImportData.deleteData);
 //登录请求
 app.post("/node/getHome",login.doHome);
+//激活研究
+app.post("/nlyy/activationStudy",ImportData.activationStudy);
+
 
 /**************导出数据*****************/
 
 //点击导出用户资料
 app.post('/node/addDcyhzhzz',ImportData.addDcyhzhzz);
 
+//点击导出图片资料
+app.post('/node/addDctpzl',ImportData.addDctpzl);
+
 //点击导出药物资料
 app.post('/node/addDcyyywh',ImportData.addDcyyywh);
 
 //点击导出随机资料
 app.post('/node/addDcyysjh',ImportData.addDcyysjh);
+
+//点击导出用户资料
+app.post('/node/addDctpzl',ImportData.addDctpzl);
 
 /*************APP接口******************/
 //获取验证码接口
@@ -415,16 +615,28 @@ app.post("/app/getDrugWLData",appChangKu.getDrugWLData);
 app.post('/app/getSingleSite',appSSZSJ.getSite);
 //判断中心是否停止入组
 app.post('/app/getIsStopItSite',appSSZSJ.getIsStopItSite);
-//添加成功受试者基础数据
+//添加受试者基础数据
+app.post('/app/getAddBasicsData',appSSZSJ.getAddBasicsData);
+//添加筛选成功受试者数据
 app.post('/app/getAddSuccessBasicsData',appSSZSJ.getAddSuccessBasicsData);
+//添加登记转成功受试者数据
+app.post('/app/getAddBasisDataSuccessBasicsData',appSSZSJ.getAddBasisDataSuccessBasicsData);
 //取随机号
 app.post('/app/getRandomNumber',appSSZSJ.getRandomNumber);
 //用药提醒
 app.post('/app/getYytx',appSSZSJ.getYytx);
 //补充药物号
 app.post('/app/getBcywh',appSSZSJ.getBcywh);
+//补充药物号考虑交叉设计
+app.post('/app/getBcywhJcsj',appSSZSJ.getBcywhJcsj);
+//补充药物号考虑药物剂量
+app.post('/app/getBcywhYwjl',appSSZSJ.getBcywhYwjl);
 //替换药物号
 app.post('/app/getThywh',appSSZSJ.getThywh);
+//替换药物号考虑交叉设计
+app.post('/app/getThywhJcsj',appSSZSJ.getThywhJcsj);
+//替换药物号考虑药物剂量
+app.post('/app/getThywhYwjl',appSSZSJ.getThywhYwjl);
 //中心所有以激活和未使用药物号
 app.post('/app/getZXAllKYYwh',appSSZSJ.getZXAllYwh);
 //查阅筛选失败例数分布
@@ -438,6 +650,10 @@ app.post('/app/getCytchwclsfbZX',appSSZSJ.getCytchwclsfbZX);
 
 //添加筛选失败受试者基础数据
 app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);
+//添加登记受试者转失败受试者
+app.post('/app/getAddBasisDataFailPatientData',appSSZSJ.getAddBasisDataFailPatientData);
+//修改筛选失败受试者基础数据
+app.post('/app/getUpdateFailPatientData',appSSZSJ.getUpdateFailPatientData);
 //查找所有受试者
 app.post('/app/getLookupSuccessBasicsData',appSSZSJ.getLookupSuccessBasicsData);
 //模糊查询受试者
@@ -485,6 +701,8 @@ app.post('/app/getAddSszjxfsrq',appSFGL.getAddSszjxfsrq);
 app.post('/app/getCyxjdnsfssz',appSFGL.getCyxjdnsfssz);
 //发送预约随访短信
 app.post('/app/getFsyysfdx',appSFGL.getFsyysfdx);
+//发送受试者短信统计
+app.post('/app/getSMSStatistics',appSFGL.getSMSStatistics);
 //添加完成或退出受试者
 app.post('/app/getAddOut',appSFGL.getAddOut);
 //添加个人揭盲申请
@@ -502,8 +720,56 @@ app.post('/app/getIsUnblindingApplication',appSFGL.getIsUnblindingApplication);
 //设置审批
 app.post('/app/getTrialUnblindingApplication',appSFGL.getTrialUnblindingApplication);
 
+/***************图片管理模块******************/
+//查询模块组
+app.post('/app/getImageModeulesList',appImageData.getImageModeulesList);
+//查询页码组
+app.post('/app/getImagePageNumberList',appImageData.getImagePageNumberList);
+//查询页码上传人数统计
+app.post('/app/getImagePageNumberListStatistics',appImageData.getImagePageNumberListStatistics);
+//查询页码上传的人
+app.post('/app/getImagePageNumberListUser',appImageData.getImagePageNumberListUser);
+//添加一个模块组
+app.post('/app/getAddImageModeulesList',appImageData.getAddImageModeulesList);
+//查询一个模块组人数统计
+app.post('/app/getAddImageModeulesListStatistics',appImageData.getAddImageModeulesListStatistics);
+//查询某个模块组的人
+app.post('/app/getAddImageModeulesListUser',appImageData.getAddImageModeulesListUser);
+
+//添加一个页码
+app.post('/app/getAddImagePageNumberList',appImageData.getAddImagePageNumberList);
+//添加一张图片
+app.post('/app/getAddImageUrls',appImageData.getAddImageUrls);
+//删除一张图片
+app.post('/app/getDeleteImageUrls',appImageData.getDeleteImageUrls);
+//审核无误
+app.post('/app/getReviewCorrect',appImageData.getReviewCorrect);
+//撤销审核无误
+app.post('/app/getRevokedReviewCorrect',appImageData.getRevokedReviewCorrect)
+//添加质疑
+app.post('/app/getAddQuestion',appImageData.getAddQuestion);
+//撤销质疑
+app.post('/app/getRevokedAddQuestion',appImageData.getRevokedAddQuestion);
+//发送消息
+app.post('/app/getSendAMessage',appImageData.getSendAMessage);
+//质疑后重新提交审核
+app.post('/app/getQuestionRevoked',appImageData.getQuestionRevoked);
+//消息中心列表
+app.post('/app/getNewsList',appImageData.getNewsList);
+//消息标记为已读
+app.post('/app/getNewsHaveRead',appImageData.getNewsHaveRead);
+//显示中心联系人
+app.post('/app/getShowSiteUsers',appImageData.getShowSiteUsers);
+
 //图片上传
 app.post('/app/imageUpdata',ImportData.imageUpdata);
+
+//音频上传
+app.post('/app/voiceUpdata',ImportData.voiceUpdata);
+
+
+//长连接
+app.post('/app/getHeartbeat',appHeartbeat.getHeartbeat);
 
 //404错误
 app.use('/',function (req, res) {
@@ -511,4 +777,4 @@ app.use('/',function (req, res) {
     res.send('404');
 });
 
-app.listen(3000);
+app.listen(3001);

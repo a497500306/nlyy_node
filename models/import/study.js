@@ -25,9 +25,10 @@ var studySchema = new mongoose.Schema({
     "ExtStudYN" : Number, //是否有延长期研究
     "SubStudYN" : Number, //是否有子研究
     "SubStudInYN" : Number, //参加子研究是否是随机抽取
-    "StudOnlineYN" : Number, //研究是否在线
-    "StudDEMOYN" : Number, //属于演示版研究
+    "StudOnlineYN" : Number, //控制随访短信
+    "StudDEMOYN" : Number, //控制用药提醒短信
     "StudSimuYN" : Number, //属于真实研究模拟版
+    "activationStudyYN" : Number,//是否激活研究
 
     "StudStopItType" : String, //该研究停止入组模式:1:中心全部停止入组,2:研究同意停止入组
     "StudIsStopIt" : String, //该研究是否停止入组

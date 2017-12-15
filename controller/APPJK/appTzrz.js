@@ -13,6 +13,7 @@ var siteStopIt = require('../../models/import/siteStopIt');
 var EMail = require("../../models/EMail");
 var study = require('../../models/import/study')
 var studyStopIt = require('../../models/import/studyStoplt')
+var MLArray = require('../../MLArray')
 //时间操作
 var moment = require('moment');
 moment().format();
@@ -149,59 +150,77 @@ exports.getApplyZXStopIt = function (req, res, next) {
                         StudyID : fields.StudyID,UserFun:'M1'
                     }).exec((err, persons1) => {
                         users.find({
-                            StudyID : fields.StudyID,UserFun:'H2'
+                            StudyID : fields.StudyID,UserSite: fields.SiteID,UserFun:'H2'
                         }).exec((err, persons2) => {
-                            //取出所有以随机例数
-                            addSuccessPatient.find({StudyID:fields.StudyID,SiteID:fields.SiteID ,Random:{$ne:null}}, function (err, addPersons) {
-                                var jj = addPersons.length ;
-                                addOutPatient.find({StudyID:fields.StudyID,SiteID:fields.SiteID}, function (err, addOutPersons) {
-                                    var htmlStr = ''
-                                    htmlStr = htmlStr + '<h1>中心停止入组</h1>'
-                                    htmlStr = htmlStr + '<h2>研究编号：' + fields.StudyID + '</h2>'
-                                    htmlStr = htmlStr + '<h2>研究标题全称：' + persons1[0].StudNameF + '</h2>'
-                                    htmlStr = htmlStr + '<h2>研究标题简称：' + persons1[0].StudNameS + '</h2>'
-                                    htmlStr = htmlStr + '<h2>研究中心编号：' + fields.SiteID + '</h2>'
-                                    htmlStr = htmlStr + '<h2>研究中心名称：' + fields.SiteNam + '</h2>'
-                                    htmlStr = htmlStr + '<h2>主要研究者：' + persons2[0].UserNam + '</h2>'
-                                    htmlStr = htmlStr + '<h2>已随机例数：' + jj + '</h2>'
-                                    htmlStr = htmlStr + '<h2>已完成或者提前退出例数：' + addOutPersons.length + '</h2>'
-                                    htmlStr = htmlStr + '<h2>申请人：' + fields.UserNam + '</h2>'
-                                    htmlStr = htmlStr + '<h2>申请人手机号：' + fields.UserMP + '</h2>'
-                                    htmlStr = htmlStr + '<h2>申请人邮箱：' + fields.UserEmail + '</h2>'
-                                    htmlStr = htmlStr + '<h2>原因：' + fields.Reason + '</h2>'
-                                    var duanxinStr = '中心停止入组' + '：' + '研究编号：' + fields.StudyID + '，' + '研究标题全称：' + persons1[0].StudNameF
-                                        + '，' + '研究标题简称：' + persons1[0].StudNameS + '，' + '研究中心编号：' + fields.SiteID + '，' +
-                                        '研究中心名称：' + fields.SiteNam + '，' + '主要研究者：' + persons2[0].UserNam + '，' + '已随机例数：' + jj
-                                        + '，' + '已完成或者提前退出例数：' + addOutPersons.length + '，' + '申请人：' + fields.UserNam + '，' + '申请人手机号：' + fields.UserMP + '，'
-                                        + '申请人邮箱：' + fields.UserEmail + '，' + '原因：' + fields.Reason;
-                                    var phones = [];
-                                    for (var i = 0; i < persons.length; i++) {
-                                        var users = persons[i]
-                                        phones.push(users.UserMP)
-                                        if (fields.isMail == '是') {
-                                            //发送邮件
-                                            EMail.fasongxiujian({
-                                                from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
-                                                to: users.UserEmail, // 收件列表
-                                                subject: fields.StudyID + "中心停止入组", // 标题
-                                                html: htmlStr // html 内容
-                                            })
+                            users.find({
+                                StudyID : fields.StudyID,UserFun:'M7'
+                            }).exec((err, persons3) => {
+                                //取出所有以随机例数
+                                addSuccessPatient.find({
+                                    StudyID: fields.StudyID,
+                                    SiteID: fields.SiteID,
+                                    Random: {$ne: null}
+                                }, function (err, addPersons) {
+                                    var jj = addPersons.length;
+                                    addOutPatient.find({
+                                        StudyID: fields.StudyID,
+                                        SiteID: fields.SiteID
+                                    }, function (err, addOutPersons) {
+                                        var htmlStr = ''
+                                        htmlStr = htmlStr + '<h1>中心停止入组</h1>'
+                                        htmlStr = htmlStr + '<h2>研究编号：' + fields.StudyID + '</h2>'
+                                        htmlStr = htmlStr + '<h2>研究标题全称：' + persons1[0].StudNameF + '</h2>'
+                                        htmlStr = htmlStr + '<h2>研究标题简称：' + persons1[0].StudNameS + '</h2>'
+                                        htmlStr = htmlStr + '<h2>研究中心编号：' + fields.SiteID + '</h2>'
+                                        htmlStr = htmlStr + '<h2>研究中心名称：' + fields.SiteNam + '</h2>'
+                                        htmlStr = htmlStr + '<h2>主要研究者：' + persons2[0].UserNam + '</h2>'
+                                        htmlStr = htmlStr + '<h2>已随机例数：' + jj + '</h2>'
+                                        htmlStr = htmlStr + '<h2>已完成或者提前退出例数：' + addOutPersons.length + '</h2>'
+                                        htmlStr = htmlStr + '<h2>申请人：' + fields.UserNam + '</h2>'
+                                        htmlStr = htmlStr + '<h2>申请人手机号：' + fields.UserMP + '</h2>'
+                                        htmlStr = htmlStr + '<h2>申请人邮箱：' + fields.UserEmail + '</h2>'
+                                        htmlStr = htmlStr + '<h2>原因：' + fields.Reason + '</h2>'
+                                        var duanxinStr = '中心停止入组' + '：' + '研究编号：' + fields.StudyID + '，' + '研究标题全称：' + persons1[0].StudNameF
+                                            + '，' + '研究标题简称：' + persons1[0].StudNameS + '，' + '研究中心编号：' + fields.SiteID + '，' +
+                                            '研究中心名称：' + fields.SiteNam + '，' + '主要研究者：' + persons2[0].UserNam + '，' + '已随机例数：' + jj
+                                            + '，' + '已完成或者提前退出例数：' + addOutPersons.length + '，' + '申请人：' + fields.UserNam + '，' + '申请人手机号：' + fields.UserMP + '，'
+                                            + '申请人邮箱：' + fields.UserEmail + '，' + '原因：' + fields.Reason;
+                                        var phones = [];
+                                        var emails = [];
+                                        for (var i = 0; i < persons.length; i++) {
+                                            var users = persons[i]
+                                            if (fields.isMail == '是') {
+                                                emails.push(users.UserEmail);
+                                            }
+                                            if (fields.isMessage == '是') {
+                                                phones.push(users.UserMP)
+                                            }
                                         }
-                                    }
-                                    for (var i = 0; i < persons1.length; i++) {
-                                        var users = persons1[i]
-                                        phones.push(users.UserMP)
-                                        if (fields.isMail == '是') {
-                                            //发送邮件
-                                            EMail.fasongxiujian({
-                                                from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
-                                                to: users.UserEmail, // 收件列表
-                                                subject:fields.StudyID +  "中心停止入组", // 标题
-                                                html: htmlStr // html 内容
-                                            })
+                                        for (var i = 0; i < persons1.length; i++) {
+                                            var users = persons1[i]
+                                            if (users.UserSiteYN == 1){
+                                                phones.push(users.UserMP)
+                                                emails.push(users.UserEmail)
+                                            }else if (users.UserSite == fields.SiteID){
+                                                phones.push(users.UserMP)
+                                                emails.push(users.UserEmail)
+                                            }
                                         }
-                                    }
-                                    if (fields.isMessage == '是') {
+                                        //添加申请人
+                                        phones.push(fields.UserMP)
+                                        emails.push(fields.UserEmail)
+                                        for (var xx = 0 ; xx < persons3.length ; xx++){
+                                            if (persons3[xx].UserSiteYN == 1){
+                                                phones.push(persons3[xx].UserMP)
+                                                emails.push(persons3[xx].UserEmail)
+                                            }else if (persons3[xx].UserSite == fields.SiteID){
+                                                phones.push(persons3[xx].UserMP)
+                                                emails.push(persons3[xx].UserEmail)
+                                            }
+                                        }
+                                        //移除相同的
+                                        phones = MLArray.unique(phones);
+                                        emails = MLArray.unique(emails);
                                         for (var y = 0; y < phones.length; y++) {
                                             client.execute('alibaba.aliqin.fc.sms.num.send', {
                                                 'extend': '',
@@ -223,7 +242,16 @@ exports.getApplyZXStopIt = function (req, res, next) {
                                                 }
                                             });
                                         }
-                                    }
+                                        for (var m = 0 ; m < emails.length ; m++){
+                                            //发送邮件
+                                            EMail.fasongxiujian({
+                                                from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
+                                                to: emails[m], // 收件列表
+                                                subject:fields.StudyID +  "中心停止入组", // 标题
+                                                html: htmlStr // html 内容
+                                            })
+                                        }
+                                    })
                                 })
                             })
                         })
@@ -676,6 +704,99 @@ exports.getDetermineZXStopIt = function (req, res, next) {
                                 });
                             } else {
                                 if (fields.isStopIt == 1) {
+                                    users.find({
+                                        StudyID : fields.StudyID,
+                                        UserFun:'H1'
+                                    }).exec((err, persons4) => {
+                                        users.find({
+                                            StudyID: fields.StudyID, UserFun: 'M1'
+                                        }).exec((err, persons1) => {
+                                            users.find({
+                                                StudyID: fields.StudyID, UserFun: 'H2',UserSite: fields.SiteID
+                                            }).exec((err, persons2) => {
+                                                users.find({
+                                                    StudyID: fields.StudyID, UserFun: 'M7'
+                                                }).exec((err, persons3) => {
+                                                    var phones = [];
+                                                    var emails = [];
+                                                    for (var i = 0; i < persons4.length; i++) {
+                                                        var users = persons4[i]
+                                                        if (persons[0].isMail == '是') {
+                                                            emails.push(users.UserEmail);
+                                                        }
+                                                        if (persons[0].isMessage == '是') {
+                                                            phones.push(users.UserMP)
+                                                        }
+                                                    }
+                                                    for (var i = 0; i < persons1.length; i++) {
+                                                        var users = persons1[i]
+                                                        phones.push(users.UserMP);
+                                                        emails.push(users.UserEmail);
+                                                    }
+                                                    for (var i = 0; i < persons2.length; i++) {
+                                                        var users = persons2[i]
+                                                        phones.push(users.UserMP);
+                                                        emails.push(users.UserEmail);
+                                                    }
+                                                    //添加申请人
+                                                    phones.push(fields.UserMP)
+                                                    emails.push(fields.UserEmail)
+                                                    for (var xx = 0; xx < persons3.length; xx++) {
+                                                        if (persons3[xx].UserSiteYN == 1) {
+                                                            phones.push(persons3[xx].UserMP)
+                                                            emails.push(persons3[xx].UserEmail)
+                                                        } else if (persons3[xx].UserSite == fields.SiteID) {
+                                                            phones.push(persons3[xx].UserMP)
+                                                            emails.push(persons3[xx].UserEmail)
+                                                        }
+                                                    }
+                                                    //移除相同的
+                                                    phones = MLArray.unique(phones);
+                                                    emails = MLArray.unique(emails);
+                                                    var htmlStr = ''
+                                                    htmlStr = htmlStr + '<h1>研究停止入组</h1>'
+                                                    htmlStr = htmlStr + '<h2>' + fields.StudyID + "研究温馨提示：" + persons[0].SiteID + '中心已经于' + (moment().format('YYYY-MM-DD h:mm:ss a')) +'</h2>'
+                                                    htmlStr = htmlStr + '<h2>停止入组，请知悉！' + '</h2>'
+
+                                                    var duanxinStr = persons[0].SiteID + '中心已经停止入组'
+                                                    for (var j = 0; j < phones.length; j++) {
+                                                        client.execute('alibaba.aliqin.fc.sms.num.send', {
+                                                            'extend': '',
+                                                            'sms_type': 'normal',
+                                                            'sms_free_sign_name': '诺兰医药科技',
+                                                            'sms_param': {
+                                                                studyID: persons[0].StudyID,
+                                                                yytx: duanxinStr,
+                                                                date: (moment().format('YYYY-MM-DD h:mm:ss a'))
+                                                            },
+                                                            'rec_num': phones[j],
+                                                            'sms_template_code': "SMS_63885566"
+                                                        }, function (error, response) {
+                                                            if (error != null) {
+                                                                console.log('阿里错误');
+                                                                console.log(error);
+                                                            } else {
+                                                                console.log(response);
+                                                            }
+                                                        });
+                                                    }
+                                                    for (var m = 0 ; m < emails.length ; m++){
+                                                        if (emails[m] != null){
+                                                            if (typeof(emails[m])!="undefined"){
+                                                                //发送邮件
+                                                                EMail.fasongxiujian({
+                                                                    from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
+                                                                    to: emails[m], // 收件列表
+                                                                    subject: persons[0].StudyID + "中心停止入组", // 标题
+                                                                    html: htmlStr // html 内容
+                                                                })
+                                                            }
+                                                        }
+                                                    }
+                                                })
+                                            })
+                                        })
+                                    })
                                     site.update({
                                         'StudyID': persons[0].StudyID,
                                         'SiteID': persons[0].SiteID,
@@ -759,14 +880,20 @@ exports.getZXStopItTable = function (req, res, next) {
                 addSuccessPatient.find({StudyID:fields.StudyID ,SiteID:persons[i].SiteID ,Random:{$ne:null}}, function (err, FailPersons) {
                     dataJson.ysjls = FailPersons.length + "";
                     addSuccessPatient.find({StudyID:fields.StudyID ,Arm:{$ne:null}}, function (err, suoyouPersons) {
-                        var sss =  (suoyouPersons.length/persons.length).toFixed(1);
-                        dataJson.pjrzls = sss;
-                        study.find({StudyID:fields.StudyID}, function (err,studyp){
-                            dataJson.zxzjjz = (studyp[0].AccrualCmpYN == 1 ? "是" : "否");
-                            dddd.data = persons[i];
-                            dddd.qita = dataJson;
-                            array.push(dddd);
-                            iterator(i + 1)
+                        site.find({
+                            'StudyID' : fields.StudyID
+                        }).exec((err, newPersons) => {
+                            var xx = suoyouPersons.length;
+
+                            var sss = (suoyouPersons.length / newPersons.length).toFixed(1);
+                            dataJson.pjrzls = sss;
+                            study.find({StudyID: fields.StudyID}, function (err, studyp) {
+                                dataJson.zxzjjz = (studyp[0].AccrualCmpYN == 1 ? "是" : "否");
+                                dddd.data = persons[i];
+                                dddd.qita = dataJson;
+                                array.push(dddd);
+                                iterator(i + 1)
+                            })
                         })
                     })
                 })
@@ -811,41 +938,78 @@ exports.getApplyYJStopIt = function (req, res, next) {
 
             //推送短信
             //推送邮件
-            if (fields.isMail == '是'){
-                //查询该研究所有全国PI
+            //查询该研究所有全国PI
+            users.find({
+                StudyID : fields.StudyID,
+                UserFun : 'H1'
+            }).exec((err, persons) => {
                 users.find({
                     StudyID : fields.StudyID,
-                    UserFun : 'H1'
-                }).exec((err, persons) => {
-                    /*
-                     /*tableData.push('研究编号')
-                     tableData.push('中心编号')
-                     tableData.push('中心名称')
-                     tableData.push('申请人')
-                     tableData.push('申请人手机号')
-                     tableData.push('申请日期')
-                     tableData.push('是否推送短信给全国PI')
-                     tableData.push('是否推送邮件给全国PI')
-                     tableData.push('中心已停止受试者入组')
-                     tableData.push('选择原因')*/
+                    UserFun : 'M1'
+                }).exec((err, persons1) => {
+                    var phones = [];
+                    var emails =[];
+                    for (var i = 0; i < persons.length; i++) {
+                        var users = persons[i]
+                        if (fields.isMail == '是') {
+                            emails.push(users.UserEmail);
+                        }
+                        if (fields.isMessage == '是') {
+                            phones.push(users.UserMP)
+                        }
+                    }
+                    for (var i = 0; i < persons1.length; i++) {
+                        var users = persons1[i]
+                        phones.push(users.UserMP);
+                        emails.push(users.UserEmail);
+                    }
+                    //添加申请人
+                    phones.push(fields.UserMP)
+                    emails.push(fields.UserEmail)
+                    //移除相同的
+                    phones = MLArray.unique(phones);
+                    emails = MLArray.unique(emails);
                     var htmlStr = ''
                     htmlStr = htmlStr + '<h1>研究停止入组</h1>'
-                    htmlStr = htmlStr + '<h2>研究编号:'+ fields.StudyID + '</h2>'
-                    htmlStr = htmlStr + '<h2>申请人:'+ fields.UserNam + '</h2>'
-                    htmlStr = htmlStr + '<h2>申请人手机号:'+ fields.UserMP + '</h2>'
-                    htmlStr = htmlStr + '<h2>原因:'+ fields.Reason+ '</h2>'
-                    for (var i = 0 ; i < persons.length ; i++){
-                        var users = persons[i]
+                    htmlStr = htmlStr + '<h2>研究编号:' + fields.StudyID + '</h2>'
+                    htmlStr = htmlStr + '<h2>申请人:' + fields.UserNam + '</h2>'
+                    htmlStr = htmlStr + '<h2>申请人手机号:' + fields.UserMP + '</h2>'
+                    htmlStr = htmlStr + '<h2>原因:' + fields.Reason + '</h2>'
+                    var duanxinStr = "研究停止入组：" + "研究编号：" + fields.StudyID + '，' + "申请人：" + fields.UserNam + '，'
+                                        +  "申请人手机号：" + fields.UserMP + '，' + "原因" + fields.Reason
+                    for (var j = 0; j < phones.length; j++) {
+
+                        client.execute('alibaba.aliqin.fc.sms.num.send', {
+                            'extend': '',
+                            'sms_type': 'normal',
+                            'sms_free_sign_name': '诺兰医药科技',
+                            'sms_param': {
+                                studyID: fields.StudyID,
+                                yytx: duanxinStr,
+                                date: (moment().format('YYYY-MM-DD h:mm:ss a'))
+                            },
+                            'rec_num': phones[j],
+                            'sms_template_code': "SMS_63885566"
+                        }, function (error, response) {
+                            if (error != null) {
+                                console.log('阿里错误');
+                                console.log(error);
+                            } else {
+                                console.log(response);
+                            }
+                        });
+                    }
+                    for (var m = 0 ; m < emails.length ; m++){
                         //发送邮件
                         EMail.fasongxiujian({
                             from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
-                            to: users.UserEmail, // 收件列表
-                            subject: fields.StudyID + "中心停止入组", // 标题
+                            to: emails[m], // 收件列表
+                            subject: fields.StudyID + "研究停止入组", // 标题
                             html: htmlStr // html 内容
                         })
                     }
                 })
-            }
+            })
             //添加数据
             studyStopIt.create({
                 StudyID : fields.StudyID,
@@ -1264,6 +1428,77 @@ exports.getDetermineYJStopIt = function (req, res, next) {
                             });
                         }else{
                             if (fields.isStopIt == 1){
+                                //推送短信
+                                //推送邮件
+                                //查询该研究所有全国PI
+                                users.find({
+                                    StudyID : fields.StudyID,
+                                    UserFun : 'H1'
+                                }).exec((err, persons) => {
+                                    users.find({
+                                        StudyID: fields.StudyID,
+                                        UserFun: 'M1'
+                                    }).exec((err, persons1) => {
+                                        var phones = [];
+                                        var emails = [];
+                                        for (var i = 0; i < persons.length; i++) {
+                                            var users = persons[i]
+                                            if (persons[0].isMail == '是') {
+                                                emails.push(users.UserEmail);
+                                            }
+                                            if (persons[0].isMessage == '是') {
+                                                phones.push(users.UserMP)
+                                            }
+                                        }
+                                        for (var i = 0; i < persons1.length; i++) {
+                                            var users = persons1[i]
+                                            phones.push(users.UserMP);
+                                            emails.push(users.UserEmail);
+                                        }
+                                        //添加申请人
+                                        phones.push(fields.UserMP)
+                                        emails.push(fields.UserEmail)
+                                        //移除相同的
+                                        phones = MLArray.unique(phones)
+                                        emails = MLArray.unique(emails)
+                                        var htmlStr = ''
+                                        htmlStr = htmlStr + '<h1>研究停止入组</h1>'
+                                        htmlStr = htmlStr + '<h2>' + fields.StudyID + "研究温馨提示：" + '所有研究中心已经于' + (moment().format('YYYY-MM-DD h:mm:ss a')) +'</h2>'
+                                        htmlStr = htmlStr + '<h2>停止入组，请知悉！' + '</h2>'
+
+                                        var duanxinStr = '所有研究中心已经停止入组'
+                                        for (var j = 0; j < phones.length; j++) {
+                                            client.execute('alibaba.aliqin.fc.sms.num.send', {
+                                                'extend': '',
+                                                'sms_type': 'normal',
+                                                'sms_free_sign_name': '诺兰医药科技',
+                                                'sms_param': {
+                                                    studyID: persons[0].StudyID,
+                                                    yytx: duanxinStr,
+                                                    date: (moment().format('YYYY-MM-DD h:mm:ss a'))
+                                                },
+                                                'rec_num': phones[j],
+                                                'sms_template_code': "SMS_63885566"
+                                            }, function (error, response) {
+                                                if (error != null) {
+                                                    console.log('阿里错误');
+                                                    console.log(error);
+                                                } else {
+                                                    console.log(response);
+                                                }
+                                            });
+                                        }
+                                        for (var m = 0 ; m < emails.length ; m++){
+                                            //发送邮件
+                                            EMail.fasongxiujian({
+                                                from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
+                                                to: emails[m], // 收件列表
+                                                subject: persons[0].StudyID + "研究停止入组", // 标题
+                                                html: htmlStr // html 内容
+                                            })
+                                        }
+                                    })
+                                })
                                 study.update({
                                     'StudyID' : persons[0].StudyID,
                                 },{

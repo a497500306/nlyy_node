@@ -1,0 +1,328 @@
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>诺兰医药管理平台</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        .shurukuan{
+            width: 300px;
+            margin: 0 auto;
+            text-align: center;
+            margin-top: 10px;
+        }
+        #cuowukuang{
+            width: 300px;
+            margin: 0 auto;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">诺兰医药管理平台</a>
+        </div>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=userName %><span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a id = "xiugai" data-toggle="modal" data-target=".xiugaimimaModel">修改密码</a></li>
+                    <li><a id = "tuichu" >退出登录</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- 修改密码 modal -->
+<div class="modal fade xiugaimimaModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="xgmmModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">修改密码</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group  shurukuan" id = "yuanshimima">
+                        <input type="text" class="form-control" placeholder="原始密码" aria-describedby="basic-addon1" name = 'jiuPassword' id="yuanshimimaText">
+                    </div>
+                    <div class="input-group shurukuan" id = "xinmima">
+                        <input type="text" class="form-control" placeholder="新密码" aria-describedby="basic-addon1" name = 'newPassword' id="xinmimaText">
+                    </div>
+                    <div class="input-group shurukuan"id = "quedingmima">
+                        <input type="text" class="form-control" placeholder="确定密码" aria-describedby="basic-addon1" name = 'qrNewPassword' id="quedingmimaText">
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="cuowukuang">账号或者密码错误</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="xgmmQD">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+<!-- 点击删除 modal -->
+<div class="modal fade caozuoModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>请选择您想要的操作！</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="jinruButton">进入研究</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-toggle="modal"  data-target=".quedingjihuoModel">激活研究</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" data-toggle="modal"  data-target=".quedingshanchuModel">删除研究</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<!-- 确定删除 modal -->
+<div class="modal fade quedingshanchuModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定删除..？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="shanchuYanjiuButton">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+<!-- 确定激活 modal -->
+<div class="modal fade quedingjihuoModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提示</h4>
+                </div>
+                <div class="modal-body">
+                    <p>确定激活..？</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="jihuoyanjiuButton">确定</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<!-- 添加用户 modal -->
+<div class="modal fade tianjiayonghuModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="xgmmModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">添加用户</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group  shurukuan" id = "yuanshimima">
+                        <input type="text" class="form-control" placeholder="账号" aria-describedby="basic-addon1" name = 'jiuPassword' id="tianjiaUserText">
+                    </div>
+                    <div class="input-group shurukuan" id = "xinmima">
+                        <input type="text" class="form-control" placeholder="密码" aria-describedby="basic-addon1" name = 'newPassword' id="tianjiaMimaText">
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="kexie"> 可写
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="guanliyonghu"> 管理用户
+                        </label>
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="tianjiaCuowukuang">账号或者密码错误</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="modalTianjiaBtn">添加</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<!-- 导出数据 modal -->
+<div class="modal fade daochushujuModel" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="xgmmModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">导出数据</h4>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-primary" id="dcyysjh">导出已用随机号</button>
+                    <br>
+                    <br>
+                    <button type="button" class="btn btn-primary" id="dcyyywh">导出已用药物号</button>
+                    <br>
+                    <br>
+                    <button type="button" class="btn btn-primary" id="dcyhzhzz">导出用户账号资料</button>
+                </div>
+                <div class="alert alert-danger" role="alert" id="daochucuowukuang">账号或者密码错误</div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <!--<li><a href="#">新增研究 <span class="sr-only">(current)</span></a></li>-->
+                <li class="active"><a href="#" id="xzyj">选择研究 </a></li>
+            </ul>
+            <ul class="nav nav-sidebar" id="szhlyhUi">
+                <li id="szhlyhLi"><a href="#" id="szhlyh">设置管理用户</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" >
+            <h2 class="sub-header">欢迎来到诺兰医药管理平台</h2>
+            <div class="alert alert-danger" role="alert" id="quanxiantishi">没有操作权限,请联系管理员</div>
+            <div id="liebiaodiv">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!--模板-->
+<script type="text/template" id="liebiaomoban">
+    <div class="table-responsive">
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" id="tianjiayonghuBtn"  data-target=".tianjiayonghuModel" >
+            添加用户
+        </button>
+        <form enctype="multipart/form-data" method="post" enctype="multipart/form-data" action= {{= importUrl}} id="caozuomokuai">
+            <input id="file-0a" class="file" type="file" multiple data-min-file-count="1" name="excel">
+            <br>
+            <button type="submit" class="btn btn-primary">上传</button>
+            <button type="reset" class="btn btn-default">取消</button>
+        </form>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                {{ for(var i = 0 ; i < result.length ; i++){}}
+                <th>{{=result[i] }}</th>
+                {{ } }}
+            </tr>
+            </thead>
+            <tbody>
+            {{ if (importUrl != "/nlyy/dcsj"){ }}
+            {{ for(var i = 0 ; i < data.length ; i++){ }}
+            <tr id="neirongTr">
+                {{ for(var j = 0 ; j < resultEn.length ; j++){ }}
+                {{ if(resultEn[j] == '操作' ){ }}
+                {{ var dataId = data[i].id + ',' + data[i].StudyID; }}
+                <td><a data-toggle="modal" data-target=".caozuoModel" name= {{= dataId}} onclick="t(this.name)">操作</a></td>
+                {{ }else if(resultEn[j] == 'Date'){ }}
+                {{ var date = new Date(data[i][resultEn[j]]); }}
+                {{ var dateStr =  date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();}}
+                <td>{{= dateStr}}</td>
+                {{ }else {}}
+                <td>{{= data[i][resultEn[j]]}}</td>
+                {{ } }}
+                {{ } }}
+            </tr>
+            {{ } }}
+            {{ }else{ }}
+            {{ for(var i = 0 ; i < data.length ; i++){ }}
+            <tr id="neirongTr">
+                {{ for(var j = 0 ; j < resultEn.length ; j++){ }}
+                {{ if(resultEn[j] == '操作' ){ }}
+                {{ var dataId = data[i].id + ',' + data[i].StudyID; }}
+                <td><a data-toggle="modal" data-target=".daochushujuModel" name= {{= dataId}} onclick="daochuFun(this.name)">选择</a></td>
+                {{ }else if(resultEn[j] == 'Date'){ }}
+                {{ var date = new Date(data[i][resultEn[j]]); }}
+                {{ var dateStr =  date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();}}
+                <td>{{= dateStr}}</td>
+                {{ }else {}}
+                <td>{{= data[i][resultEn[j]]}}</td>
+                {{ } }}
+                {{ } }}
+            </tr>
+            {{ } }}
+            {{ } }}
+            </tbody>
+        </table>
+        <nav>
+            <ul class="pagination">
+                {{ for(var i = 1 ; i <= pageCount ; i++){}}
+                <li class="yemaanniu" data-page={{= i.toString() }}><a href="#">{{= i }}</a></li>
+                <!--{{if ((i+1) == pageNumber){ }}-->
+                <!--<li class="active" class="yemaanniu"><a href="#">{{= (i + 1).toString() }}<span class="sr-only">(current)</span></a></li>-->
+                <!--{{ }else{ }}-->
+                <!--<li class="yemaanniu"><a>{{= (i + 1).toString() }}<span class="sr-only">(current)</span></a></li>-->
+                <!--{{ } }}-->
+                {{ } }}
+            </ul>
+        </nav>
+    </div>
+</script>
+
+<script type="text/javascript" src="js/underscore-noflect.js"></script>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/fileinput.min.js"></script>
+<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+<!--<script src="../../assets/js/vendor/holder.min.js"></script>-->
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="js/ie10-viewport-bug-workaround.js"></script>
+<script type="text/javascript" src="js/mshome.js"></script>
+</body>
+</html>

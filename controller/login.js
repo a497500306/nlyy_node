@@ -15,6 +15,11 @@ var users = require('../models/import/users');//导入用户数据
 var researchParameter = require('../models/import/researchParameter');//设置研究的随机化参数
 var ApplicationAndAudit = require('../models/import/ApplicationAndAudit');//设置研究的随机化参数
 
+
+//显示登录界面
+exports.cheshi = function (req, res, next) {
+    res.render("./cheshi");
+}
 //显示登录界面
 exports.showAdmin = function (req, res, next) {
     res.render("./login");
@@ -90,6 +95,21 @@ exports.addAdminUser = function (req, res, next) {
 }
 
 
+//进入研究
+exports.enterStudy = function (req, res, next) {
+    //得到用户填写的东西
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        res.send({
+            'isSucceed' : "1",
+            'msg' : '成功',
+            // 'url' : settings.fwqUrl + '/home',
+            'addUser' : req.session.addUser,
+            'url' : settings.fwqUrl + 'home' + '?' + 'StudyID=' + fields.StudyID,
+        });
+        return;
+    })
+}
 //登录交互
 exports.doLogin = function (req, res, next) {
     //得到用户填写的东西
@@ -110,8 +130,9 @@ exports.doLogin = function (req, res, next) {
                 res.send({
                     'isSucceed' : "1",
                     'msg' : '成功',
-                    'url' : settings.fwqUrl + '/home',
-                    'addUser' : req.session.addUser
+                    // 'url' : settings.fwqUrl + '/home',
+                    'addUser' : req.session.addUser,
+                    'url' : settings.fwqUrl + 'selectStudy',
                 });
                 return;
             }else{
@@ -123,6 +144,22 @@ exports.doLogin = function (req, res, next) {
             }
         })
     })
+}
+
+
+exports.showSelectStudy = function (req, res, next) {
+    if(req.session.login!= '1'){
+        res.render("login");
+        return;
+    }
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        console.log(fields);
+    });
+
+    res.render("selectStudy",{
+        "userName": req.session.name
+    });
 }
 
 //进入管理界面
@@ -142,7 +179,6 @@ exports.showHome = function (req, res, next) {
             "userName": req.session.name
     });
 }
-
 //管理页面获取网络请求
 exports.doHome = function (req, res, next) {
     if(req.session.login!= '1'){
@@ -152,18 +188,20 @@ exports.doHome = function (req, res, next) {
     //得到用户填写的东西
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
+        if (fields.StudyID != null){
+            fields.StudyID = fields.StudyID.replace("#","")
+        }
         if (fields.id == "xzyj"){
             //新增研究
             var keys = ['研究序列号','研究编号','申办方全称','申办方简称','研究标题全称','研究标题简称','全国PI手机号',
                 '全国PI','全国PI邮箱','治疗领域','研究分期','研究总样本量'
                 ,'受试者入组是否中心之间竞争','中心平均入组例数','研究总招募月数','研究招募信心度','是否有延长期研究','是否有子研究','参加子研究是否是随机抽取',
-                '研究是否在线','属于演示版研究','属于真实研究模拟版','添加时间','操作'];
+                '控制随访短信','控制用药提醒短信','属于真实研究模拟版','添加时间','操作'];
             var keyEn = ['StudySeq','StudyID','SponsorF','SponsorS','StudNameF','StudNameS','CoorPIPhone','CoorPI',
                 'CoorPIEMail','TherArea','StudyPh','StudySize','AccrualCmpYN'
                 ,'AccrualPerS','AccrualT','AccrualConf','ExtStudYN','SubStudYN','SubStudInYN','StudOnlineYN',
                 'StudDEMOYN','StudSimuYN','Date','操作'];
             showTable(fields, res , req ,study , keys , keyEn , "/nlyy/addYzyj");
-
         }else if(fields.id == "szyjsjhcs"){
             //设置研究随机化参数
             var keys =  [
@@ -178,7 +216,7 @@ exports.doHome = function (req, res, next) {
                 '第五个分层因素的权重','第六个分层因素的权重','第七个分层因素的权重','第八个分层因素的权重',
                 '第九个分层因素的权重','不平衡分数算法','随机选择治疗方法','指定概率法概率高值','指定概率法概率低值',
                 '是否考虑分层因素完全重复（SIGN RULE）','随机号是否导出治疗分组','取随机号时是否显示随机号','取随机号时是否显示药物号','取随机号时是否显示分组情况',
-                '取随机号时是否显示随机抽中参加子研究','取随机号时是否显示目前研究阶段','添加时间','操作'];
+                '取随机号时是否显示随机抽中参加子研究','取随机号时是否显示目前研究阶段',"页码最大数量","模块名","图片审核用户手机号","药物规格","交叉设计数据",'添加时间','操作'];
             var keyEn = [
                 'StudySeq','StudyID','StudyDs','StudyPeNum','RandoM',
                 'BlindSta','DrugNSBlind','DrugNOpen','NTrtGrp','AlloRatio',
@@ -191,7 +229,7 @@ exports.doHome = function (req, res, next) {
                 'WeightStraE','WeightStraF','WeightStraG','WeightStraH','WeightStraI',
                 'FormulaImSc','TrtSelMth','HighProb','LowProb','SignRuleYN',
                 'ArmCDYN','RandoNumYN','DrugNumYN','ArmYN','SubStudYN',
-                'CStudyPeYN','Date','操作'];
+                'CStudyPeYN',"CRFMaxNum","CRFModeules","CRFReviewPhones","DrugDose","StudyDCross",'Date','操作'];
             showTable(fields, res , req ,researchParameter , keys , keyEn , "/nlyy/addSzyjsjhcs");
             console.log('显示设置研究随机化参数');
 
@@ -220,13 +258,15 @@ exports.doHome = function (req, res, next) {
             console.log('导入研究入选排除标准');
         }else if(fields.id == "gdsjfdrsjh"){
             //固定随机法导入随机号
-            var keys =  ['研究编号','分层结果代码','研究设计','研究阶段个数','目前所处研究阶段','层内区组号','区组内序号','随机号','治疗分组代码','治疗分组标签',"分层结果a","分层结果b","分层结果c","分层结果d","分层结果e","分层结果f","分层结果g","分层结果h","分层结果i",'添加时间','操作'];
-            var keyEn = ['StudyID','StratumN','StudyDs','StudyPeNum','CStudyPe','BlockSeq','SeqInBlock','RandoNum','ArmCD','Arm','SubjFa','SubjFb','SubjFc','SubjFd','SubjFe','SubjFg','SubjFg','SubjFh','SubjFi','Date','操作'];
+            var keys =  ['研究编号','交叉设计数据','分层结果代码','研究设计','研究阶段个数','目前所处研究阶段','层内区组号','区组内序号','随机号','治疗分组代码','治疗分组标签',"分层结果a","分层结果b","分层结果c","分层结果d","分层结果e","分层结果f","分层结果g","分层结果h","分层结果i",'添加时间','操作'];
+            var keyEn = ['StudyID','CrossCode','StratumN','StudyDs','StudyPeNum','CStudyPe','BlockSeq','SeqInBlock','RandoNum','ArmCD','Arm','SubjFa','SubjFb','SubjFc','SubjFd','SubjFe','SubjFg','SubjFg','SubjFh','SubjFi','Date','操作'];
             showTable(fields, res , req ,random , keys , keyEn , "/nlyy/addGdsjfdrsjh");
             console.log('固定随机法导入随机号');
         }else if(fields.id == "drywh"){//导入药物号
-            var keys =  ['研究编号','药物号','药物号位数','治疗分组代码','治疗分组标签','编盲编号批次','药物流水号','药物有效期','添加时间','操作'];
-            var keyEn = ['StudyID','DrugNum','DrugDigits','ArmCD','Arm','PackSeq','DrugSeq','DrugExpryDTC','Date','操作'];
+            // "StudyDCross" : String,//交叉设计数据
+            //     "DrugDose" : String,//药物剂量数据
+            var keys =  ['研究编号','药物号','药物号位数','治疗分组代码','治疗分组标签','编盲编号批次','药物流水号','药物有效期','交叉设计数据','药物剂量数据','添加时间','操作'];
+            var keyEn = ['StudyID','DrugNum','DrugDigits','ArmCD','Arm','PackSeq','DrugSeq','DrugExpryDTC','StudyDCross','DrugDose','Date','操作'];
             showTable(fields, res , req ,drug , keys , keyEn , "/nlyy/addDrywh");
             console.log('导入药物号');
         }else if(fields.id == "nztjssjsywaqkc"){//内置统计算式计算药物安全库存
@@ -274,7 +314,11 @@ exports.doHome = function (req, res, next) {
 }
 
 showTable = function (fields, res , req , model , keys , keysEn , importUrl) {
-    dbHelper.pageQuery(Number(fields.page),10,model,"",{},{
+    var json = {};
+    if (fields.StudyID != ""){
+        json = {StudyID : fields.StudyID}
+    }
+    dbHelper.pageQuery(Number(fields.page),10,model,"",json,{
         Date: 'desc'
     },function (error, $page) {
         if(error){

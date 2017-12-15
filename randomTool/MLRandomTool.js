@@ -130,13 +130,13 @@ exports.jichafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons,blo
     }else{
         //根据4种治疗选择方法进行随机
         if (persons[0].TrtSelMth == 1) {//直接法
-            return this.zhijiefa(nTrtGrpArray,bupinghen,block)
+            return this.zhijiefa(persons,nTrtGrpArray,bupinghen,block)
 
         }else if (persons[0].TrtSelMth == 2) {//指定概率法
             return this.zhidinggailv(bupinghen,persons,block)
 
         }else if (persons[0].TrtSelMth == 3) {//倒数法,比例法
-            return this.bilifa(bupinghen,nTrtGrpArray,block)
+            return this.bilifa(bupinghen,persons,nTrtGrpArray,block)
 
         }else {//完全随机法
             return this.wangquansuiji(persons,block)
@@ -231,17 +231,17 @@ exports.fangchafa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons,b
     }
     if (isWangquan == 0 ){
         console.log('不平衡得分完全相等,使用完全随机')
-        return this.wangquansuiji(persons)
+        return this.wangquansuiji(persons,block)
     }else{
         //根据4种治疗选择方法进行随机
         if (persons[0].TrtSelMth == 1) {//直接法
-            return this.zhijiefa(nTrtGrpArray,bupinghen,block)
+            return this.zhijiefa(persons,nTrtGrpArray,bupinghen,block)
 
         }else if (persons[0].TrtSelMth == 2) {//指定概率法
             return this.zhidinggailv(bupinghen,persons,block)
 
         }else if (persons[0].TrtSelMth == 3) {//倒数法,比例法
-            return this.bilifa(bupinghen,nTrtGrpArray,block)
+            return this.bilifa(bupinghen,persons,nTrtGrpArray,block)
 
         }else {//完全随机法
             return this.wangquansuiji(persons,block)
@@ -377,13 +377,13 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons,
     console.log(bupinghen)
     //根据4种治疗选择方法进行随机
     if (persons[0].TrtSelMth == 1) {//直接法
-        return this.zhijiefa(nTrtGrpArray,bupinghen,block)
+        return this.zhijiefa(persons,nTrtGrpArray,bupinghen,block)
 
     }else if (persons[0].TrtSelMth == 2) {//指定概率法
         return this.zhidinggailv(bupinghen,persons,block)
 
     }else if (persons[0].TrtSelMth == 3) {//倒数法,比例法
-        return this.bilifa(bupinghen,nTrtGrpArray,block)
+        return this.bilifa(bupinghen,persons,nTrtGrpArray,block)
 
     }else {//完全随机法
         return this.wangquansuiji(persons,block)
@@ -392,7 +392,7 @@ exports.zuidazhifa = function (nTrtGrpArray,addSuccessPersons,qiwangcha,persons,
 
 /*******************随机分配***********************/
 //直接法
-exports.zhijiefa = function (nTrtGrpArray,bupinghen,block){
+exports.zhijiefa = function (persons,nTrtGrpArray,bupinghen,block){
     var arrayNuber = null;
     var fenpeiStrs = [];
     var alloRatio = persons[0].AlloRatio.split(",");
@@ -443,47 +443,55 @@ exports.zhidinggailv = function (bupinghen,persons,block) {
     if (bupinghen[0] > bupinghen[1]){
         //概率排序
         highProb = highProb.sort(function (a,b) {
-            return b - a
-        });
-        for (var i = 0 ; i < highProb.length ; i++){
-            console.log(ntrtGrp + '不平衡分为:' + bupinghen[i])
-
-            var aa = highProb[0] * 100;
-            for (var j = 0 ; j < aa ; j++) {
-                ntrts.push(ntrtGrp[i])
-            }
-        }
-        var n = Math.floor(Math.random() * ntrts.length + 1)-1;
-        console.log('概率:' + highProb)
-        block(ntrts[n])
-    }else if (bupinghen[0] < bupinghen[1]){
-        //概率排序
-        highProb = highProb.sort(function (a,b) {
             return a - b
         });
         for (var i = 0 ; i < highProb.length ; i++){
             console.log(ntrtGrp + '不平衡分为:' + bupinghen[i])
 
-            var aa = highProb[0] * 100;
+            var aa = highProb[i] * 100;
             for (var j = 0 ; j < aa ; j++) {
                 ntrts.push(ntrtGrp[i])
             }
         }
         var n = Math.floor(Math.random() * ntrts.length + 1)-1;
         console.log('概率:' + highProb)
-        block(ntrts[n])
+        // block(ntrts[n])
+        zuizongsuiji(alloRatio,ntrtGrp,function (zhu) {
+            block(zhu)
+        })
+    }else if (bupinghen[0] < bupinghen[1]){
+        //概率排序
+        highProb = highProb.sort(function (a,b) {
+            return b - a
+        });
+        for (var i = 0 ; i < highProb.length ; i++){
+            console.log(ntrtGrp + '不平衡分为:' + bupinghen[i])
 
+            var aa = highProb[i] * 100;
+            for (var j = 0 ; j < aa ; j++) {
+                ntrts.push(ntrtGrp[i])
+            }
+        }
+        var n = Math.floor(Math.random() * ntrts.length + 1)-1;
+        console.log('概率:' + highProb)
+        // block(ntrts[n])
+        zuizongsuiji(alloRatio,ntrtGrp,function (zhu) {
+            block(zhu)
+        })
     }else{
         //完全随机
         console.log('完全随机')
         var n = Math.floor(Math.random() * ntrtGrp.length + 1)-1;
-        block(ntrtGrp[n])
+        // block(ntrtGrp[n])
+        zuizongsuiji(alloRatio,ntrtGrp,function (zhu) {
+            block(zhu)
+        })
     }
 
 }
 
 //比例法
-exports.bilifa = function (bupinghen,nTrtGrpArray,block) {
+exports.bilifa = function (bupinghen,persons,nTrtGrpArray,block) {
     //取出总数
     var daoshuZ = 0;
     var weiling = [];
@@ -523,11 +531,11 @@ exports.bilifa = function (bupinghen,nTrtGrpArray,block) {
 
 //完全随机法
 exports.wangquansuiji = function (persons,block) {
-    var ntrtGrp = persons[0].NTrtGrp.split(",");
-    var alloRatio = persons[0].AlloRatio.split(",");
+    var ntrtGrp = persons[0].NTrtGrp.split(",");//治疗组数
+    var alloRatio = persons[0].AlloRatio.split(",");//受试者分组比例
     var glArray = [];
-    for (var i = 0 ; i < alloRatio.length ; i++){
-        for (var j = 0 ; j < alloRatio[i] ; j++){
+    for (var i = 0 ; i < alloRatio.length ; i++){//查看有多少个分组
+        for (var j = 0 ; j < alloRatio[i] ; j++){//按照不同的比例添加对应个数的分组到glArray容器中
             glArray.push(i)
         }
     }
@@ -536,7 +544,7 @@ exports.wangquansuiji = function (persons,block) {
     var jj = 1;
     var ntrtInt = alloRatio[id];
     var str = null
-    while(jj){
+    while(jj){//循环取任意随机数
         var suijishu = Math.random();
         id = Math.ceil(suijishu*10);
         if (id <= glArray.length){
@@ -550,6 +558,18 @@ exports.wangquansuiji = function (persons,block) {
     //需要放入的治疗组
     block(str)
 }
+
+function zuizongsuiji(alloRatio,ntrtGrp,block) {
+    var zhuArray = [];
+    for (var i = 0 ; i < alloRatio.length ; i++){
+        for (var j = 0 ; j < alloRatio[i] ; j++){
+            zhuArray.push(ntrtGrp[i])
+        }
+    }
+    var n = Math.floor(Math.random() * zhuArray.length + 1)-1;
+    block(zhuArray[n]);
+}
+
 /**
  * JS获取n至m随机整数
  * 琼台博客

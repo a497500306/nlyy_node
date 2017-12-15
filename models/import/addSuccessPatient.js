@@ -37,12 +37,16 @@ var addSuccessPatientSchema = new mongoose.Schema({
     "stopDrugDate":Date,//停止用药日期
     "Arm" : String, //治疗分组标签
     "Drug" : Array,//药物号数组
+    "StudyDCross" : Array,//交叉设计数据
+    "DrugDose" : Array,//药物剂量数据
+    "DrugDoer" : Array,//取药物号者ID
     "DrugDate" : Array,//取药物号时间数组
     "SubjStudYN" : String,//受试者是否参加子研究
     "isUnblinding" : String,//是否揭盲
     "UnblindingType" : String,//揭盲类型
     "UnblindingDate" : Date, //揭盲时间
     "isOut" : String,//是否完成或退出
+    'isBasicData' : Number,//是否为基础数据,1为是
     "Date" : Date, //导入时间
 });
 addSuccessPatientSchema.plugin(autoIncrement.plugin, {

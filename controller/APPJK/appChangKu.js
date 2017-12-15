@@ -1,5 +1,4 @@
 var users = require('../../models/import/users');
-var formidable = require('formidable');
 var depot = require('../../models/import/depot');
 var site = require('../../models/import/site');
 var drug = require('../../models/import/drug');
@@ -10,6 +9,7 @@ var YSZDrug = require('../../models/import/YSZDryg');
 var drugCK = require('../../models/import/drugCK');
 var addSuccessPatient = require('../../models/import/addSuccessPatient');
 var researchParameter = require('../../models/import/researchParameter');
+var formidable = require('formidable');
 var mongoose = require('mongoose');
 var EMail = require("../../models/EMail");
 //时间操作
@@ -120,7 +120,7 @@ exports.appGetZnfp = function (req, res, next) {
                         DDrugDMNumYN: {$ne:1},
                         DDrugUseAYN:{$ne:1},
                         DrugExpryDTC : {$gte:new Date()},
-                    }).sort('DrugNum').exec(function(err, zxDrugPersons) {
+                    }).sort({DrugSeq : 1}).exec(function(err, zxDrugPersons) {
                          yDrug = yDrug - zxDrugPersons.length;
                         if (yDrug == 0){
                             iterator(jj+1)
@@ -178,7 +178,7 @@ exports.appGetZnfp = function (req, res, next) {
                                         if (persons.length < yDrug){
                                             res.send({
                                                 'isSucceed' : 200,
-                                                'msg' : '某组药物号不足'
+                                                'msg' : '药物号不足，请联系药物提供方。'
                                             });
                                             return
                                         }else{
@@ -433,7 +433,8 @@ exports.appGetYwhgsfp = function (req, res, next) {
                         }else {
                             var iii = fields.Number - drugArray.length;
                             for (var  i = 0 ; i < iii ; i++){
-                                drugAll.slice(drugArray.length + i,1)
+                                var zss = drugAll.slice(-(i + 1))
+                                drugArray.push(zss[0])
                             }
                             tianjiadaolinshi(drugArray,fields,res)
                         }
@@ -491,7 +492,7 @@ exports.appGetYwhgsfp = function (req, res, next) {
                                 if (persons.length < shuliang){
                                     res.send({
                                         'isSucceed' : 200,
-                                        'msg' : '某组药物号最多为' + persons.length + '个'
+                                        'msg' : '药物号不足，请联系药物提供方'
                                     });
                                     return
                                 }else{
@@ -584,6 +585,8 @@ tianjiadaolinshi = function(drugs,fields,res) {
                                     DrugDigits: persons[0].drugs[j].DrugDigits,
                                     ArmCD: persons[0].drugs[j].ArmCD,
                                     Arm: persons[0].drugs[j].Arm,
+                                    StudyDCross : persons[0].drugs[i].StudyDCross,//交叉设计数据
+                                    DrugDose : persons[0].drugs[i].DrugDose,//药物剂量数据
                                     PackSeq: persons[0].drugs[j].PackSeq,
                                     DrugExpryDTC: persons[0].drugs[j].DrugExpryDTC,
                                     DDrugNumRYN: persons[0].drugs[j].DDrugNumRYN,
@@ -717,7 +720,7 @@ exports.appGetAssignYwhgsfp = function (req, res, next) {
                                             'drugStrs' : fields.UsedAddress.DepotName + '分配药物号,等待发货',
                                             'drugDate' : new Date()
                                         } ,
-                                    },function () {
+                                    },{multi:true},function () {
                                         console.log("修改成功");
                                         iterator(jj+1)
                                     })
@@ -786,20 +789,20 @@ exports.appGetAssignYwhgsfp = function (req, res, next) {
                                 htmlStr = htmlStr + '<h2>药物个数:' + yaowuhaogs + '</h2>'
                                 htmlStr = htmlStr + '<h2>药物号:</h2>'
                                 htmlStr = htmlStr + '<h2>'+yaowuhao+'</h2>'
-                                var emails = null;
-                                if (fields.UsedAddress.DepotEmail == persons[0].Users.UserEmail){
-                                    emails = [fields.UsedAddress.DepotEmail]
-                                }else{
-                                    emails = [fields.UsedAddress.DepotEmail,persons[0].Users.UserEmail]
-                                }
-                                for (var x = 0 ; x < emails.length ; x++ ){
+                                // var emails = null;
+                                // if (fields.UsedAddress.DepotEmail == persons[0].Users.UserEmail){
+                                //     emails = [fields.UsedAddress.DepotEmail]
+                                // }else{
+                                //     emails = [fields.UsedAddress.DepotEmail,persons[0].Users.UserEmail]
+                                // }
+                                // for (var x = 0 ; x < emails.length ; x++ ){
                                     EMail.fasongxiujian({
                                         from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
-                                        to: emails[x], // 收件列表
+                                        to: fields.UsedAddress.DepotEmail, // 收件列表
                                         subject: persons[0].Users.StudyID + "配送清单", // 标题
                                         html: htmlStr // html 内容
                                     })
-                                }
+                                // }
                             }else{
                                 htmlStr = htmlStr + '<h2>研究编号:'+ persons[0].Users.StudyID + '</h2>'
                                 htmlStr = htmlStr + '<h2>研究简称:'+ persons[0].Users.StudNameS + '</h2>'
@@ -815,38 +818,37 @@ exports.appGetAssignYwhgsfp = function (req, res, next) {
                                 htmlStr = htmlStr + '<h2>中心邮编:' + persons[0].Address.SiteZipC + '</h2>'
                                 //取出中心仓管员信息
                                 users.find({"UserSite" : persons[0].Address.SiteID,'StudyID':persons[0].Users.StudyID,"UserFun" : "H4"}, function (err, userPersons) {
-
                                     var emails = null;
                                     if (fields.UsedAddress.DepotEmail == persons[0].Users.UserEmail){
                                         emails = [fields.UsedAddress.DepotEmail]
                                     }else{
                                         emails = [fields.UsedAddress.DepotEmail,persons[0].Users.UserEmail]
                                     }
-                                    for (var i = 0 ; i < userPersons.length ; i++){
+
+                                    // for (var i = 0 ; i < userPersons.length ; i++){
+                                    for (var i = 0 ; i < 1 ; i++){
                                         var user = userPersons[i];
-                                        htmlStr = htmlStr + '<h2>中心接收人姓名:' + user.UserNam + '</h2>'
-                                        htmlStr = htmlStr + '<h2>中心接收手机号码:' + user.UserMP + '</h2>'
-                                        htmlStr = htmlStr + "<h2>药物分配时间:"+ (moment().format('YYYY-MM-DD h:mm:ss a'))  + "</h2>"
-                                        htmlStr = htmlStr + '<h2>药物个数:' + yaowuhaogs + '</h2>'
-                                        htmlStr = htmlStr + '<h2>药物号:</h2>'
-                                        htmlStr = htmlStr + '<h2>'+yaowuhao+'</h2>'
-                                        var isEmail = true;
-                                        for (var j = 0 ; j < emails.length ; j++){
-                                            if (user.UserEmail == emails[j]){
-                                                isEmail = false;
-                                            }
-                                        }
-                                        if (isEmail == true){
-                                            emails.push(user.UserEmail);
-                                        }
-                                    }
-                                    for (var xx = 0 ; xx < emails.length ; xx++){
-                                        EMail.fasongxiujian({
-                                            from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
-                                            to: emails[xx], // 收件列表
-                                            subject: persons[0].Users.StudyID + "配送清单", // 标题
-                                            html: htmlStr // html 内容
-                                        })
+                                        var jiuHtmlStr = '';
+                                        jiuHtmlStr = htmlStr + '<h2>中心接收人姓名:' + user.UserNam + '</h2>'
+                                        jiuHtmlStr = jiuHtmlStr + '<h2>中心接收手机号码:' + user.UserMP + '</h2>'
+                                        jiuHtmlStr = jiuHtmlStr + "<h2>药物分配时间:"+ (moment().format('YYYY-MM-DD h:mm:ss a'))  + "</h2>"
+                                        jiuHtmlStr = jiuHtmlStr + '<h2>药物个数:' + yaowuhaogs + '</h2>'
+                                        jiuHtmlStr = jiuHtmlStr + '<h2>药物号:</h2>'
+                                        jiuHtmlStr = jiuHtmlStr + '<h2>'+yaowuhao+'</h2>'
+                                        // var isEmail = true;
+                                        // for (var j = 0 ; j < emails.length ; j++){
+                                        //     if (user.UserEmail == emails[j]){
+                                        //         isEmail = false;
+                                        //     }
+                                        // }
+                                        // if (isEmail == true){
+                                            EMail.fasongxiujian({
+                                                from: "诺兰随机专用APP<k13918446402@qq.com>", // 发件地址
+                                                to: fields.UsedAddress.DepotEmail, // 收件列表
+                                                subject: persons[0].Users.StudyID + "配送清单", // 标题
+                                                html: jiuHtmlStr // html 内容
+                                            })
+                                        // }
                                     }
                                 })
                             }
@@ -957,6 +959,8 @@ exports.appGetCancelYwhgsfp = function (req, res, next) {
                                 DrugDigits:persons[0].drugs[j].DrugDigits,
                                 ArmCD:persons[0].drugs[j].ArmCD,
                                 Arm:persons[0].drugs[j].Arm,
+                                StudyDCross : persons[0].drugs[i].StudyDCross,//交叉设计数据
+                                DrugDose : persons[0].drugs[i].DrugDose,//药物剂量数据
                                 PackSeq:persons[0].drugs[j].PackSeq,
                                 DrugExpryDTC:persons[0].drugs[j].DrugExpryDTC,
                                 DDrugNumRYN:persons[0].drugs[j].DDrugNumRYN,
@@ -1344,8 +1348,7 @@ exports.appGetDysywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
-        DYSDrug.chazhaosuoyouDyslb(fields.UsedAddressId,fields.UserMP,function (err, persons){
-            console.log(persons)
+        DYSDrug.find({'UsedAddress.id' : fields.UsedAddressId, 'isDelivery' : 0}).sort('-id').exec(function (err, persons) {
             if (err != null){
                 res.send({
                     'isSucceed' : 200,
@@ -1397,7 +1400,7 @@ exports.appGetAssignDysywqd = function (req, res, next) {
                                 'drugStrs' : ddd,
                                 'drugDate' : new Date()
                             } ,
-                        },function () {
+                        },{multi:true},function () {
                             console.log("修改成功");
                         })
                     }
@@ -1419,7 +1422,7 @@ exports.appGetAssignDysywqd = function (req, res, next) {
                             });
                         }else {
                             //把DYSDrug数据修改为已发货,更新
-                            DYSDrug.update({'id' : fields.id},{'isDelivery' : 1,'DeliveryDate':new Date()},function () {
+                            DYSDrug.update({'id' : fields.id},{'isDelivery' : 1,'DeliveryDate':new Date()},{multi:true},function () {
                                 console.log("修改成功");
                             })
                             //返回成功
@@ -1445,8 +1448,7 @@ exports.appGetYszywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
-        YSZDrug.chazhaosuoyouYsz(fields.UsedAddressId,fields.UserMP,function (err, persons){
-            console.log(persons)
+        YSZDrug.find({'UsedAddress.id' : fields.UsedAddressId, 'isSign' : 0}).sort('-id').exec(function (err, persons){
             if (err != null){
                 res.send({
                     'isSucceed' : 200,
@@ -1468,8 +1470,7 @@ exports.appGetYsdywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
-        YSZDrug.chazhaosuoyouYSD(fields.UsedAddressId,fields.UserMP,function (err, persons){
-            console.log(persons)
+        YSZDrug.find({'UsedAddress.id' : fields.UsedAddressId, 'isSign' : 1}).sort('-id').exec(function (err, persons) {
             if (err != null){
                 res.send({
                     'isSucceed' : 200,
@@ -1516,7 +1517,6 @@ exports.appGetDqsywqd = function (req, res, next) {
 exports.appGetAssignDqsywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        console.log(fields)
         //已签收
         YSZDrug.find({id : fields.id , isSign : 0},function (err, persons){
             if (err == null){
@@ -1538,6 +1538,8 @@ exports.appGetAssignDqsywqd = function (req, res, next) {
                             DrugSeq : persons[0].drugs[i].DrugSeq,
                             DrugDigits : persons[0].drugs[i].DrugDigits, // 药物号位数
                             DrugExpryDTC : persons[0].drugs[i].DrugExpryDTC,
+                            StudyDCross : persons[0].drugs[i].StudyDCross,//交叉设计数据
+                            DrugDose : persons[0].drugs[i].DrugDose,//药物剂量数据
                             DDrugNumRYN : 1,
                             DDrugNumAYN : 0,
                             DDrugDMNumYN : 0,
@@ -1568,7 +1570,7 @@ exports.appGetAssignDqsywqd = function (req, res, next) {
                                     'drugStrs' : persons[0].Address.DepotName + '已签收',
                                     'drugDate' : new Date()
                                 } ,
-                            },function () {
+                            },{multi:true},function () {
                                 console.log("修改成功");
                             })
                         }else{
@@ -1581,13 +1583,13 @@ exports.appGetAssignDqsywqd = function (req, res, next) {
                                     'drugStrs' : persons[0].Address.SiteNam + '已签收',
                                     'drugDate' : new Date()
                                 } ,
-                            },function () {
+                            },{multi:true},function () {
                                 console.log("修改成功");
                             })
                         }
                     }
                     //把DYSDrug数据修改为已发货
-                    YSZDrug.update({'id' : fields.id},{'isSign' : 1,'SignDate':new Date()},function () {
+                    YSZDrug.update({'id' : fields.id},{'isSign' : 1,'SignDate':new Date()},{multi:true},function () {
                         //返回成功
                         res.send({
                             'isSucceed' : 400,
@@ -1653,18 +1655,18 @@ exports.getAllOnActivation = function (req, res, next) {
                                     'drugStrs' : '激活',
                                     'drugDate' : new Date()
                                 } ,
-                            },function () {
+                            },{multi:true},function () {
                                 console.log("修改成功");
                             })
                         }
                         //把DYSDrug数据修改为已发货,更新
-                        drugCK.update({'id' : persons[i].id},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function () {
+                        drugCK.update({'id' : persons[i].id,DDrugDMNumYN:{$ne:1}},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},{multi:true},function () {
                             console.log("修改成功");
                         })
                     }
                     res.send({
                         'isSucceed' : 400,
-                        'msg' : '全部激活完成'
+                        'msg' : '操作成功'
                     });
                     return
                 }else{
@@ -1744,7 +1746,7 @@ exports.getSelectedActivation = function (req, res, next) {
                 console.log(fields.ids[i])
                 //修改药物号为激活状态
                 drugCK.find({'id' : fields.ids[i]},function (err, persons) {
-                    drugCK.update({'id' : fields.ids[i]},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function (err, persons1) {
+                    drugCK.update({'id' : fields.ids[i],DDrugDMNumYN:{$ne:1}},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},{multi:true},function (err, persons1) {
                         if (persons[0].DDrugNumAYN != 1){
                             //修改物流信息
                             drugWL.update({
@@ -1755,7 +1757,7 @@ exports.getSelectedActivation = function (req, res, next) {
                                     'drugStrs' : '激活',
                                     'drugDate' : new Date()
                                 } ,
-                            },function () {
+                            },{multi:true},function () {
                                 console.log("修改成功");
                             })
                         }
@@ -1800,7 +1802,7 @@ exports.getSelectedAbandoned = function (req, res, next) {
                                     'drugStrs' : '废弃',
                                     'drugDate' : new Date()
                                 } ,
-                            },function () {
+                            },{multi:true},function () {
                                 console.log("修改成功");
                             })
                         }
@@ -1895,7 +1897,7 @@ exports.getZXAllYwqd = function (req, res, next) {
     form.parse(req,function (err, fields, files) {
         
         //在待运送数据库中查找该用户该研究的所有数据,并且按时间先后排序
-        YSZDrug.chazhaosuoyouZXQD(fields.StudyID,fields.UserSiteYN,fields.UserSite,function (err, persons){
+        YSZDrug.chazhaosuoyouZXYQS(fields.StudyID,fields.UserSiteYN,fields.UserSite,function (err, persons){
             console.log(persons)
             if (err != null){
                 res.send({
@@ -1970,18 +1972,18 @@ exports.getZXAllOnActivation = function (req, res, next) {
                                     'drugStrs' : '激活',
                                     'drugDate' : new Date()
                                 } ,
-                            },function () {
+                            },{multi:true},function () {
                                 console.log("修改成功");
                             })
                         }
                         //把DYSDrug数据修改为已发货,更新
-                        drugCK.update({'id' : persons[i].id},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},function () {
+                        drugCK.update({'id' : persons[i].id,DDrugDMNumYN:{$ne:1}},{'DDrugNumAYN' : 1 , 'DDrugDMNumYN' : 0 ,},{multi:true},function () {
                             console.log("修改成功");
                         })
                     }
                     res.send({
                         'isSucceed' : 400,
-                        'msg' : '全部激活完成'
+                        'msg' : '操作成功'
                     });
                     return
                 }else{
@@ -2346,6 +2348,8 @@ zhongjian = function (drugs,Users,Address,Type,DepotGNYN,DepotBrYN,DepotId,res) 
                                     ArmCD:persons[0].drugs[j].ArmCD,
                                     Arm:persons[0].drugs[j].Arm,
                                     PackSeq:persons[0].drugs[j].PackSeq,
+                                    StudyDCross : persons[0].drugs[i].StudyDCross,//交叉设计数据
+                                    DrugDose : persons[0].drugs[i].DrugDose,//药物剂量数据
                                     DrugExpryDTC:persons[0].drugs[j].DrugExpryDTC,
                                     DDrugNumRYN:persons[0].drugs[j].DDrugNumRYN,
                                     DDrugNumAYN:persons[0].drugs[j].DDrugNumAYN,

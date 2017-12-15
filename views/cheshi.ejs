@@ -1,0 +1,110 @@
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <br>
+    <div>
+        <button type="button" id="JSCallOCBtn" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+            跳转到任意控制器
+        </button>
+    </div>
+    <br>
+    <br>
+    <div>
+        <button type="button" id="JSCallAPIBtn" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+            js调用网络请求(api)
+        </button>
+    </div>
+    <br>
+    <script type="text/javascript">
+        //必须要写的代码--<!-- 申明交互 -->
+        function setupWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) { return callback(WebViewJavascriptBridge); }
+            if (window.WVJBCallbacks) { return window.WVJBCallbacks.push(callback); }
+            window.WVJBCallbacks = [callback];
+            var WVJBIframe = document.createElement('iframe');
+            WVJBIframe.style.display = 'none';
+            WVJBIframe.src = 'https://__bridge_loaded__';
+            document.documentElement.appendChild(WVJBIframe);
+            setTimeout(function() { document.documentElement.removeChild(WVJBIframe) }, 0)
+        }   
+
+        //<!-- 处理交互  方法名要和ios内定义的对应-->
+        setupWebViewJavascriptBridge(function(bridge) {
+            //处理 oc 调用 js
+//            bridge.registerHandler('registerAction', function(data, responseCallback) {
+//                //处理oc给的传参
+//                alert('oc请求js  传值参数是：'+data)
+//                var responseData = { 'result':'handle success' }
+//                //处理完，回调传值给oc
+//                responseCallback(responseData)
+//            })
+
+            //跳转到任意控制器:需要跳转时对接一下
+            document.getElementById('JSCallOCBtn').onclick=function(){
+//                bridge.callHandler('pushViewController', {'vcName':'MLWebCSController','title': '章三'}, function(response) {
+//                     //处理oc过来的回调
+//                     alert('收到oc过来的回调:'+response)
+//                })
+                //图片
+//                bridge.callHandler('showImagePhotoBrowser',
+//                    {
+//                        'imageUrls': ['http://cdn.cocimg.com/bbs/attachment/Fid_21/21_502154_6d77906ccb4b32b.png','http://cdn.cocimg.com/bbs/attachment/Fid_21/21_502154_6d77906ccb4b32b.png'],
+//                        'index':'1'//点击的第几张图片
+//                    }, function(response) {
+//
+//                    })
+                //拨打电话
+//                bridge.callHandler('obtainCode',
+//                    {
+//                        'phoneNum': '10086',
+//                        'title' :'',
+//                        'text':''
+//                    }, function(response) {
+//
+//                    })
+                //跳转到报名信息
+//                bridge.callHandler('pushViewController', {
+//                    'vcName':'MLMyLearnCarController',
+//                    'title': '报名信息',
+//                    'dataDict':{
+//                        'sort':'1',
+//                        'sub_title':'包接包送 灵活教学',
+//                        'price':'3499.00',
+//                        'market_price':'3599.00',
+//                        'title':'C1特训班（爆款）',
+//                        'cover_img':'http://imgs.todriver.com/image/1e5d1a37e2294b4471237482f17a552e.jpeg',
+//                        'drive_type':'C1',
+//                        'item_code':'302800000158'
+//                    }
+//                }, function(response) {
+//
+//                })
+                //跳转到学车进度
+//                bridge.callHandler('pushViewController', {
+//                    'vcName':'MLCarScheduleController',
+//                    'title': '学车进度',
+//                }, function(response) {
+//
+//                })
+
+            }
+            //网络请求
+            document.getElementById('JSCallAPIBtn').onclick=function(){
+                //post:关键字
+                //{传参}
+                bridge.callHandler('post',
+                    {
+                        'api': 'Customer.UCenter.Order.lists',
+                        'data' : {'page':'1','page_size': '10'}
+                    }, function(response) {
+                    //处理oc过来的回调
+                    alert('收到oc过来的回调111:'+JSON.stringify(response))
+                })
+            }
+        })
+    </script>
+</body>
+</html>

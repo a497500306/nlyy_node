@@ -14,6 +14,7 @@ var addOutPatient = require('../../models/import/addOutPatient');
 var Unblinding = require('../../models/import/Unblinding');
 var ApplicationAndAudit = require('../../models/import/ApplicationAndAudit');
 var MLArray = require('../../MLArray');
+var recordingSMS = require('../../models/import/recordingSMS');
 
 TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
@@ -29,6 +30,13 @@ moment().format();
 exports.getAddSszjxfsrq = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
+        if (fields.baselineDate.length == 0){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '请填写基线日期！'
+            });
+            return;
+        }
         //查找是否有改用户
         baselineUser.find({"StudyID" : fields.StudyID,"userId" : fields.userId}, function (err, persons1) {
             if (persons1.length == 0){
@@ -104,8 +112,22 @@ exports.getCyxjdnsfssz = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         var resData = [];
+        var data = [];
+        var findJson = null;
+        if (fields.SiteID.indexOf(',') != -1 ) {
+            var sites = fields.SiteID.split(",");
+            findJson = {$or:[]};
+            for (var i = 0 ; i < sites.length ; i++){
+                findJson.$or.push({
+                    'StudyID' : fields.StudyID,
+                    'SiteID' : sites[i]
+                })
+            }
+        }else{
+            findJson = {SiteID : fields.SiteID,StudyID : fields.StudyID}
+        }
         //查找是否有改用户
-        baselineUser.find({"StudyID" : fields.StudyID,"SiteID" : fields.SiteID}, function (err, persons1) {
+        baselineUser.find(findJson, function (err, persons1) {
             //取出数据库中设置基线仿视日期参数
             FollowUpParameter.find({"StudyID" : fields.StudyID}, function (err, persons) {
                 var tingyaoFUP = null;
@@ -153,6 +175,9 @@ exports.getCyxjdnsfssz = function (req, res, next) {
                         for (var j = 0 ; j <= fangshiFUP.VisitDy.split(",").length ; j++){
                             if (j != 0){
                                 var date1=baseline.baselineDate;  //开始时间
+                                if (date1 == null){
+                                    break;
+                                }
                                 var date2=new Date();    //结束时间
                                 var date3=date2.getTime()-date1.getTime();  //时间差的毫秒数
                                 //计算出相差天数
@@ -183,6 +208,9 @@ exports.getCyxjdnsfssz = function (req, res, next) {
                         for (var j = 0 ; j <= tingyaoFUP.VisitDy.split(",").length ; j++){
                             if (j != 0){
                                 var date1=baseline.stopDrugDate;  //开始时间
+                                if (date1 == null){
+                                    break;
+                                }
                                 var date2=new Date();    //结束时间
                                 var date3=date2.getTime()-date1.getTime();  //时间差的毫秒数
                                 //计算出相差天数
@@ -223,34 +251,116 @@ exports.getFsyysfdx = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         console.log(fields)
-        client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-            'extend' : '' ,
-            'sms_type' : 'normal' ,
-            'sms_free_sign_name' : '诺兰医药科技' ,
-            'sms_param' : {
-                studyID:fields.StudyID ,
-                yytx:fields.content.replace('研究温馨提示：',''),
-                date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-            } ,
-            'rec_num' : fields.phone ,
-            'sms_template_code' : "SMS_63885566"
-        }, function(error, response) {
-            if (error != null){
-                console.log(error)
+        //查看该研究是否允许发送预约随访短信
+        study.find({'StudyID' : fields.StudyID},function (err, studyData) {
+            if (err != null){
                 res.send({
-                    'isSucceed' : 200,
-                    'msg' : '发送失败,查看是否手机号码错误!'
+                    'isSucceed': 200,
+                    'msg': '数据库错误'
                 });
-            }else{
+                return
+            }else if (studyData.length == 0){
                 res.send({
-                    'isSucceed' : 400,
-                    'msg' : '发送成功'
+                    'isSucceed': 200,
+                    'msg': '没有找到相关数据'
                 });
+                return
+            }else if (studyData[0].StudOnlineYN == 1) {
+                client.execute('alibaba.aliqin.fc.sms.num.send', {
+                    'extend': '',
+                    'sms_type': 'normal',
+                    'sms_free_sign_name': '诺兰医药科技',
+                    'sms_param': {
+                        studyID: fields.StudyID,
+                        yytx: fields.content.replace('研究温馨提示：', ''),
+                        date: (moment().format('YYYY-MM-DD h:mm:ss a'))
+                    },
+                    'rec_num': fields.phone,
+                    'sms_template_code': "SMS_63885566"
+                }, function (error, response) {
+                    if (error != null) {
+                        console.log(error)
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '发送失败,查看是否手机号码错误!'
+                        });
+                    } else {
+                        //发送成功,添加到数据库
+                        recordingSMS.create({
+                            "StudyID" : fields.StudyID,    //研究编号
+                            "content" : "【诺兰医药科技】" + fields.StudyID + fields.content + '，' + "完成时间" + (moment().format('YYYY-MM-DD h:mm:ss a')),    //内容
+
+                            "patient" : fields.patient,    //用户信息
+
+                            "users" : fields.users,      //添加这信息
+                            "type" : 2,       //1:药物推送短信,2:随访短信
+                            "Date" : new Date(), //导入时间
+                        },function () {
+
+                        })
+                        res.send({
+                            'isSucceed': 400,
+                            'msg': '发送成功'
+                        });
+                    }
+                });
+            }else {
+                res.send({
+                    'isSucceed': 200,
+                    'msg': '该研究禁用了预约随访短信功能'
+                });
+                return
             }
         });
     })
 }
 
+
+//发送受试者短信统计
+exports.getSMSStatistics = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        //查找筛选成功受试者
+        var siteJson = {};
+        if (fields.SiteID == ''){
+            siteJson = {StudyID:fields.StudyID};
+        }else if (fields.SiteID.indexOf(',') != -1 ) {
+            var sites = fields.SiteID.split(",");
+            siteJson = {$or:[]};
+            for (var i = 0 ; i < sites.length ; i++){
+                siteJson.$or.push({
+                    'StudyID' : fields.StudyID,
+                    'SiteID' : sites[i]
+                })
+            }
+        }else{
+            siteJson = {StudyID:fields.StudyID,SiteID:fields.SiteID};
+        }
+        site.find(siteJson,function (err, sitep) {
+            //异步转同步
+            var data = {
+                sites:[],
+            };
+            (function iterator(i){
+                if (i == sitep.length){
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data,
+                    });
+                    return
+                }else {
+                    recordingSMS.find({StudyID:fields.StudyID,"patient.SiteID":sitep[i].SiteID}).sort({Date:-1}).exec(function(err, recording) {
+                        data.sites.push({
+                            site:sitep[i],
+                            recordingSMS:recording
+                        })
+                        iterator(i+1)
+                    })
+                }
+            })(0);
+        })
+    })
+}
 
 //添加完成或退出受试者
 exports.getAddOut = function (req, res, next) {
@@ -285,7 +395,10 @@ exports.getAddOut = function (req, res, next) {
                     "DSCONT_OLE":fields.DSCONT_OLE,//参加延长期开放研究
                     "Date" : new Date(), //导入时间
                 },function (error) {
-                    if (fields.isShibai == false){
+                    baselineUser.remove({"StudyID" : fields.StudyID,"SiteID" : fields.SiteID,"userId" : fields.userId}, function (err, personsxx) {
+
+                    })
+                        if (fields.isShibai == false){
                         //更新addSuccessPatient
                         addSuccessPatient.update({
                             'id':fields.userId,
@@ -345,7 +458,7 @@ exports.getUnblindingApplication = function (req, res, next) {
                             'Reason' : [fields.Reason],//揭盲原因
                             'UnblindingType' : fields.UnblindingType,
                             "UnblApplDTC":new Date(),//揭盲申请日期
-                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系" + fields.Causal],//完成或退出日期
+                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系:" + fields.Causal],//完成或退出日期
                             "UnblindingProcessDates":[new Date()],//参加延长期开放研究
                             "Date" : new Date(), //导入时间
                         },function (error) {
@@ -355,37 +468,41 @@ exports.getUnblindingApplication = function (req, res, next) {
                             });
                         })
                     }else {//更新数据
-                        Unblinding.update({
-                            "Users.id" : fields.Users.id,'UnblindingType':fields.UnblindingType,"SiteID" : fields.SiteID,'StudyID':fields.StudyID,'isStopIt':{$ne:1}
-                        },{
-                            "isStopIt" : null,
-                            "StudyID" : fields.StudyID,//研究编号
-                            "StudySeq" : fields.StudySeq,//研究序列号
-                            "SiteID" : fields.SiteID,//中心编号
-                            "SiteNam":fields.SiteNam,//中心名称
-                            "ScreenYN":fields.ScreenYN,//筛选结果
-                            "Users":fields.Users,//受试者信息
-                            "UserNam":[fields.UserNam],//申请人名称
-                            "UserMP":[fields.UserMP],//申请人手机号
-                            "User" : [fields.User],//申请用户信息
-                            'Causal' : [fields.Causal],//因果关系
-                            'Reason' : [fields.Reason],//揭盲原因
-                            'UnblindingType' : fields.UnblindingType,
-                            "UnblApplDTC":new Date(),//揭盲申请日期
-                            "ToExamineUsers" : [],//审核人
-                            "ToExaminePhone" : [],//审核人手机号
-                            "ToExamineUserData" : [],//审核人数据
-                            "ToExamineType" : [],//是通过还是拒绝
-                            "ToExamineDate" : [], //审核时间
-                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系" + fields.Causal],//完成或退出日期
-                            "UnblindingProcessDates":[new Date()],//参加延长期开放研究
-                            "Date" : new Date(), //导入时间,
-                        },function () {
-                            res.send({
-                                'isSucceed': 400,
-                                'msg': '操作成功'
-                            });
-                        })
+                        res.send({
+                            'isSucceed' : 200,
+                            'msg' : '请勿重复申请'
+                        });
+                        // Unblinding.update({
+                        //     "Users.id" : fields.Users.id,'UnblindingType':fields.UnblindingType,"SiteID" : fields.SiteID,'StudyID':fields.StudyID,'isStopIt':{$ne:1}
+                        // },{
+                        //     "isStopIt" : null,
+                        //     "StudyID" : fields.StudyID,//研究编号
+                        //     "StudySeq" : fields.StudySeq,//研究序列号
+                        //     "SiteID" : fields.SiteID,//中心编号
+                        //     "SiteNam":fields.SiteNam,//中心名称
+                        //     "ScreenYN":fields.ScreenYN,//筛选结果
+                        //     "Users":fields.Users,//受试者信息
+                        //     "UserNam":[fields.UserNam],//申请人名称
+                        //     "UserMP":[fields.UserMP],//申请人手机号
+                        //     "User" : [fields.User],//申请用户信息
+                        //     'Causal' : [fields.Causal],//因果关系
+                        //     'Reason' : [fields.Reason],//揭盲原因
+                        //     'UnblindingType' : fields.UnblindingType,
+                        //     "UnblApplDTC":new Date(),//揭盲申请日期
+                        //     "ToExamineUsers" : [],//审核人
+                        //     "ToExaminePhone" : [],//审核人手机号
+                        //     "ToExamineUserData" : [],//审核人数据
+                        //     "ToExamineType" : [],//是通过还是拒绝
+                        //     "ToExamineDate" : [], //审核时间
+                        //     "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系" + fields.Causal],//完成或退出日期
+                        //     "UnblindingProcessDates":[new Date()],//参加延长期开放研究
+                        //     "Date" : new Date(), //导入时间,
+                        // },function () {
+                        //     res.send({
+                        //         'isSucceed': 400,
+                        //         'msg': '操作成功'
+                        //     });
+                        // })
                     }
                 })
             }else{
@@ -420,7 +537,7 @@ exports.getSiteUnblindingApplication = function (req, res, next) {
                             'Reason' : [fields.Reason],//揭盲原因
                             'UnblindingType' : fields.UnblindingType,
                             "UnblApplDTC":new Date(),//揭盲申请日期
-                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系" + fields.Causal],//完成或退出日期
+                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系:" + fields.Causal],//完成或退出日期
                             "UnblindingProcessDates":[new Date()],
                             "Date" : new Date(), //导入时间
                         },function (error) {
@@ -430,37 +547,41 @@ exports.getSiteUnblindingApplication = function (req, res, next) {
                             });
                         })
                     }else {//更新数据
-                        Unblinding.update({
-                            "site.id" : fields.site.id,'UnblindingType':fields.UnblindingType,"SiteID" : fields.SiteID,'StudyID':fields.StudyID,'isStopIt':{$ne:1}
-                        },{
-                            "isStopIt":null,
-                            "StudyID" : fields.StudyID,//研究编号
-                            "StudySeq" : fields.StudySeq,//研究序列号
-                            "SiteID" : fields.SiteID,//中心编号
-                            "SiteNam":fields.SiteNam,//中心名称
-                            "ScreenYN":fields.ScreenYN,//筛选结果
-                            "site":fields.site,//中心信息
-                            "UserNam":[fields.UserNam],//申请人名称
-                            "UserMP":[fields.UserMP],//申请人手机号
-                            "User" : [fields.User],
-                            'Causal' : [fields.Causal],//因果关系
-                            'Reason' : [fields.Reason],//揭盲原因
-                            'UnblindingType' : fields.UnblindingType,
-                            "UnblApplDTC":new Date(),//揭盲申请日期
-                            "ToExamineUsers" : [],//审核人
-                            "ToExaminePhone" : [],//审核人手机号
-                            "ToExamineUserData" : [],//审核人数据
-                            "ToExamineType" : [],//是通过还是拒绝
-                            "ToExamineDate" : [], //审核时间
-                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系" + fields.Causal],//完成或退出日期
-                            "UnblindingProcessDates":[new Date()],
-                            "Date" : new Date(), //导入时间
-                        },function () {
-                            res.send({
-                                'isSucceed': 400,
-                                'msg': '操作成功'
-                            });
-                        })
+                        res.send({
+                            'isSucceed': 200,
+                            'msg': '请勿重复申请'
+                        });
+                        // Unblinding.update({
+                        //     "site.id" : fields.site.id,'UnblindingType':fields.UnblindingType,"SiteID" : fields.SiteID,'StudyID':fields.StudyID,'isStopIt':{$ne:1}
+                        // },{
+                        //     "isStopIt":null,
+                        //     "StudyID" : fields.StudyID,//研究编号
+                        //     "StudySeq" : fields.StudySeq,//研究序列号
+                        //     "SiteID" : fields.SiteID,//中心编号
+                        //     "SiteNam":fields.SiteNam,//中心名称
+                        //     "ScreenYN":fields.ScreenYN,//筛选结果
+                        //     "site":fields.site,//中心信息
+                        //     "UserNam":[fields.UserNam],//申请人名称
+                        //     "UserMP":[fields.UserMP],//申请人手机号
+                        //     "User" : [fields.User],
+                        //     'Causal' : [fields.Causal],//因果关系
+                        //     'Reason' : [fields.Reason],//揭盲原因
+                        //     'UnblindingType' : fields.UnblindingType,
+                        //     "UnblApplDTC":new Date(),//揭盲申请日期
+                        //     "ToExamineUsers" : [],//审核人
+                        //     "ToExaminePhone" : [],//审核人手机号
+                        //     "ToExamineUserData" : [],//审核人数据
+                        //     "ToExamineType" : [],//是通过还是拒绝
+                        //     "ToExamineDate" : [], //审核时间
+                        //     "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系" + fields.Causal],//完成或退出日期
+                        //     "UnblindingProcessDates":[new Date()],
+                        //     "Date" : new Date(), //导入时间
+                        // },function () {
+                        //     res.send({
+                        //         'isSucceed': 400,
+                        //         'msg': '操作成功'
+                        //     });
+                        // })
                     }
                 })
             }else{
@@ -494,7 +615,7 @@ exports.getStudyUnblindingApplication = function (req, res, next) {
                             'Reason' : [fields.Reason],//揭盲原因
                             'UnblindingType' : fields.UnblindingType,
                             "UnblApplDTC":new Date(),//揭盲申请日期
-                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系" + fields.Causal],//完成或退出日期
+                            "UnblindingProcess":[fields.UserNam + '申请揭盲' + '\n' + "揭盲原因:" + fields.Reason + '\n' + "不良事件因果关系:" + fields.Causal],//完成或退出日期
                             "UnblindingProcessDates":[new Date()],
                             "Date" : new Date(), //导入时间
                         },function (error) {
@@ -504,6 +625,11 @@ exports.getStudyUnblindingApplication = function (req, res, next) {
                             });
                         })
                     }else {//更新数据
+                        res.send({
+                            'isSucceed' : 200,
+                            'msg' : '请勿重复申请'
+                        });
+                        /*
                         Unblinding.update({
                             "study.id" : fields.study.id,'UnblindingType':fields.UnblindingType,'StudyID':fields.StudyID,'isStopIt':{$ne:1}
                         },{
@@ -533,6 +659,7 @@ exports.getStudyUnblindingApplication = function (req, res, next) {
                                 'msg': '操作成功'
                             });
                         })
+                        */
                     }
                 })
             }else{
@@ -733,6 +860,22 @@ exports.getIsUnblindingApplication = function (req, res, next) {
                                     UnblindingProcessDates: new Date()
                                 }
                             }, function (err, data) {
+                                //修改数据其他揭盲数据
+                                Unblinding.update({
+                                    StudyID:fields.Users.StudyID,
+                                    'Users.Random':fields.Users.Random
+                                }, {
+                                    isStopIt: fields.isStopIt,
+                                    UnblindingUsers: fields.UnblindingUsers,
+                                    UnblindingPhone: fields.UnblindingPhone,
+                                    UnblindingDate: new Date(),
+                                    $push: {
+                                        UnblindingProcess: fields.UnblindingUsers + (fields.isStopIt == 1 ? "同意揭盲" : "拒绝揭盲"),
+                                        UnblindingProcessDates: new Date()
+                                    }
+                                }, {multi:true}, function (err, data) {
+
+                                })
                                 if (fields.isStopIt == 1) {
                                     addSuccessPatient.update({
                                         "id": fields.Users.id,
@@ -751,10 +894,14 @@ exports.getIsUnblindingApplication = function (req, res, next) {
                                         })
                                     })
                                 } else {
-                                    res.send({
-                                        'isSucceed': 400,
-                                        'msg': '操作成功'
-                                    });
+                                    Unblinding.remove({
+                                        "id": fields.id
+                                    }, function (err, data) {
+                                        res.send({
+                                            'isSucceed': 400,
+                                            'msg': '操作成功'
+                                        });
+                                    })
                                 }
                             })
                         })
@@ -773,6 +920,22 @@ exports.getIsUnblindingApplication = function (req, res, next) {
                             }
                         }, function (err, data) {
                             if (fields.isStopIt == 1) {
+                                //修改数据其他揭盲数据
+                                Unblinding.update({
+                                    StudyID:fields.StudyID,
+                                    'Users.SiteID':fields.SiteID
+                                }, {
+                                    isStopIt: fields.isStopIt,
+                                    UnblindingUsers: fields.UnblindingUsers,
+                                    UnblindingPhone: fields.UnblindingPhone,
+                                    UnblindingDate: new Date(),
+                                    $push: {
+                                        UnblindingProcess: fields.UnblindingUsers + (fields.isStopIt == 1 ? "同意揭盲" : "拒绝揭盲"),
+                                        UnblindingProcessDates: new Date()
+                                    }
+                                }, {multi:true}, function (err, data) {
+
+                                })
                                 //修改中心数据
                                 site.update({
                                     "StudyID": fields.StudyID,
@@ -799,10 +962,14 @@ exports.getIsUnblindingApplication = function (req, res, next) {
                                     })
                                 })
                             } else {
-                                res.send({
-                                    'isSucceed': 400,
-                                    'msg': '操作成功'
-                                });
+                                Unblinding.remove({
+                                    "id": fields.id
+                                }, function (err, data) {
+                                    res.send({
+                                        'isSucceed': 400,
+                                        'msg': '操作成功'
+                                    });
+                                })
                             }
                         })
                     } else if (fields.UnblindingType == 4) {
@@ -821,6 +988,21 @@ exports.getIsUnblindingApplication = function (req, res, next) {
                         }
                         }, {multi:true},function (err, data) {
                             if (fields.isStopIt == 1) {
+                                //修改数据其他揭盲数据
+                                Unblinding.update({
+                                    StudyID:fields.StudyID,
+                                }, {
+                                    isStopIt: fields.isStopIt,
+                                    UnblindingUsers: fields.UnblindingUsers,
+                                    UnblindingPhone: fields.UnblindingPhone,
+                                    UnblindingDate: new Date(),
+                                    $push: {
+                                        UnblindingProcess: fields.UnblindingUsers + (fields.isStopIt == 1 ? "同意揭盲" : "拒绝揭盲"),
+                                        UnblindingProcessDates: new Date()
+                                    }
+                                }, {multi:true}, function (err, data) {
+
+                                })
                                 study.update({
                                     "StudyID": fields.StudyID
                                 },{$set: {
@@ -846,10 +1028,14 @@ exports.getIsUnblindingApplication = function (req, res, next) {
                                     })
                                 })
                             } else {
-                                res.send({
-                                    'isSucceed': 400,
-                                    'msg': '操作成功'
-                                });
+                                Unblinding.remove({
+                                    "id": fields.id
+                                }, function (err, data) {
+                                    res.send({
+                                        'isSucceed': 400,
+                                        'msg': '操作成功'
+                                    });
+                                })
                             }
                         })
                     }
@@ -877,11 +1063,11 @@ jiemangyoujian = function (UsersPersons,data,fields) {
             }, function (err, persons) {
                 if (Unblinding[0].Users.SubjFa == '' || Unblinding[0].Users.SubjFa == null){//没有分层
                     htmlStr = htmlStr + "<h2>" + Unblinding[0].Users.StudyID + "研究温馨提示："+ "受试者" + Unblinding[0].Users.USubjID + "," + Unblinding[0].Users.SubjIni + "已经于" + (moment().format('YYYY-MM-DD h:mm:ss a'))  + "完成揭盲，随机号为" + Unblinding[0].Users.Random + "，治疗分组为" + Unblinding[0].Users.Arm + '，' +"</h2>"
-                    duanxinStr = duanxinStr + "受试者" + Unblinding[0].Users.USubjID + "，" + Unblinding[0].Users.SubjIni + "已经于" + (moment().format('YYYY-MM-DD h:mm:ss a'))  + "完成揭盲，随机号为" + Unblinding[0].Users.Random + "，治疗分组为" + Unblinding[0].Users.Arm + '，'
+                    duanxinStr = duanxinStr + "受试者" + Unblinding[0].Users.USubjID + "，" + Unblinding[0].Users.SubjIni + "完成揭盲，随机号为" + Unblinding[0].Users.Random + "，治疗分组为" + Unblinding[0].Users.Arm + '，'
                 }else{//有分层
                     htmlStr = htmlStr + "<h2>" + Unblinding[0].Users.StudyID + "研究温馨提示："+ "受试者" + Unblinding[0].Users.USubjID + "，" + Unblinding[0].Users.SubjIni + "已经于" + (moment().format('YYYY-MM-DD h:mm:ss a'))  + "完成揭盲，随机号为" + Unblinding[0].Users.Random + "，治疗分组为" + Unblinding[0].Users.Arm + '，' + "</h2>"
                     htmlStr = htmlStr + '<h2>分层因素如下：' + '</h2>'
-                    duanxinStr = duanxinStr +  "受试者" + Unblinding[0].Users.USubjID + "，" + Unblinding[0].Users.SubjIni + "已经于" + (moment().format('YYYY-MM-DD h:mm:ss a'))  + "完成揭盲，随机号为" + Unblinding[0].Users.Random + "，治疗分组为" + Unblinding[0].Users.Arm + '，'
+                    duanxinStr = duanxinStr +  "受试者" + Unblinding[0].Users.USubjID + "，" + Unblinding[0].Users.SubjIni + "完成揭盲，随机号为" + Unblinding[0].Users.Random + "，治疗分组为" + Unblinding[0].Users.Arm + '，'
                     duanxinStr = duanxinStr + '分层因素如下：' + ''
                     if (Unblinding[0].Users.SubjFa != ''){
                         htmlStr = htmlStr + '<h2>' + persons[0].LabelStraA + '：' + Unblinding[0].Users.SubjFa + '</h2>'
@@ -920,6 +1106,7 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                         duanxinStr = duanxinStr + '' + persons[0].LabelStraI + '：' + Unblinding[0].Users.SubjFi + '；'
                     }
                 }
+                duanxinStr=duanxinStr.substr(0,duanxinStr.length-1)
                 for (var  i = 0 ; i < Unblinding[0].ToExamineUserData.length ; i++){
                     emas.push(Unblinding[0].ToExamineUserData[i].UserEmail)
                     phones.push(Unblinding[0].ToExamineUserData[i].UserMP)
@@ -941,17 +1128,11 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                         }
                     ]}, function (err, usersPersons) {
                     for (var j = 0 ; j < usersPersons.length ;j++){
-                        var isXiangtong = false;
-                        for (var x = 0 ; x < emas.length ; x++){
-                            if (emas[x] == usersPersons[j].UserEmail){
-                                isXiangtong = true;
-                            }
-                        }
-                        if (isXiangtong == false){
-                            emas.push(usersPersons[j].UserEmail)
-                            phones.push(usersPersons[j].UserMP)
-                        }
+                        emas.push(usersPersons[j].UserEmail)
+                        phones.push(usersPersons[j].UserMP)
                     }
+                    emas.push(Unblinding[0].User[0].UserEmail)
+                    phones.push(Unblinding[0].User[0].UserMP)
                     emas = MLArray.unique(emas);
                     phones = MLArray.unique(phones);
                     //发送邮件
@@ -962,24 +1143,26 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                             subject: Unblinding[0].Users.StudyID + "揭盲成功", // 标题
                             html: htmlStr // html 内容
                         })
+                    }
+                    for (var xxx = 0 ; xxx < phones.length ; xxx++){
                         client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
-                                'extend' : '' ,
-                                'sms_type' : 'normal' ,
-                                'sms_free_sign_name' : '诺兰医药科技' ,
-                                'sms_param' : {
-                                    studyID:Unblinding[0].Users.StudyID ,
-                                    yytx:duanxinStr,
-                                    date:(moment().format('YYYY-MM-DD h:mm:ss a'))
-                                } ,
-                                'rec_num' : phones[y] ,
-                                'sms_template_code' : "SMS_63885566"
-                            }, function(error, response) {
-                                if (error != null){
-                                    console.log('阿里错误');
-                                    console.log(error);
-                                }else {
-                                    console.log(response);
-                                }
+                            'extend' : '' ,
+                            'sms_type' : 'normal' ,
+                            'sms_free_sign_name' : '诺兰医药科技' ,
+                            'sms_param' : {
+                                studyID:Unblinding[0].Users.StudyID ,
+                                yytx:duanxinStr,
+                                date:(moment().format('YYYY-MM-DD h:mm:ss a'))
+                            } ,
+                            'rec_num' : phones[xxx] ,
+                            'sms_template_code' : "SMS_63885566"
+                        }, function(error, response) {
+                            if (error != null){
+                                console.log('阿里错误');
+                                console.log(error);
+                            }else {
+                                console.log(response);
+                            }
                         });
                     }
                 })
@@ -993,7 +1176,7 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                 "StudyID": Unblinding[0].StudyID
             }, function (err, persons) {
                 htmlStr = htmlStr + "<h2>" + Unblinding[0].StudyID + "研究温馨提示：" + Unblinding[0].SiteID + "中心" + "已经于" + (moment().format('YYYY-MM-DD h:mm:ss a'))  + "完成揭盲" +"</h2>"
-                duanxinStr = duanxinStr +  + Unblinding[0].SiteID + "中心" + "，"  + "完成揭盲"
+                duanxinStr = duanxinStr + Unblinding[0].SiteID.toString() + "中心"  + "完成揭盲"
                 for (var  i = 0 ; i < Unblinding[0].ToExamineUserData.length ; i++){
                     emas.push(Unblinding[0].ToExamineUserData[i].UserEmail)
                     phones.push(Unblinding[0].ToExamineUserData[i].UserMP)
@@ -1015,17 +1198,11 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                         }
                     ]}, function (err, usersPersons) {
                     for (var j = 0 ; j < usersPersons.length ;j++){
-                        var isXiangtong = false;
-                        for (var x = 0 ; x < emas.length ; x++){
-                            if (emas[x] == usersPersons[j].UserEmail){
-                                isXiangtong = true;
-                            }
-                        }
-                        if (isXiangtong == false){
-                            emas.push(usersPersons[j].UserEmail)
-                            phones.push(usersPersons[j].UserMP)
-                        }
+                        emas.push(usersPersons[j].UserEmail)
+                        phones.push(usersPersons[j].UserMP)
                     }
+                    emas.push(Unblinding[0].User[0].UserEmail)
+                    phones.push(Unblinding[0].User[0].UserMP)
                     emas = MLArray.unique(emas);
                     phones = MLArray.unique(phones);
                     //发送邮件
@@ -1036,6 +1213,8 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                             subject: Unblinding[0].StudyID + "揭盲成功", // 标题
                             html: htmlStr // html 内容
                         })
+                    }
+                    for (var xxx = 0 ; xxx < phones.length ;xxx++){
                         client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
                             'extend' : '' ,
                             'sms_type' : 'normal' ,
@@ -1045,7 +1224,7 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                                 yytx:duanxinStr,
                                 date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                             } ,
-                            'rec_num' : phones[y] ,
+                            'rec_num' : phones[xxx] ,
                             'sms_template_code' : "SMS_63885566"
                         }, function(error, response) {
                             if (error != null){
@@ -1067,7 +1246,7 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                 "StudyID": Unblinding[0].StudyID
             }, function (err, persons) {
                 htmlStr = htmlStr + "<h2>" + Unblinding[0].StudyID + "研究温馨提示：" + Unblinding[0].StudyID + "研究" + "已经于" + (moment().format('YYYY-MM-DD h:mm:ss a'))  + "完成揭盲" +"</h2>"
-                duanxinStr = duanxinStr +  + Unblinding[0].StudyID + "研究" + "，"  + "完成揭盲"
+                duanxinStr = duanxinStr  + Unblinding[0].StudyID + "研究"  + "完成揭盲"
                 for (var  i = 0 ; i < Unblinding[0].ToExamineUserData.length ; i++){
                     emas.push(Unblinding[0].ToExamineUserData[i].UserEmail)
                     phones.push(Unblinding[0].ToExamineUserData[i].UserMP)
@@ -1088,18 +1267,11 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                         }
                     ]}, function (err, usersPersons) {
                     for (var j = 0 ; j < usersPersons.length ;j++){
-                        var isXiangtong = false;
-                        for (var x = 0 ; x < emas.length ; x++){
-                            if (emas[x] == usersPersons[j].UserEmail){
-                                isXiangtong = true;
-                            }
-                        }
-                        if (isXiangtong == false){
-                            emas.push(usersPersons[j].UserEmail)
-                            phones.push(usersPersons[j].UserMP)
-                        }
+                        emas.push(usersPersons[j].UserEmail)
+                        phones.push(usersPersons[j].UserMP)
                     }
-
+                    emas.push(Unblinding[0].User[0].UserEmail)
+                    phones.push(Unblinding[0].User[0].UserMP)
                     emas = MLArray.unique(emas);
                     phones = MLArray.unique(phones);
                     //发送邮件
@@ -1110,6 +1282,8 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                             subject: Unblinding[0].StudyID + "揭盲成功", // 标题
                             html: htmlStr // html 内容
                         })
+                    }
+                    for (var l = 0 ; l < phones.length ; l++){
                         client.execute( 'alibaba.aliqin.fc.sms.num.send' , {
                             'extend' : '' ,
                             'sms_type' : 'normal' ,
@@ -1119,7 +1293,7 @@ jiemangyoujian = function (UsersPersons,data,fields) {
                                 yytx:duanxinStr,
                                 date:(moment().format('YYYY-MM-DD h:mm:ss a'))
                             } ,
-                            'rec_num' : phones[y] ,
+                            'rec_num' : phones[l] ,
                             'sms_template_code' : "SMS_63885566"
                         }, function(error, response) {
                             if (error != null){

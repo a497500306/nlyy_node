@@ -33,6 +33,7 @@ var randomSchema = new mongoose.Schema({
     "SubjFi" : String,//随机分层因素i
     "isUse" : Number, //是否使用;1为使用
     "UseUserId" : String, //使用者ID
+    "CrossCode" : String,//交叉设计代码
     "Date" : Date, //导入时间
 });
 randomSchema.plugin(autoIncrement.plugin, {
