@@ -10,6 +10,7 @@
     "express": "^4.14.0",
     "express-session": "^1.14.0",
     "formidable": "^1.0.17",
+    "jpush-async": "^4.0.0-rc.1",
     "lockman": "^1.0.2",
     "moment": "^2.16.0",
     "mongoose": "^4.5.10",

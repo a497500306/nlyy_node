@@ -24,6 +24,7 @@ var appImageData = require('./controller/APPJK/appImageData')//图片管理模�
 var drug = require('./models/import/drug')//药物号
 var drugCK = require('./models/import/drugCK')//药物号
 var drugGQ = require('./models/import/drugGQ')//药物号
+var appVersion = require('./controller/APPJK/appVersion')//app版本相关
 
 var schedule = require("node-schedule");
 var yytx = require('./models/import/yytx');
@@ -541,6 +542,8 @@ app.post('/node/addDcyysjh',ImportData.addDcyysjh);
 app.post('/node/addDctpzl',ImportData.addDctpzl);
 
 /*************APP接口******************/
+//检测新版本
+app.post("/app/getDetectNewVersion",appVersion.appDetectNewVersion);
 //获取验证码接口
 app.post("/app/getIDCode",appLogin.appIDCode);
 //登录接口
