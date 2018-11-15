@@ -3,7 +3,6 @@ var formidable = require('formidable');
 exports.appDetectNewVersion = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
-        console.log("版本号:" + JSON.stringify(fields))
         if (fields.version == null) {
             res.send({
                 'isSucceed': 200,
@@ -11,10 +10,8 @@ exports.appDetectNewVersion = function (req, res, next) {
             });
         }else{
             var version = parseInt(fields.version)
-            console.log(version)
-
             //1.普通更新,2.强制更新
-            if (version < 2){
+            if (version < 0){
                 res.send({
                     'updateType': 2,
                     'title' : '发现新版本',
