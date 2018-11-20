@@ -3512,7 +3512,7 @@ exports.getVagueBasicsData = function (req, res, next) {
                 {'StudyID' : fields.StudyID}
             ]};
             FailFindJson = {$or:[
-                {'USubjID':{$regex : reg}},
+                {'USubjectID':{$regex : reg}},
                 {'SubjIni':{$regex : reg}},
                 {'SubjMP':{$regex : reg}},
                 {'SubjSex':{$regex : reg}},
