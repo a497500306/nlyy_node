@@ -11,7 +11,7 @@ exports.appDetectNewVersion = function (req, res, next) {
         }else{
             var version = parseInt(fields.version)
             //1.普通更新,2.强制更新
-            if (version < 2){
+            if (version < 0){
                 res.send({
                     'updateType': 2,
                     'title' : '发现新版本',
