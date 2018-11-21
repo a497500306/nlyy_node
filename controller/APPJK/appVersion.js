@@ -13,7 +13,7 @@ exports.appDetectNewVersion = function (req, res, next) {
             //1.普通更新,2.强制更新
             if (version < 2){
                 res.send({
-                    'updateType': 1,
+                    'updateType': 2,
                     'title' : '发现新版本',
                     'text' : '做了一些优化',
                     'isSucceed': 400,
