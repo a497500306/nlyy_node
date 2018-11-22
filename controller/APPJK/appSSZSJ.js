@@ -3866,18 +3866,32 @@ exports.getNewCysjlsfb = function (req, res, next) {
         //查询该研究有多少中心
         site.chazhaozhongxin(fields.StudyID,function (err,persons) {
             var data = [];
+            var total = 0;
+            var names = [];
             (function iterator(i) {
                 var siteData = persons[i];
                 if (i == persons.length) {
                     res.send({
                         'isSucceed': 400,
-                        'data': data
+                        'data': data,
+                        'total' : total,
+                        'names' : names
                     });
                     return
                 }
-                addSuccessPatient.find({StudyID:fields.StudyID ,SiteID:siteData.SiteID ,Random:{$ne:null},Date:{"$gte" : fields.startDate , "$lt" : fields.endDate}}, function (err, FailPersons) {
+                names.push(siteData.SiteNam)
+                var findJson = {
+                    StudyID:fields.StudyID ,
+                    SiteID:siteData.SiteID ,
+                    Random:{$ne:null}
+                }
+                if (fields.startingDate != null && fields.endDate != null) {
+                    findJson.Date = {"$gte" : fields.startingDate , "$lt" : fields.endDate}
+                }
+                addSuccessPatient.find(findJson, function (err, FailPersons) {
                     var dd = [siteData.SiteID,FailPersons.length];
                     data.push(dd);
+                    total = total + FailPersons.length
                     iterator(i + 1)
                 })
             })(0);
