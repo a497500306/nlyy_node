@@ -646,6 +646,7 @@ app.post('/app/getZXAllKYYwh',appSSZSJ.getZXAllYwh);
 app.post('/app/getCysxsblsfb',appSSZSJ.getCysxsblsfb);
 //查阅随机例数分布
 app.post('/app/getCysjlsfb',appSSZSJ.getCysjlsfb);
+app.post('/app/getNewCysjlsfb',appSSZSJ.getNewCysjlsfb);
 //查阅退出或完成例数分布
 app.post('/app/getCytchwclsfb',appSSZSJ.getCytchwclsfb);
 //查阅退出或完成例数分布--单个中心

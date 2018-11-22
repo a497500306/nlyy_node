@@ -3859,6 +3859,32 @@ exports.getCysjlsfb = function (req, res, next) {
     })
 }
 
+//查阅随机例数分布
+exports.getNewCysjlsfb = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询该研究有多少中心
+        site.chazhaozhongxin(fields.StudyID,function (err,persons) {
+            var data = [];
+            (function iterator(i) {
+                var siteData = persons[i];
+                if (i == persons.length) {
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                    return
+                }
+                addSuccessPatient.find({StudyID:fields.StudyID ,SiteID:siteData.SiteID ,Random:{$ne:null},Date:{"$gte" : fields.startDate , "$lt" : fields.endDate}}, function (err, FailPersons) {
+                    var dd = [siteData.SiteID,FailPersons.length];
+                    data.push(dd);
+                    iterator(i + 1)
+                })
+            })(0);
+        })
+    })
+}
+
 //查阅退出或完成例数分布
 exports.getCytchwclsfb = function (req, res, next) {
     var form = new formidable.IncomingForm();
