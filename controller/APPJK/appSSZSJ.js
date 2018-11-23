@@ -3832,6 +3832,44 @@ exports.getCysxsblsfb = function (req, res, next) {
 
     })
 }
+//新的查阅筛选失败例数分布
+exports.getNewCysxsblsfb = function(req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询该研究有多少中心
+        site.chazhaozhongxin(fields.StudyID,function (err,persons) {
+            var data = [];
+            var total = 0;
+            var names = [];
+            (function iterator(i) {
+                var siteData = persons[i];
+                if (i == persons.length) {
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data,
+                        'total' : total,
+                        'names' : names
+                    });
+                    return
+                }
+                names.push(siteData.SiteNam)
+                var findJson = {
+                    StudyID:fields.StudyID ,
+                    SiteID:siteData.SiteID
+                }
+                if (fields.startingDate != null && fields.endDate != null) {
+                    findJson.DSSTDAT = {"$gte" : fields.startingDate , "$lt" : fields.endDate}
+                }
+                addFailPatient.find(findJson, function (err, FailPersons) {
+                    var dd = [siteData.SiteID,FailPersons.length];
+                    data.push(dd);
+                    total = total + FailPersons.length
+                    iterator(i + 1)
+                })
+            })(0);
+        })
+    })
+}
 
 //查阅随机例数分布
 exports.getCysjlsfb = function (req, res, next) {
@@ -3925,6 +3963,45 @@ exports.getCytchwclsfb = function (req, res, next) {
     })
 }
 
+//新的查阅退出或完成例数分布
+exports.getNewCytchwclsfb = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //查询该研究有多少中心
+        site.chazhaozhongxin(fields.StudyID,function (err,persons) {
+            var total = 0;
+            var names = [];
+            var data = [];
+            (function iterator(i) {
+                var siteData = persons[i];
+                if (i == persons.length) {
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data,
+                        'total' : total,
+                        'names' : names
+                    });
+                    return
+                }
+                names.push(siteData.SiteNam)
+                var findJson = {
+                    StudyID:fields.StudyID ,
+                    SiteID:siteData.SiteID
+                }
+                if (fields.startingDate != null && fields.endDate != null) {
+                    findJson.DSSTDAT = {"$gte" : fields.startingDate , "$lt" : fields.endDate}
+                }
+                addOutPatient.find(findJson, function (err, FailPersons) {
+                    var dd = [siteData.SiteID,FailPersons.length];
+                    data.push(dd);
+                    total = total + FailPersons.length
+                    iterator(i + 1)
+                })
+            })(0);
+        })
+    })
+}
+
 //查阅退出或完成例数分布--单个中心
 exports.getCytchwclsfbZX = function (req, res, next) {
     var form = new formidable.IncomingForm();
@@ -3936,6 +4013,44 @@ exports.getCytchwclsfbZX = function (req, res, next) {
                 'isSucceed': 400,
                 'data': data
             });
+        })
+    })
+}
+
+//新的查阅退出或完成例数分布--单个中心
+exports.getNewCytchwclsfbZX  = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        site.find({StudyID:fields.StudyID ,SiteID:fields.SiteID}, function (err, persons) {
+            var total = 0;
+            var names = [];
+            var data = [];
+            (function iterator(i) {
+                var siteData = persons[i];
+                if (i == persons.length) {
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data,
+                        'total' : total,
+                        'names' : names
+                    });
+                    return
+                }
+                names.push(siteData.SiteNam)
+                var findJson = {
+                    StudyID:fields.StudyID,
+                    SiteID:fields.SiteID
+                }
+                if (fields.startingDate != null && fields.endDate != null) {
+                    findJson.DSSTDAT = {"$gte" : fields.startingDate , "$lt" : fields.endDate}
+                }
+                addOutPatient.find(findJson, function (err, FailPersons) {
+                    var dd = [siteData.SiteID,FailPersons.length];
+                    data.push(dd);
+                    total = total + FailPersons.length
+                    iterator(i + 1)
+                })
+            })(0);
         })
     })
 }

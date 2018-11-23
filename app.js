@@ -644,13 +644,16 @@ app.post('/app/getThywhYwjl',appSSZSJ.getThywhYwjl);
 app.post('/app/getZXAllKYYwh',appSSZSJ.getZXAllYwh);
 //查阅筛选失败例数分布
 app.post('/app/getCysxsblsfb',appSSZSJ.getCysxsblsfb);
+app.post('/app/getNewCysxsblsfb',appSSZSJ.getNewCysxsblsfb);
 //查阅随机例数分布
 app.post('/app/getCysjlsfb',appSSZSJ.getCysjlsfb);
 app.post('/app/getNewCysjlsfb',appSSZSJ.getNewCysjlsfb);
 //查阅退出或完成例数分布
 app.post('/app/getCytchwclsfb',appSSZSJ.getCytchwclsfb);
+app.post('/app/getNewCytchwclsfb',appSSZSJ.getNewCytchwclsfb);
 //查阅退出或完成例数分布--单个中心
 app.post('/app/getCytchwclsfbZX',appSSZSJ.getCytchwclsfbZX);
+app.post('/app/getNewCytchwclsfbZX',appSSZSJ.getNewCytchwclsfbZX);
 
 //添加筛选失败受试者基础数据
 app.post('/app/getAddFailPatientData',appSSZSJ.getAddFailPatientData);
