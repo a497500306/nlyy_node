@@ -48,6 +48,8 @@ var addSuccessPatientSchema = new mongoose.Schema({
     "isOut" : String,//是否完成或退出
     'isBasicData' : Number,//是否为基础数据,1为是
     "Date" : Date, //导入时间
+    "RandomDate" : Date,//操作取随机号的时间, 成功失败都会记录
+    "RandomUserPhone" : String,//随机操作者手机号
 });
 addSuccessPatientSchema.plugin(autoIncrement.plugin, {
     model: 'Books',

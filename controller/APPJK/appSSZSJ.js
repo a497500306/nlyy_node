@@ -1752,7 +1752,16 @@ exports.getRandomNumber = function (req, res, next) {
                         });
                         //locker.release();
                         return;
-                    }
+                    };
+
+                //添加随机号操作时间
+                addSuccessPatient.update({
+                    'id': fields.userId
+                }, {
+                    'RandomDate': new Date(),
+                    'RandomUserPhone' : fields.user.UserMP
+                }, function () {
+                });
                     //异步转同步
                     (function iterator(i) {
                         //取出研究随机化参数信息
