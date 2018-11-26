@@ -18,6 +18,7 @@ var siteSchema = new mongoose.Schema({
     "isStopIt"  : String,   //是否停止入组:1为停止
     "StopItDate"  : Date,   //停止入组时间
     "ThywhGS"  : Number,   //替换药物号的个数
+    "ManualNum" : Number, //手动设置手机号个数
     "Date" : Date, //导入时间
 });
 siteSchema.plugin(autoIncrement.plugin, {

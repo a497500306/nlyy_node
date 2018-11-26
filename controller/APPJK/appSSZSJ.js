@@ -96,20 +96,20 @@ exports.getAddBasicsData = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //搜索新增失败中是否有该用户
-        addFailPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
-            if (persons.length != 0){
-                res.send({
-                    'isSucceed' : 200,
-                    'msg' : '该手机已经使用'
-                });
-            }else{
-                addSuccessPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
-                    if (persons.length != 0){
-                        res.send({
-                            'isSucceed' : 200,
-                            'msg' : '该手机已经使用'
-                        });
-                    }else{
+        // addFailPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
+        //     if (persons.length != 0){
+        //         res.send({
+        //             'isSucceed' : 200,
+        //             'msg' : '该手机已经使用'
+        //         });
+        //     }else{
+        //         addSuccessPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
+        //             if (persons.length != 0){
+        //                 res.send({
+        //                     'isSucceed' : 200,
+        //                     'msg' : '该手机已经使用'
+        //                 });
+        //             }else{
                         //设置患者SubjID(流水号)
                         addSuccessPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, spersons) {
                             if (err != null){
@@ -182,18 +182,54 @@ exports.getAddBasicsData = function (req, res, next) {
                                                         subjId = "0" + subjId;
                                                     }
                                                     subjId = data.SiteID + subjId
-                                                    //创建用户号
-                                                    addSuccessPatient.update({
-                                                        'id': data.id,
-                                                    }, {
+                                                    var updateJons = {
                                                         'USubjID': subjId,
-                                                    }, function () {
-                                                        res.send({
-                                                            'isSucceed': 400,
-                                                            'USubjID': subjId,
-                                                            'id': data.id
-                                                        });
-                                                    })
+                                                    }
+                                                    if (fields.SubjMP == null || fields.SubjMP == "") {
+                                                        site.find({
+                                                            "StudyID" : fields.StudyID,
+                                                            "SiteID" : fields.SiteID
+                                                        },function (err,siteData) {
+                                                            var ManualNum = 0
+                                                            if (siteData.length != 0 && siteData[0].ManualNum != null) {
+                                                                ManualNum = siteData[0].ManualNum
+                                                            }
+                                                            ManualNum = ManualNum + 1
+                                                            var newPhone = ManualNum + ""
+                                                            for (var j = newPhone.length ; j < 5 ; j++){
+                                                                newPhone = "0" + newPhone;
+                                                            }
+                                                            newPhone = subjId + newPhone
+                                                            updateJons.SubjMP = newPhone
+                                                            site.update({
+                                                                "StudyID" : fields.StudyID,
+                                                                "SiteID" : fields.SiteID
+                                                            },{ManualNum : parseInt(ManualNum)},function () {
+                                                                //创建用户号
+                                                                addSuccessPatient.update({
+                                                                    'id': data.id,
+                                                                },updateJons , function () {
+                                                                    res.send({
+                                                                        'isSucceed': 400,
+                                                                        'USubjID': subjId,
+                                                                        'id': data.id
+                                                                    });
+                                                                })
+                                                            })
+
+                                                        })
+                                                    }else{
+                                                        //创建用户号
+                                                        addSuccessPatient.update({
+                                                            'id': data.id,
+                                                        },updateJons , function () {
+                                                            res.send({
+                                                                'isSucceed': 400,
+                                                                'USubjID': subjId,
+                                                                'id': data.id
+                                                            });
+                                                        })
+                                                    }
                                                 }
                                             })
                                         }
@@ -201,10 +237,10 @@ exports.getAddBasicsData = function (req, res, next) {
                                 })
                             }
                         })
-                    }
-                })
-            }
-        })
+    //                 }
+    //             })
+    //         }
+    //     })
     })
 }
 
@@ -264,20 +300,20 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req,function (err, fields, files) {
         //搜索新增失败中是否有该用户
-        addFailPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
-            if (persons.length != 0){
-                res.send({
-                    'isSucceed' : 200,
-                    'msg' : '该手机已经使用'
-                });
-            }else{
-                addSuccessPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
-                    if (persons.length != 0){
-                        res.send({
-                            'isSucceed' : 200,
-                            'msg' : '该手机已经使用'
-                        });
-                    }else{
+        // addFailPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
+        //     if (persons.length != 0){
+        //         res.send({
+        //             'isSucceed' : 200,
+        //             'msg' : '该手机已经使用'
+        //         });
+        //     }else{
+        //         addSuccessPatient.find({StudyID : fields.StudyID,SubjMP : fields.SubjMP},function (err, persons) {
+        //             if (persons.length != 0){
+        //                 res.send({
+        //                     'isSucceed' : 200,
+        //                     'msg' : '该手机已经使用'
+        //                 });
+        //             }else{
                         //设置患者SubjID(流水号)
                         addSuccessPatient.find({StudyID : fields.StudyID,SiteID : fields.SiteID},function (err, spersons) {
                             if (err != null){
@@ -360,18 +396,57 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
                                                         subjId = "0" + subjId;
                                                     }
                                                     subjId = data.SiteID + subjId
-                                                    //创建用户号
-                                                    addSuccessPatient.update({
-                                                        'id': data.id,
-                                                    }, {
+
+                                                    var updateJons = {
                                                         'USubjID': subjId,
-                                                    }, function () {
-                                                        res.send({
-                                                            'isSucceed': 400,
+                                                    }
+                                                    if (fields.SubjMP == null || fields.SubjMP == "") {
+                                                        site.find({
+                                                            "StudyID" : fields.StudyID,
+                                                            "SiteID" : fields.SiteID
+                                                        },function (err,siteData) {
+                                                            var ManualNum = 0
+                                                            if (siteData.length != 0 && siteData[0].ManualNum != null) {
+                                                                ManualNum = siteData[0].ManualNum
+                                                            }
+                                                            ManualNum = ManualNum + 1
+                                                            var newPhone = ManualNum + ""
+                                                            for (var j = newPhone.length ; j < 5 ; j++){
+                                                                newPhone = "0" + newPhone;
+                                                            }
+                                                            newPhone = subjId + newPhone
+                                                            updateJons.SubjMP = newPhone
+                                                            site.update({
+                                                                "StudyID" : fields.StudyID,
+                                                                "SiteID" : fields.SiteID
+                                                            },{ManualNum : parseInt(ManualNum)},function () {
+                                                                //创建用户号
+                                                                addSuccessPatient.update({
+                                                                    'id': data.id,
+                                                                },updateJons , function () {
+                                                                    res.send({
+                                                                        'isSucceed': 400,
+                                                                        'USubjID': subjId,
+                                                                        'id': data.id
+                                                                    });
+                                                                })
+                                                            })
+
+                                                        })
+                                                    }else {
+                                                        //创建用户号
+                                                        addSuccessPatient.update({
+                                                            'id': data.id,
+                                                        }, {
                                                             'USubjID': subjId,
-                                                            'id': data.id
-                                                        });
-                                                    })
+                                                        }, function () {
+                                                            res.send({
+                                                                'isSucceed': 400,
+                                                                'USubjID': subjId,
+                                                                'id': data.id
+                                                            });
+                                                        })
+                                                    }
                                                 }
                                             })
                                         }
@@ -379,10 +454,10 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
                                 })
                             }
                         })
-                    }
-                })
-            }
-        })
+                    // }
+        //         })
+        //     }
+        // })
     })
 }
 
