@@ -1814,6 +1814,55 @@ exports.getSelectedAbandoned = function (req, res, next) {
     })
 }
 
+//废弃选中的已签收的仓库药物
+exports.getSelectedDestroy = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        if (fields.ids.length == 0){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '数据有误'
+            });
+        }else{
+            //异步转同步
+            (function iterator(i){
+                if(i == fields.ids.length){
+                    console.log('执行完成')
+                    res.send({
+                        'isSucceed' : 400,
+                        'msg' : '操作成功'
+                    });
+                    return
+                }
+                console.log(fields.ids[i])
+                //修改药物号为激活状态
+                drugCK.find({'id' : fields.ids[i]},function (err, persons){
+                    drugCK.update({'id' : fields.ids[i]},{$set: {
+                            isDestroy: '1'
+                        }
+                    }, {multi:true},function () {
+                        if (persons[0].isDestroy != 1){
+                            //修改物流信息
+                            drugWL.update({
+                                'StudyID' : persons[0].StudyID,
+                                'DrugNum' : persons[0].DrugNum
+                            },{
+                                $push : {
+                                    'drugStrs' : '销毁',
+                                    'drugDate' : new Date()
+                                } ,
+                            },{multi:true},function () {
+                                console.log("修改成功");
+                            })
+                        }
+                        iterator(i+1)
+                    })
+                })
+            })(0);
+        }
+    })
+}
+
 //中心代签收药物清单
 exports.getZXDqsywqd = function (req, res, next) {
     var form = new formidable.IncomingForm();

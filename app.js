@@ -596,6 +596,8 @@ app.post("/app/getAllOnDrug",appChangKu.getAllOnDrug);
 app.post("/app/getSelectedActivation",appChangKu.getSelectedActivation);
 //废弃选中的已签收的仓库药物
 app.post("/app/getSelectedAbandoned",appChangKu.getSelectedAbandoned);
+//销毁选中的已签收的仓库药物
+app.post("/app/getSelectedDestroy",appChangKu.getSelectedDestroy);
 //中心代签收药物清单
 app.post("/app/getZXDqsywqd",appChangKu.getZXDqsywqd);
 //获取中心仓管员信息

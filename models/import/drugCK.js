@@ -23,6 +23,8 @@ var drugCKSchema = new mongoose.Schema({
     "DDrugNumRYN" : Number, // 属于分仓库已接收的药物号
     "DDrugNumAYN" : Number, // 属于分仓库已激活的药物号
     "DDrugDMNumYN" : Number, // 属于分仓库损坏和遗漏药物号
+    "isRecycling" : Number, //回收,0无,1回收
+    "isDestroy" : Number, //销毁,0无,1销毁
     "DDrugUseAYN" : Number, // 是否使用:1使用
     "DDrugUseID" : Number, // 使用者ID
     "DDrugDMNum" : Number,//分仓库损坏和遗漏药物号,已激活药物号对应的药物发现损坏或遗漏不见时，则对此药物号进行废弃
