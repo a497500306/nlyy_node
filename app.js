@@ -598,6 +598,14 @@ app.post("/app/getSelectedActivation",appChangKu.getSelectedActivation);
 app.post("/app/getSelectedAbandoned",appChangKu.getSelectedAbandoned);
 //销毁选中的已签收的仓库药物
 app.post("/app/getSelectedDestroy",appChangKu.getSelectedDestroy);
+//取消销毁选中的已签收的仓库药物
+app.post("/app/getCancelSelectedDestroy",appChangKu.getCancelSelectedDestroy);
+//获取用药历史的状态
+app.post("/app/getMedicationHistoryType",appChangKu.getMedicationHistoryType);
+//回收
+app.post("/app/getAddRecycling",appChangKu.getAddRecycling)
+//回收撤回
+app.post("/app/getCancelRecycling",appChangKu.getCancelRecycling)
 //中心代签收药物清单
 app.post("/app/getZXDqsywqd",appChangKu.getZXDqsywqd);
 //获取中心仓管员信息

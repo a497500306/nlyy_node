@@ -1838,7 +1838,7 @@ exports.getSelectedDestroy = function (req, res, next) {
                 //修改药物号为激活状态
                 drugCK.find({'id' : fields.ids[i]},function (err, persons){
                     drugCK.update({'id' : fields.ids[i]},{$set: {
-                            isDestroy: '1'
+                            isDestroy: 1
                         }
                     }, {multi:true},function () {
                         if (persons[0].isDestroy != 1){
@@ -1860,6 +1860,186 @@ exports.getSelectedDestroy = function (req, res, next) {
                 })
             })(0);
         }
+    })
+}
+//取消销毁选中的已签收的仓库药物
+exports.getCancelSelectedDestroy = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        if (fields.ids.length == 0){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '数据有误'
+            });
+        }else{
+            //异步转同步
+            (function iterator(i){
+                if(i == fields.ids.length){
+                    console.log('执行完成')
+                    res.send({
+                        'isSucceed' : 400,
+                        'msg' : '操作成功'
+                    });
+                    return
+                }
+                console.log(fields.ids[i])
+                //修改药物号为激活状态
+                drugCK.find({'id' : fields.ids[i]},function (err, persons){
+                    drugCK.update({'id' : fields.ids[i]},{$set: {
+                            isDestroy: 0
+                        }
+                    }, {multi:true},function () {
+                        if (persons[0].isDestroy != 1){
+                            //修改物流信息
+                            drugWL.update({
+                                'StudyID' : persons[0].StudyID,
+                                'DrugNum' : persons[0].DrugNum
+                            },{
+                                $push : {
+                                    'drugStrs' : '撤回销毁',
+                                    'drugDate' : new Date()
+                                } ,
+                            },{multi:true},function () {
+                                console.log("修改成功");
+                            })
+                        }
+                        iterator(i+1)
+                    })
+                })
+            })(0);
+        }
+    })
+}
+
+//获取用药历史的状态
+exports.getMedicationHistoryType = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        if (fields.DrugNums.length == 0){
+            res.send({
+                'isSucceed' : 200,
+                'msg' : '数据有误'
+            });
+        }else{
+            var data = {};
+            //异步转同步
+            (function iterator(i){
+                if(i == fields.DrugNums.length){
+                    console.log('执行完成')
+                    res.send({
+                        'isSucceed' : 400,
+                        'msg' : '操作成功',
+                        'data' : data
+                    });
+                    return
+                }
+                console.log(fields.DrugNums[i])
+                var reg = new RegExp("替换药物号为")
+                var DrugNum = fields.DrugNums[i].replace(reg,"")
+                //修改药物号为激活状态
+                drugCK.find({'StudyID' : fields.StudyID,'DrugNum' : DrugNum},function (err, persons){
+                    if (persons.length > 0){
+                        data[persons[0].DrugNum] = (persons[0].isRecycling == null ? 0 : persons[0].isRecycling)
+                    }
+                    iterator(i+1)
+                })
+            })(0);
+        }
+    })
+}
+
+//回收
+exports.getAddRecycling = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        drugCK.find({'StudyID' : fields.StudyID,'DrugNum' : fields.DrugNum},function (err, persons) {
+            if (persons.length > 0){
+                if (persons[0].isDestroy == 1) {
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '药物号被销毁'
+                    });
+                    return
+                }else{
+                    drugCK.update({'StudyID' : fields.StudyID,'DrugNum' : fields.DrugNum},{$set: {
+                            isRecycling: 1
+                        }
+                    }, {multi:true},function () {
+                        //修改物流信息
+                        drugWL.update({
+                            'StudyID' : fields.StudyID,
+                            'DrugNum' : fields.DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : '回收',
+                                'drugDate' : new Date()
+                            } ,
+                        },{multi:true},function () {
+                            console.log("修改成功");
+                        })
+
+                        res.send({
+                            'isSucceed' : 400,
+                            'msg' : '操作成功'
+                        });
+                        return
+                    })
+                }
+            }else{
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '错误'
+                });
+                return
+            }
+        })
+    })
+}
+
+//回收撤回
+exports.getCancelRecycling = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        drugCK.find({'StudyID' : fields.StudyID,'DrugNum' : fields.DrugNum},function (err, persons) {
+            if (persons.length > 0){
+                if (persons[0].isDestroy == 1) {
+                    res.send({
+                        'isSucceed' : 200,
+                        'msg' : '药物号被销毁'
+                    });
+                    return
+                }else{
+                    drugCK.update({'StudyID' : fields.StudyID,'DrugNum' : fields.DrugNum},{$set: {
+                            isRecycling: 0
+                        }
+                    }, {multi:true},function () {
+                        //修改物流信息
+                        drugWL.update({
+                            'StudyID' : fields.StudyID,
+                            'DrugNum' : fields.DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : '回收撤回',
+                                'drugDate' : new Date()
+                            } ,
+                        },{multi:true},function () {
+                            console.log("修改成功");
+                        })
+                        res.send({
+                            'isSucceed' : 400,
+                            'msg' : '操作成功'
+                        });
+                        return
+                    })
+                }
+            }else{
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : '错误'
+                });
+                return
+            }
+        })
     })
 }
 
