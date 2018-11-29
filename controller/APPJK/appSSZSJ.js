@@ -737,6 +737,8 @@ exports.getBcywhYwjl = function (req, res, next) {
                         DDrugDMNumYN: {$ne:1},
                         DDrugUseAYN:{$ne:1},
                         DrugExpryDTC : {$gte:new Date()},
+                        isRecycling:{$ne:1},
+                        isDestroy:{$ne:1},
                     }).sort({DrugSeq : 1}).exec(function(err, drugPersons) {
                         if (err != null) {
                             console.log(err)
@@ -843,6 +845,8 @@ exports.getBcywhJcsj = function (req, res, next) {
                             DDrugDMNumYN: {$ne:1},
                             DDrugUseAYN:{$ne:1},
                             DrugExpryDTC : {$gte:new Date()},
+                            isRecycling:{$ne:1},
+                            isDestroy:{$ne:1},
                         }).sort({DrugSeq : 1}).exec(function(err, drugPersons) {
                             if (err != null) {
                                 console.log(err)
@@ -927,6 +931,8 @@ exports.getBcywh = function (req, res, next) {
                         DDrugDMNumYN: {$ne:1},
                         DDrugUseAYN:{$ne:1},
                         DrugExpryDTC : {$gte:new Date()},
+                        isRecycling:{$ne:1},
+                        isDestroy:{$ne:1},
                     }).sort({DrugSeq : 1}).exec(function(err, drugPersons) {
                         if (err != null) {
                             console.log(err)
@@ -1044,7 +1050,9 @@ exports.getThywhYwjl = function (req, res, next) {
                 drugCK.find({
                     'DrugNum': fields.DrugNum,
                     'StudyID': fields.StudyID,
-                    'DDrugDMNumYN': 1
+                    'DDrugDMNumYN': 1,
+                    'isRecycling':{$ne:1},
+                    'isDestroy':{$ne:1},
                 }, function (err, isFQPersons) {
                     if (isFQPersons.length == 0) {
                         addSuccessPatient.find({'id': fields.userId}, function (err, userPersons) {
@@ -1060,7 +1068,9 @@ exports.getThywhYwjl = function (req, res, next) {
                                         DrugExpryDTC: {$gte: new Date()},
                                         Arm: userPersons[0].Arm,
                                         DrugDose:fields.DrugDose,
-                                        DDrugUseAYN: {$ne: 1}
+                                        DDrugUseAYN: {$ne: 1},
+                                        isRecycling:{$ne:1},
+                                        isDestroy:{$ne:1},
                                     }).sort({DrugSeq : 1}).exec(function (err, drugPersons) {
                                         if (err != null) {
                                             console.log(err)
@@ -1220,7 +1230,9 @@ exports.getThywhJcsj = function (req, res, next) {
                 drugCK.find({
                     'DrugNum': fields.DrugNum,
                     'StudyID': fields.StudyID,
-                    'DDrugDMNumYN': 1
+                    'DDrugDMNumYN': 1,
+                    'isRecycling':{$ne:1},
+                    'isDestroy':{$ne:1},
                 }, function (err, isFQPersons) {
                     if (isFQPersons.length == 0) {
                         addSuccessPatient.find({'id': fields.userId}, function (err, userPersons) {
@@ -1245,7 +1257,9 @@ exports.getThywhJcsj = function (req, res, next) {
                                             DrugExpryDTC: {$gte: new Date()},
                                             // Arm: userPersons[0].Arm,
                                             StudyDCross:newStudyDCross,
-                                            DDrugUseAYN: {$ne: 1}
+                                            DDrugUseAYN: {$ne: 1},
+                                            isRecycling:{$ne:1},
+                                            isDestroy:{$ne:1},
                                         }).sort({DrugSeq : 1}).exec(function (err, drugPersons) {
                                             if (err != null) {
                                                 console.log(err)
@@ -1393,7 +1407,9 @@ exports.getThywh = function (req, res, next) {
                 drugCK.find({
                     'DrugNum': fields.DrugNum,
                     'StudyID': fields.StudyID,
-                    'DDrugDMNumYN': 1
+                    'DDrugDMNumYN': 1,
+                    'isRecycling':{$ne:1},
+                    'isDestroy':{$ne:1},
                 }, function (err, isFQPersons) {
                     if (isFQPersons.length == 0) {
                         addSuccessPatient.find({'id': fields.userId}, function (err, userPersons) {
@@ -1408,7 +1424,9 @@ exports.getThywh = function (req, res, next) {
                                         DDrugDMNumYN: {$ne: 1},
                                         DrugExpryDTC: {$gte: new Date()},
                                         Arm: userPersons[0].Arm,
-                                        DDrugUseAYN: {$ne: 1}
+                                        DDrugUseAYN: {$ne: 1},
+                                        isRecycling:{$ne:1},
+                                        isDestroy:{$ne:1},
                                     }).sort({DrugSeq : 1}).exec(function (err, drugPersons) {
                                         if (err != null) {
                                             console.log(err)
@@ -3043,7 +3061,9 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
             DDrugDMNumYN: {$ne:1},
             DDrugUseAYN:{$ne:1},
             DrugExpryDTC : {$gte:new Date()},
-            StudyDCross:newStudyDCross
+            StudyDCross:newStudyDCross,
+            isRecycling:{$ne:1},
+            isDestroy:{$ne:1},
         }
     }else if (fields.DrugDose != null){
         drugJson = {
@@ -3054,7 +3074,9 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
             DDrugDMNumYN: {$ne:1},
             DDrugUseAYN:{$ne:1},
             DrugExpryDTC : {$gte:new Date()},
-            DrugDose:fields.DrugDose
+            DrugDose:fields.DrugDose,
+            isRecycling:{$ne:1},
+            isDestroy:{$ne:1},
         }
     }else{
         drugJson = {
@@ -3065,6 +3087,8 @@ function youyaowuhaoquyaowuhao(persons,fields,randomPersons,RandoM,res) {
             DDrugDMNumYN: {$ne:1},
             DDrugUseAYN:{$ne:1},
             DrugExpryDTC : {$gte:new Date()},
+            isRecycling:{$ne:1},
+            isDestroy:{$ne:1},
         }
     }
     //药物号

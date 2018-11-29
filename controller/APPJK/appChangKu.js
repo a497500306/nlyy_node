@@ -2244,6 +2244,8 @@ exports.getSiteDrugData = function (req, res, next) {
             YFQYWL : null,
             YJMYWL : null,
             YTHYWL : null,
+            YHSYWL : null,
+            YXHYWL : null
         };
         data.UsedCoreId = fields.UsedCoreId,
         data.StudyID = fields.StudyID,
@@ -2362,11 +2364,25 @@ exports.getSiteDrugData = function (req, res, next) {
                                                                 //查找已揭盲药物量
                                                                 // data.YJMYWL = '目前还未开发';
                                                                 data.YJMYWL = sss;
-                                                                res.send({
-                                                                    'isSucceed' : 400,
-                                                                    'data' : data
-                                                                });
-                                                                return
+                                                                drugCK.find({
+                                                                    UsedCoreId : fields.UsedCoreId,
+                                                                    StudyID : fields.StudyID,
+                                                                    isRecycling: 1
+                                                                },function (err, persons){
+                                                                    data.YHSYWL = persons.length
+                                                                    drugCK.find({
+                                                                        UsedCoreId : fields.UsedCoreId,
+                                                                        StudyID : fields.StudyID,
+                                                                        isRecycling: 1
+                                                                    },function (err, persons){
+                                                                        data.YXHYWL = persons.length
+                                                                        res.send({
+                                                                            'isSucceed' : 400,
+                                                                            'data' : data
+                                                                        });
+                                                                        return
+                                                                    })
+                                                                })
                                                             })
                                                         })
                                                     })
