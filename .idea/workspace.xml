@@ -20,6 +20,26 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="-195931033">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.open.time.5" value="1" />
+          <entry key="project.opened" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="js" value="26" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JavaScript" value="26" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
   <component name="FavoritesManager">
     <favorites_list name="nlyy_node" />
   </component>
@@ -28,17 +48,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="138">
-              <caret line="623" column="51" selection-start-line="623" selection-start-column="51" selection-end-line="623" selection-end-column="51" />
+            <state relative-caret-position="201">
+              <caret line="603" column="68" lean-forward="true" selection-start-line="603" selection-start-column="68" selection-end-line="603" selection-end-column="68" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="101">
-              <caret line="1710" column="23" lean-forward="true" selection-start-line="1710" selection-start-column="23" selection-end-line="1710" selection-end-column="23" />
+            <state relative-caret-position="347">
+              <caret line="1478" column="64" selection-start-line="1478" selection-start-column="52" selection-end-line="1478" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -46,8 +66,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/import/drugCK.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="183">
-              <caret line="26" column="14" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="14" />
+            <state relative-caret-position="201">
+              <caret line="24" column="17" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -55,7 +75,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/import/addSuccessPatient.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="795">
+            <state relative-caret-position="603">
               <caret line="53" column="28" selection-start-line="53" selection-start-column="28" selection-end-line="53" selection-end-column="29" />
             </state>
           </provider>
@@ -79,11 +99,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controller/APPJK/appChangKu.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="284">
-              <caret line="2385" column="45" selection-start-line="2385" selection-start-column="45" selection-end-line="2385" selection-end-column="45" />
+            <state relative-caret-position="316">
+              <caret line="1935" column="20" selection-start-line="1935" selection-start-column="20" selection-end-line="1935" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -91,8 +111,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controller/APPJK/appLogin.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="103" column="31" lean-forward="true" selection-start-line="103" selection-start-column="31" selection-end-line="103" selection-end-column="31" />
+            <state relative-caret-position="1515">
+              <caret line="103" column="31" selection-start-line="103" selection-start-column="31" selection-end-line="103" selection-end-column="31" />
               <folding>
                 <element signature="e#0#39#0" />
               </folding>
@@ -129,9 +149,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>USubjectID</find>
-      <find>FailFindJson</find>
-      <find>/app/getVagueBasicsData</find>
       <find>/app/getCysjlsfb</find>
       <find>/app/getCysxsblsfb</find>
       <find>/app/getCytchwclsfb</find>
@@ -153,12 +170,15 @@
       <find>iterator</find>
       <find>drugCK.find({</find>
       <find>.update({</find>
-      <find>DDrugDMNumYN</find>
       <find>isSucceed</find>
       <find>/app/getBcywhJcsj</find>
       <find>drugCK.find(</find>
       <find>/app/getSiteDrugData</find>
       <find>DDrugUseAYN</find>
+      <find>替换</find>
+      <find>/app/getMedicationHistoryType</find>
+      <find>YHSY</find>
+      <find>DDrugDMNumYN</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/file</dir>
@@ -208,9 +228,28 @@
       </list>
     </option>
   </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
+    <package-json value="$PROJECT_DIR$/package.json" />
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths>
+      <path value="$PROJECT_DIR$/ALYZM/package.json" />
+      <path value="$PROJECT_DIR$/package.json" />
+    </packageJsonPaths>
+  </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="width" value="1280" />
-    <option name="height" value="800" />
+    <option name="x" value="-280" />
+    <option name="y" value="-1080" />
+    <option name="width" value="1920" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -283,10 +322,10 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="app.js" type="NodeJSConfigurationType" temporary="true" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
+    <configuration name="app.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
-    <configuration default="true" type="js.build_tools.gulp">
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
       <node-interpreter>project</node-interpreter>
       <node-options />
       <gulpfile />
@@ -330,24 +369,25 @@
       <workItem from="1542944644799" duration="6425000" />
       <workItem from="1543200808780" duration="18782000" />
       <workItem from="1543497770005" duration="2021000" />
+      <workItem from="1543568601639" duration="2068000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="133637000" />
+    <option name="totallyTimeSpent" value="135705000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
+    <frame x="-280" y="-1080" width="1920" height="1080" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8273973" visible="true" weight="0.19459888" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8250825" visible="true" weight="0.14533965" />
       <window_info id="Structure" order="1" weight="0.25" />
-      <window_info id="npm" order="2" sideWeight="0.17260274" side_tool="true" visible="true" weight="0.19459888" />
+      <window_info id="npm" order="2" sideWeight="0.17491749" side_tool="true" visible="true" weight="0.14533965" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32970297" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32739726" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32673267" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -370,6 +410,9 @@
     <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
       <collection />
     </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -396,62 +439,62 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>3924</line>
+          <line>3923</line>
           <option name="timeStamp" value="12" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>3926</line>
+          <line>3925</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>3920</line>
+          <line>3919</line>
           <option name="timeStamp" value="14" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>3971</line>
+          <line>3970</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4133</line>
+          <line>4132</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4138</line>
+          <line>4137</line>
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4135</line>
+          <line>4134</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4137</line>
+          <line>4136</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4146</line>
+          <line>4145</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4154</line>
+          <line>4153</line>
           <option name="timeStamp" value="27" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>2784</line>
+          <line>2783</line>
           <option name="timeStamp" value="28" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>2760</line>
+          <line>2759</line>
           <option name="timeStamp" value="29" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -466,7 +509,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appChangKu.js</url>
-          <line>2003</line>
+          <line>2006</line>
           <option name="timeStamp" value="53" />
         </line-breakpoint>
       </breakpoints>
@@ -669,13 +712,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/addSuccessPatient.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
-          <caret line="53" column="28" selection-start-line="53" selection-start-column="28" selection-end-line="53" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/express/lib/application.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="9150">
@@ -687,6 +723,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="16" column="15" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controller/APPJK/appLogin.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1515">
+          <caret line="103" column="31" selection-start-line="103" selection-start-column="31" selection-end-line="103" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#39#0" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -704,41 +750,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appLogin.js">
+    <entry file="file://$PROJECT_DIR$/models/import/addSuccessPatient.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="103" column="31" lean-forward="true" selection-start-line="103" selection-start-column="31" selection-end-line="103" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#39#0" />
-          </folding>
+        <state relative-caret-position="603">
+          <caret line="53" column="28" selection-start-line="53" selection-start-column="28" selection-end-line="53" selection-end-column="29" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="138">
-          <caret line="623" column="51" selection-start-line="623" selection-start-column="51" selection-end-line="623" selection-end-column="51" />
+        <state relative-caret-position="201">
+          <caret line="603" column="68" lean-forward="true" selection-start-line="603" selection-start-column="68" selection-end-line="603" selection-end-column="68" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/import/drugCK.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="183">
-          <caret line="26" column="14" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appChangKu.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="2385" column="45" selection-start-line="2385" selection-start-column="45" selection-end-line="2385" selection-end-column="45" />
+        <state relative-caret-position="201">
+          <caret line="24" column="17" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="1710" column="23" lean-forward="true" selection-start-line="1710" selection-start-column="23" selection-end-line="1710" selection-end-column="23" />
+        <state relative-caret-position="347">
+          <caret line="1478" column="64" selection-start-line="1478" selection-start-column="52" selection-end-line="1478" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controller/APPJK/appChangKu.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="316">
+          <caret line="1935" column="20" selection-start-line="1935" selection-start-column="20" selection-end-line="1935" selection-end-column="20" />
         </state>
       </provider>
     </entry>

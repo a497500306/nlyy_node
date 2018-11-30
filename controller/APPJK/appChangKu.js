@@ -1922,6 +1922,7 @@ exports.getMedicationHistoryType = function (req, res, next) {
             });
         }else{
             var data = {};
+            var DDrugDMNumYNs = {};
             //异步转同步
             (function iterator(i){
                 if(i == fields.DrugNums.length){
@@ -1929,7 +1930,8 @@ exports.getMedicationHistoryType = function (req, res, next) {
                     res.send({
                         'isSucceed' : 400,
                         'msg' : '操作成功',
-                        'data' : data
+                        'data' : data,
+                        'DDrugDMNumYNs' : DDrugDMNumYNs
                     });
                     return
                 }
@@ -1939,7 +1941,8 @@ exports.getMedicationHistoryType = function (req, res, next) {
                 //修改药物号为激活状态
                 drugCK.find({'StudyID' : fields.StudyID,'DrugNum' : DrugNum},function (err, persons){
                     if (persons.length > 0){
-                        data[persons[0].DrugNum] = (persons[0].isRecycling == null ? 0 : persons[0].isRecycling)
+                        data[persons[0].DrugNum] = (persons[0].isRecycling == null ? 0 : persons[0].isRecycling);
+                        DDrugDMNumYNs[persons[0].DrugNum] = (persons[0].DDrugDMNumYN == null ? 0 : persons[0].DDrugDMNumYN)
                     }
                     iterator(i+1)
                 })
@@ -2255,6 +2258,8 @@ exports.getSiteDrugData = function (req, res, next) {
             DDrugNumAYN: {$ne:0},
             DDrugDMNumYN: {$ne:1},
             DrugExpryDTC : {$gte:new Date()},
+            isDestroy:{$ne:1},
+            isRecycling:{$ne:1},
             $or:[
                 {DDrugUseAYN:0},
                 {DDrugUseAYN:null}
@@ -2272,7 +2277,9 @@ exports.getSiteDrugData = function (req, res, next) {
                 //查找已签收药物量
                     drugCK.find({
                         UsedCoreId : fields.UsedCoreId,
-                        StudyID : fields.StudyID
+                        StudyID : fields.StudyID,
+                        isDestroy:{$ne:1},
+                        isRecycling:{$ne:1},
                         },function (err, persons){
                         if (err != null){
                             console.log(err)
@@ -2288,7 +2295,9 @@ exports.getSiteDrugData = function (req, res, next) {
                             drugCK.find({
                                 UsedCoreId : fields.UsedCoreId,
                                 StudyID : fields.StudyID,
-                                DDrugNumAYN: 1
+                                DDrugNumAYN: 1,
+                                isDestroy:{$ne:1},
+                                isRecycling:{$ne:1},
                             },function (err, persons){
                                 if (err != null){
                                     console.log(err)
@@ -2304,7 +2313,9 @@ exports.getSiteDrugData = function (req, res, next) {
                                     drugCK.find({
                                         UsedCoreId : fields.UsedCoreId,
                                         StudyID : fields.StudyID,
-                                        DDrugUseAYN: 1
+                                        DDrugUseAYN: 1,
+                                        isDestroy:{$ne:1},
+                                        isRecycling:{$ne:1},
                                     },function (err, persons){
                                         if (err != null){
                                             console.log(err)
@@ -2320,7 +2331,9 @@ exports.getSiteDrugData = function (req, res, next) {
                                             drugCK.find({
                                                 UsedCoreId : fields.UsedCoreId,
                                                 StudyID : fields.StudyID,
-                                                DDrugDMNumYN: 1
+                                                DDrugDMNumYN: 1,
+                                                isDestroy:{$ne:1},
+                                                isRecycling:{$ne:1},
                                             },function (err, drugCKPersons){
                                                 if (err != null){
                                                     console.log(err)
@@ -2334,7 +2347,9 @@ exports.getSiteDrugData = function (req, res, next) {
                                                     //查询已替换药物量
                                                     addSuccessPatient.find({
                                                         SiteID : fields.UsedCoreId,
-                                                        StudyID : fields.StudyID
+                                                        StudyID : fields.StudyID,
+                                                        isDestroy:{$ne:1},
+                                                        isRecycling:{$ne:1},
                                                     },function (err, persons){
                                                         var sss = 0
                                                         for (var i = 0 ; i < persons.length ; i++){
@@ -2367,7 +2382,8 @@ exports.getSiteDrugData = function (req, res, next) {
                                                                 drugCK.find({
                                                                     UsedCoreId : fields.UsedCoreId,
                                                                     StudyID : fields.StudyID,
-                                                                    isRecycling: 1
+                                                                    isRecycling: 1,
+                                                                    isDestroy:{$ne:1},
                                                                 },function (err, persons){
                                                                     data.YHSYWL = persons.length
                                                                     drugCK.find({

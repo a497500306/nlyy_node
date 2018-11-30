@@ -1460,7 +1460,6 @@ exports.getThywh = function (req, res, next) {
                                         } else {
                                             //设置为已使用
                                             //查看药物号是否过期
-
                                             drugCK.update({
                                                 'id': newDrug.id
                                             }, {
