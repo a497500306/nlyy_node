@@ -20,6 +20,7 @@ var random = require("../models/import/random");//随机号
 var ApplicationAndAudit = require("../models/import/ApplicationAndAudit");//设置申请人和审核人
 var ImageData = require("../models/import/imageData");//图片保存
 var Unblinding = require("../models/import/Unblinding");//揭盲表
+var userModeules = require("../models/import/userModeules");//用户图片保存表
 var settings = require('../settings');
 const uuidV1 = require('uuid/v1');
 //测试
@@ -76,6 +77,7 @@ exports.addDctpzl = function (req, res, next) {
     conf.cols = [
         {caption:'StudyID', type:'string'},
         {caption:'imageUrl', type:'string'},
+        {caption:'imageType', type:'string'},
         {caption:'isAbandoned', type:'string'},
         {caption:'successPatientPhone', type:'string'},
         {caption:'successUSubjID', type:'string'},
@@ -483,17 +485,36 @@ daochuExcel = function (req, res, conf, name) {
                                 });
                                 return;
                             }else{
-                                dataArray.push([
-                                    imagedatas[i].StudyID,
-                                    imagedatas[i].imageUrl,
-                                    imagedatas[i].isAbandoned.toString(),
-                                    (imagedatas[i].successPatientPhone == null ? '' : imagedatas[i].successPatientPhone),
-                                    imagedatas[i].successUSubjID,
-                                    (imagedatas[i].uploadUserPhone == null ? '' : imagedatas[i].uploadUserPhone),
-                                    (imagedatas[i].uploadName == null ? '' : imagedatas[i].uploadName),
-                                    imagedatas[i].Date,
-                                ])
-                                iterator(i + 1);
+                                userModeules.find({
+                                    imageUrls : imagedatas[i].imageUrl
+                                },function (err, userModeulesData) {
+                                    var imageTypeStr = "未找到类型"
+                                    if (userModeulesData.length > 0) {
+                                        if (userModeulesData[0].imageType == 0){
+                                            imageTypeStr = '未上传';
+                                        }else if (userModeulesData[0].imageType == 1){
+                                            imageTypeStr = '等待核查';
+                                        }else if (userModeulesData[0].imageType == 2){
+                                            imageTypeStr = '正在核查';
+                                        }else if (userModeulesData[0].imageType == 3){
+                                            imageTypeStr = '冻结';
+                                        }else if (userModeulesData[0].imageType == 6){
+                                            imageTypeStr = '质疑处理中';
+                                        }
+                                    }
+                                    dataArray.push([
+                                        imagedatas[i].StudyID,
+                                        imagedatas[i].imageUrl,
+                                        imageTypeStr,
+                                        imagedatas[i].isAbandoned.toString(),
+                                        (imagedatas[i].successPatientPhone == null ? '' : imagedatas[i].successPatientPhone),
+                                        imagedatas[i].successUSubjID,
+                                        (imagedatas[i].uploadUserPhone == null ? '' : imagedatas[i].uploadUserPhone),
+                                        (imagedatas[i].uploadName == null ? '' : imagedatas[i].uploadName),
+                                        imagedatas[i].Date,
+                                    ])
+                                    iterator(i + 1);
+                                })
                             }
                         })(0);
                     })

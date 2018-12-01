@@ -677,6 +677,8 @@ app.post('/app/getLookupSuccessBasicsData',appSSZSJ.getLookupSuccessBasicsData);
 app.post('/app/getVagueBasicsData',appSSZSJ.getVagueBasicsData);
 //模糊查询受试者User信息
 app.post('/app/getVagueBasicsDataUser',appSSZSJ.getVagueBasicsDataUser);
+//图片模块条件模糊查询受试者User信息
+app.post('/app/getImageVagueBasicsDataUser',appSSZSJ.getImageVagueBasicsDataUser);
 //停止入组--查询中心
 app.post('/app/getTzrzSite',appTzrz.getTzrzSite);
 //停止入组--确定申请

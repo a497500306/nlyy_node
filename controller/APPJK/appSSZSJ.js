@@ -9,6 +9,7 @@ var researchParameter = require('../../models/import/researchParameter');
 var addSuccessPatient = require('../../models/import/addSuccessPatient');
 var addFailPatient = require('../../models/import/addFailPatient');
 var addOutPatient = require('../../models/import/addOutPatient');
+var userModeules = require('../../models/import/userModeules');
 var random = require('../../models/import/random');
 var drugCK = require('../../models/import/drugCK');
 var users = require('../../models/import/users');
@@ -3629,17 +3630,17 @@ exports.getVagueBasicsData = function (req, res, next) {
         }else if (fields.SiteID.indexOf(',') != -1 ) {
             var sites = fields.SiteID.split(",");
             findJson = {$or:[
-                {'USubjID':{$regex : reg}},
-                {'SubjIni':{$regex : reg}},
-                {'SubjMP':{$regex : reg}},
-                {'SubjSex':{$regex : reg}}
-            ],$and:[]};
+                    {'USubjID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ],$and:[]};
             FailFindJson = {$or:[
-                {'USubjID':{$regex : reg}},
-                {'SubjIni':{$regex : reg}},
-                {'SubjMP':{$regex : reg}},
-                {'SubjSex':{$regex : reg}}
-            ],$and:[]}
+                    {'USubjectID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ],$and:[]}
             var xxxx = {'StudyID' : {$in:[]},'SiteID':{$in:[]}}
             for (var i = 0 ; i < sites.length ; i++){
                 xxxx.StudyID.$in.push(fields.StudyID)
@@ -3787,17 +3788,17 @@ exports.getVagueBasicsDataUser = function (req, res, next) {
         }else if (fields.SiteID.indexOf(',') != -1 ) {
             var sites = fields.SiteID.split(",");
             findJson = {$or:[
-                {'USubjID':{$regex : reg}},
-                {'SubjIni':{$regex : reg}},
-                {'SubjMP':{$regex : reg}},
-                {'SubjSex':{$regex : reg}}
-            ],$and:[]};
+                    {'USubjID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ],$and:[]};
             FailFindJson = {$or:[
-                {'USubjID':{$regex : reg}},
-                {'SubjIni':{$regex : reg}},
-                {'SubjMP':{$regex : reg}},
-                {'SubjSex':{$regex : reg}}
-            ],$and:[]}
+                    {'USubjectID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ],$and:[]}
             var xxxx = {'StudyID' : {$in:[]},'SiteID':{$in:[]}}
             for (var i = 0 ; i < sites.length ; i++){
                 xxxx.StudyID.$in.push(fields.StudyID)
@@ -3837,7 +3838,7 @@ exports.getVagueBasicsDataUser = function (req, res, next) {
                     {'StudyID' : fields.StudyID}
                 ]}
             }
-        }
+        };
 
         addSuccessPatient.find(findJson).exec((err, persons) => {
             if (err) {
@@ -3910,6 +3911,235 @@ exports.getVagueBasicsDataUser = function (req, res, next) {
                 }
             });
         })
+    })
+}
+
+// 图片模块模糊查询
+exports.getImageVagueBasicsDataUser = function(req,res,next){
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        //模糊查询受试者
+        var data = [];
+        var reg = new RegExp(fields.str, 'i'); //不区分大小写
+        //查找筛选成功受试者
+        var findJson = null;
+        var FailFindJson = null;
+        if (fields.SiteID == ''){
+            findJson = {$or:[
+                    {'USubjID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}},
+                ],$and:[
+                    {'StudyID' : fields.StudyID}
+                ]};
+            FailFindJson = {$or:[
+                    {'USubjectID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}},
+                ],$and:[
+                    {'StudyID' : fields.StudyID}
+                ]};
+        }else if (fields.SiteID.indexOf(',') != -1 ) {
+            var sites = fields.SiteID.split(",");
+            findJson = {$or:[
+                    {'USubjID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ],$and:[]};
+            FailFindJson = {$or:[
+                    {'USubjectID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ],$and:[]}
+            var xxxx = {'StudyID' : {$in:[]},'SiteID':{$in:[]}}
+            for (var i = 0 ; i < sites.length ; i++){
+                xxxx.StudyID.$in.push(fields.StudyID)
+                xxxx.SiteID.$in.push(sites[i])
+            }
+            FailFindJson.$and.push(xxxx)
+            findJson.$and.push(xxxx)
+        }else if (fields.SiteID == null){
+            findJson = {$or:[
+                    {'USubjID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ]};
+            FailFindJson = {$or:[
+                    {'USubjectID':{$regex : reg}},
+                    {'SubjectSex':{$regex : reg}},
+                    {'SubjectIn':{$regex : reg}}
+                ]}
+        }else{
+            findJson = {$or:[
+                    {'USubjID':{$regex : reg}},
+                    {'SubjIni':{$regex : reg}},
+                    {'SubjMP':{$regex : reg}},
+                    {'SubjSex':{$regex : reg}}
+                ],$and:[
+                    {'SiteID' : fields.SiteID},
+                    {'StudyID' : fields.StudyID}
+                ]};
+            FailFindJson = {$or:[
+                    {'USubjectID':{$regex : reg}},
+                    {'SubjectSex':{$regex : reg}},
+                    {'SubjectIn':{$regex : reg}}
+                ],$and:[
+                    {'SiteID' : fields.SiteID},
+                    {'StudyID' : fields.StudyID}
+                ]}
+        }
+
+        if (fields.zhongxin != ""){
+            findJson.SiteID = fields.zhongxin;
+            FailFindJson.SiteID = fields.zhongxin;
+        }
+        if (fields.suiji != ""){
+            if (fields.suiji == "筛选中"){
+                findJson.isBasicData = 1
+                FailFindJson.isBasicData = 1
+            }
+            if (fields.suiji == "已随机"){
+                findJson.Random = {$ne:null}
+                FailFindJson.Random = {$ne:null}
+            }
+            if (fields.suiji == "筛选失败") {
+                findJson.isBasicDatasss = 1
+            }
+            if (fields.suiji == "已完成或退出"){
+                findJson.isOut = 1
+                FailFindJson.isOut = 1
+            }
+        }
+        addSuccessPatient.find(findJson).exec((err, persons) => {
+            if (err) {
+                console.log(err);
+            } else {
+                for (var i = 0 ; i < persons.length ; i++){
+            if (persons[i].Random == null){
+                data.push({
+                    id : persons[i].id,
+                    SubjIni : persons[i].SubjIni,
+                    USubjID : persons[i].USubjID,
+                    Random : -1,//随机号
+                    Drug : -1,
+                    isSuccess : 1,
+                    phone:persons[i].SubjMP,
+                    isOut : persons[i].isOut == 1 ? 1 : 0,
+                    isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                    persons:persons[i],
+                    Arm : persons[i].Arm,
+                })
+            }else{
+                if (persons[i].Drug == null){
+                    data.push({
+                        id : persons[i].id,
+                        SubjIni : persons[i].SubjIni,
+                        USubjID : persons[i].USubjID,
+                        Random : persons[i].Random,//随机号
+                        Drug : -1,
+                        phone:persons[i].SubjMP,
+                        isOut : persons[i].isOut == 1 ? 1 : 0,
+                        isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                        Arm : persons[i].Arm,
+                        persons:persons[i],
+                        isSuccess : 1
+                    })
+                }else {
+                    data.push({
+                        id : persons[i].id,
+                        SubjIni : persons[i].SubjIni,
+                        USubjID : persons[i].USubjID,
+                        Random : persons[i].Random,//随机号
+                        Drug : persons[i].Drug,
+                        isOut : persons[i].isOut == 1 ? 1 : 0,
+                        phone:persons[i].SubjMP,
+                        persons:persons[i],
+                        isUnblinding : persons[i].isUnblinding == 1 ? 1 : 0,
+                        Arm : persons[i].Arm,
+                        isSuccess : 1
+                    })
+                }
+            }
+        }
+    }
+
+        //查找筛选失败受试者
+        addFailPatient.find(FailFindJson).exec((err, persons) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log('查找失败---' + persons.length);
+        for (var i = 0 ; i < persons.length ; i++){
+            data.push({
+                id : persons[i].id,
+                SubjIni : persons[i].SubjectIn,
+                USubjID : persons[i].USubjectID,
+                isSuccess : 0,
+                persons:persons[i]
+            })
+        }
+        if (fields.tupian != ""){
+            /*不符合要求的数组*/
+            var noData = [];
+            (function iterator(i) {
+                if(i == data.length){
+                    for (var j = 0 ; j < noData.length ; j++) {
+                        var i = data.indexOf(noData[j])
+                        data.splice(i,1)
+                    }
+                    if (fields.bianhao == "按编号排序"){
+                        function sortNumber(a,b)
+                        {
+                            return a.USubjID - b.USubjID
+                        }
+                        data.sort(sortNumber)
+                    }
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                    return
+                }
+                var userModeulesJson = {
+                    "StudyID":fields.StudyID,
+                    "Subjects.persons.id":data[i].id,
+                    "imageUrls.1":{$exists:true}
+                }
+                userModeules.find(userModeulesJson,function (err, userModeulesData) {
+                    if (fields.tupian == "是"){
+                        if (userModeulesData.length == 0){
+                            noData.push(data[i])
+                        }
+                    }else if (fields.tupian == "否"){
+                        if (userModeulesData.length != 0){
+                            noData.push(data[i])
+                        }
+                    }
+                    iterator(i+1)
+                })
+            })(0);
+        }else{
+            if (fields.bianhao == "按编号排序"){
+                function sortNumber(a,b)
+                {
+                    return a.USubjID - b.USubjID
+                }
+                data.sort(sortNumber)
+            }
+                res.send({
+                    'isSucceed': 400,
+                    'data': data
+                });
+            }
+    }
+    });
+
+    })
     })
 }
 //查阅筛选例数分布
