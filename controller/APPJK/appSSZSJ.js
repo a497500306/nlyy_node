@@ -4083,43 +4083,86 @@ exports.getImageVagueBasicsDataUser = function(req,res,next){
                 persons:persons[i]
             })
         }
-        if (fields.tupian != ""){
+        if (fields.tupian != "" || fields.shuju != ""){
             /*不符合要求的数组*/
             var noData = [];
+            var shujuData = [];
+            var tupian = [];
             (function iterator(i) {
                 if(i == data.length){
-                    for (var j = 0 ; j < noData.length ; j++) {
-                        var i = data.indexOf(noData[j])
-                        data.splice(i,1)
-                    }
-                    if (fields.bianhao == "按编号排序"){
-                        function sortNumber(a,b)
-                        {
-                            return a.USubjID - b.USubjID
-                        }
-                        data.sort(sortNumber)
-                    }
+                    // for (var j = 0 ; j < noData.length ; j++) {
+                    //     var i = data.indexOf(noData[j])
+                    //     data.splice(i,1)
+                    // }
+                    // if (fields.bianhao == "按编号排序"){
+                    //     function sortNumber(a,b)
+                    //     {
+                    //         return a.USubjID - b.USubjID
+                    //     }
+                    //     data.sort(sortNumber)
+                    // }
                     res.send({
                         'isSucceed': 400,
-                        'data': data
+                        'data': noData
                     });
                     return
                 }
                 var userModeulesJson = {
                     "StudyID":fields.StudyID,
-                    "Subjects.persons.id":data[i].id,
-                    "imageUrls.1":{$exists:true}
+                    "Subjects.persons.id":data[i].id
                 }
+                // if (fields.tupian != "") {
+                //     userModeulesJson["imageUrls.1"] = {$exists:true}
+                // }
                 userModeules.find(userModeulesJson,function (err, userModeulesData) {
-                    if (fields.tupian == "是"){
-                        if (userModeulesData.length == 0){
-                            noData.push(data[i])
+                    for (var j = 0; j < userModeulesData.length; j++) {
+                        // if (noData.indexOf(data[i]) == 1){break}
+
+                        if (fields.shuju != "" && shujuData.indexOf(data[i]) == -1) {
+                            //图片状态,0:没有上传图片,1:等待审核,2:正在审核,3:冻结,4:无用的,5:作废,6:质疑中
+                            if (fields.shuju == "点击上传图片" && userModeulesData[j].imageType == 0) {
+                                shujuData.push(data[i])
+                            }else if (fields.shuju == "等待核查" && userModeulesData[j].imageType == 1) {
+                                shujuData.push(data[i])
+                            }else if (fields.shuju == "正在核查" && userModeulesData[j].imageType == 2) {
+                                shujuData.push(data[i])
+                            }else if (fields.shuju == "质疑处理中" && userModeulesData[j].imageType == 6) {
+                                shujuData.push(data[i])
+                            }else if (fields.shuju == "冻结" && userModeulesData[j].imageType == 3) {
+                                shujuData.push(data[i])
+                            }
                         }
-                    }else if (fields.tupian == "否"){
-                        if (userModeulesData.length != 0){
+
+                        if (fields.tupian != "" && tupian.indexOf(data[i]) == -1) {
+                            if (fields.tupian == "是" && userModeulesData[j].imageUrls.length > 0){
+                                tupian.push(data[i])
+                            }
+                            if (fields.tupian == "否" && j == userModeulesData.length - 1 && tupian.indexOf(data[i]) == -1){
+                                tupian.push(data[i])
+                            }
+                        }
+
+                        if (shujuData[i] == data[i] && tupian[i] == data[i]){
                             noData.push(data[i])
+                            break
                         }
                     }
+
+                    // if (fields.tupian != "") {
+                    //     if (fields.tupian == "是"){
+                    //         if (userModeulesData.length == 0){
+                    //             noData.push(data[i])
+                    //         }
+                    //     }else if (fields.tupian == "否"){
+                    //         if (userModeulesData.length != 0){
+                    //             noData.push(data[i])
+                    //         }
+                    //     }
+                    // }else if (fields.shuju != "") {
+                    //     if (userModeulesData.length == 0){
+                    //         noData.push(data[i])
+                    //     }
+                    // }
                     iterator(i+1)
                 })
             })(0);
