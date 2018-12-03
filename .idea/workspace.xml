@@ -19,54 +19,15 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="-195931033">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="js" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="JavaScript" value="1" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="js" value="384" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="JavaScript" value="384" />
-        </counts>
-      </usages-collector>
-    </session>
-  </component>
   <component name="FavoritesManager">
     <favorites_list name="nlyy_node" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
-              <caret line="745" column="58" lean-forward="true" selection-start-line="745" selection-start-column="58" selection-end-line="745" selection-end-column="58" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controller/APPJK/appImageData.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="271">
+            <state relative-caret-position="2115">
               <caret line="141" column="12" selection-start-line="141" selection-start-column="12" selection-end-line="141" selection-end-column="12" />
             </state>
           </provider>
@@ -76,7 +37,7 @@
         <entry file="file://$PROJECT_DIR$/models/import/userModeules.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="285">
-              <caret line="19" column="25" lean-forward="true" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="76" />
+              <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="76" />
             </state>
           </provider>
         </entry>
@@ -84,8 +45,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="89">
-              <caret line="4123" column="32" selection-start-line="4123" selection-start-column="32" selection-end-line="4123" selection-end-column="32" />
+            <state relative-caret-position="-92">
+              <caret line="4105" column="32" selection-start-line="4105" selection-start-column="32" selection-end-line="4105" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///private/var/folders/_x/3wdcdczs63z3pcj6rx92z88r0000gn/T/controller_APPJK_appSSZSJ_Before_2979e89b855ae307bc38350cd40a9fab1a44fd62.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="445">
+              <caret line="4110" column="44" selection-start-line="4110" selection-start-column="44" selection-end-line="4110" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -158,7 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>$set:</find>
       <find>/app/getSelectedAbandoned</find>
       <find>/app/getLookupSuccessBasicsData</find>
       <find>getCancelSelectedDestroy</find>
@@ -188,6 +157,7 @@
       <find>(function iterator(i){</find>
       <find>(function iterator(i)</find>
       <find>/app/getImagePageNumberList</find>
+      <find>nodata</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/file</dir>
@@ -233,32 +203,14 @@
         <option value="$PROJECT_DIR$/controller/APPJK/appChangKu.js" />
         <option value="$PROJECT_DIR$/controller/ImportData.js" />
         <option value="$PROJECT_DIR$/app.js" />
+        <option value="/private/var/folders/_x/3wdcdczs63z3pcj6rx92z88r0000gn/T/controller_APPJK_appSSZSJ_Before_2979e89b855ae307bc38350cd40a9fab1a44fd62.js" />
         <option value="$PROJECT_DIR$/controller/APPJK/appSSZSJ.js" />
       </list>
     </option>
   </component>
-  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
-    <package-json value="$PROJECT_DIR$/package.json" />
-  </component>
-  <component name="JsGulpfileManager">
-    <detection-done>true</detection-done>
-    <sorting>DEFINITION_ORDER</sorting>
-  </component>
-  <component name="NodeModulesDirectoryManager">
-    <handled-path value="$PROJECT_DIR$/node_modules" />
-  </component>
-  <component name="NodePackageJsonFileManager">
-    <packageJsonPaths>
-      <path value="$PROJECT_DIR$/ALYZM/package.json" />
-      <path value="$PROJECT_DIR$/package.json" />
-    </packageJsonPaths>
-  </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="-280" />
-    <option name="y" value="-1080" />
-    <option name="width" value="1920" />
-    <option name="height" value="1080" />
+    <option name="width" value="1280" />
+    <option name="height" value="800" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -331,10 +283,10 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="app.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
+    <configuration name="app.js" type="NodeJSConfigurationType" temporary="true" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+    <configuration default="true" type="js.build_tools.gulp">
       <node-interpreter>project</node-interpreter>
       <node-options />
       <gulpfile />
@@ -381,24 +333,24 @@
       <workItem from="1543568601639" duration="2068000" />
       <workItem from="1543677866891" duration="8119000" />
       <workItem from="1543826464555" duration="5063000" />
+      <workItem from="1543848337621" duration="2022000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="151913000" />
+    <option name="totallyTimeSpent" value="153935000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-280" y="-1080" width="1920" height="1080" extended-state="0" />
-    <editor active="true" />
+    <frame x="0" y="0" width="1280" height="800" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8220588" visible="true" weight="0.14533965" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.82" visible="true" weight="0.14455917" />
       <window_info id="Structure" order="1" weight="0.25" />
-      <window_info id="npm" order="2" sideWeight="0.17794117" side_tool="true" visible="true" weight="0.14533965" />
+      <window_info id="npm" order="2" sideWeight="0.18" side_tool="true" visible="true" weight="0.14455917" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32970297" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32673267" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.3841584" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3260274" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.38356164" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -422,9 +374,6 @@
       <collection />
     </option>
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -444,46 +393,6 @@
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4405</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4410</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4407</line>
-          <option name="timeStamp" value="24" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4409</line>
-          <option name="timeStamp" value="25" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4418</line>
-          <option name="timeStamp" value="26" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>4426</line>
-          <option name="timeStamp" value="27" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>2784</line>
-          <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>2760</line>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appChangKu.js</url>
           <line>1838</line>
           <option name="timeStamp" value="39" />
@@ -500,25 +409,20 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>3765</line>
-          <option name="timeStamp" value="55" />
+          <line>4136</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="59" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js</url>
-          <line>3766</line>
-          <option name="timeStamp" value="57" />
+          <url>file:///private/var/folders/_x/3wdcdczs63z3pcj6rx92z88r0000gn/T/controller_APPJK_appSSZSJ_Before_2979e89b855ae307bc38350cd40a9fab1a44fd62.js</url>
+          <line>4090</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="67" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/js/ie10-viewport-bug-workaround.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="22" column="5" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/js/jquery-1.11.3.min.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -725,6 +629,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11175">
+          <caret line="745" column="58" selection-start-line="745" selection-start-column="58" selection-end-line="745" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controller/APPJK/appImageData.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2115">
+          <caret line="141" column="12" selection-start-line="141" selection-start-column="12" selection-end-line="141" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/import/userModeules.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/MLArray.js">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -770,31 +695,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
+    <entry file="file:///private/var/folders/_x/3wdcdczs63z3pcj6rx92z88r0000gn/T/controller_APPJK_appSSZSJ_Before_2979e89b855ae307bc38350cd40a9fab1a44fd62.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="745" column="58" lean-forward="true" selection-start-line="745" selection-start-column="58" selection-end-line="745" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/userModeules.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="25" lean-forward="true" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appImageData.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="141" column="12" selection-start-line="141" selection-start-column="12" selection-end-line="141" selection-end-column="12" />
+        <state relative-caret-position="445">
+          <caret line="4110" column="44" selection-start-line="4110" selection-start-column="44" selection-end-line="4110" selection-end-column="44" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="89">
-          <caret line="4123" column="32" selection-start-line="4123" selection-start-column="32" selection-end-line="4123" selection-end-column="32" />
+        <state relative-caret-position="-92">
+          <caret line="4105" column="32" selection-start-line="4105" selection-start-column="32" selection-end-line="4105" selection-end-column="32" />
         </state>
       </provider>
     </entry>
