@@ -4103,9 +4103,13 @@ exports.getImageVagueBasicsDataUser = function(req,res,next){
                         var shujuData = [];
                         (function iterator(j) {
                             if(j == data.length){
+                                var newData = data
+                                if (fields.yonghuID != null && fields.yonghuID != ""){
+                                    newData = yonghuIDquchong(fields.yonghuID , newData)
+                                }
                                 res.send({
                                     'isSucceed': 400,
-                                    'data': shujuData
+                                    'data': newData
                                 });
                                 return
                             }
@@ -4134,9 +4138,13 @@ exports.getImageVagueBasicsDataUser = function(req,res,next){
                             })
                         })(0);
                     }else{
+                        var newData = data
+                        if (fields.yonghuID != null && fields.yonghuID != ""){
+                            newData = yonghuIDquchong(fields.yonghuID , newData)
+                        }
                         res.send({
                             'isSucceed': 400,
-                            'data': data
+                            'data': newData
                         });
                         return
                     }
@@ -4168,10 +4176,16 @@ exports.getImageVagueBasicsDataUser = function(req,res,next){
                 }
                 data.sort(sortNumber)
             }
+
+                var newData = data
+                if (fields.yonghuID != null && fields.yonghuID != ""){
+                    newData = yonghuIDquchong(fields.yonghuID , newData)
+                }
                 res.send({
                     'isSucceed': 400,
-                    'data': data
+                    'data': newData
                 });
+                return
             }
     }
     });
@@ -4179,6 +4193,18 @@ exports.getImageVagueBasicsDataUser = function(req,res,next){
     })
     })
 }
+/*用户ID去重*/
+function yonghuIDquchong(userID , data){
+    var newData = []
+    for (var i = 0 ; i < data.length ; i++ ){
+        if (data[i].USubjID == userID){
+            newData.push(data[i])
+            return newData
+        }
+    }
+    return newData
+}
+
 //查阅筛选例数分布
 exports.getCysxsblsfb = function (req, res, next) {
     var form = new formidable.IncomingForm();
