@@ -715,6 +715,7 @@ exports.getSendAMessage = function (req, res, next) {
             }
         }
         fields.selectUsers = array;
+        var uuid = generateUUID();
         (function iterator(i){
             if (i == fields.selectUsers.length){
                 res.send({
@@ -723,6 +724,7 @@ exports.getSendAMessage = function (req, res, next) {
                 });
                 return
             }
+            //0:未解决,1:已解决,2:不需要解决,3:取消标记
             questionPatient.create({
                 "StudyID": fields.StudyID,    //研究编号
                 "CRFModeule": null,//研究数据
@@ -733,6 +735,8 @@ exports.getSendAMessage = function (req, res, next) {
                 "GroupUsers" : fields.selectUsers,//群组数据
                 "Date": new Date(),
                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
+                "messageIDNum" : uuid,
+                "markType" : 0
             }, function (err, userData) {
                 var string = fields.StudyID + '研究收到一条消息：' +  fields.text
                 //发送通知
@@ -742,6 +746,16 @@ exports.getSendAMessage = function (req, res, next) {
         })(0);
     })
 }
+
+function generateUUID(){
+    var d = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (d + Math.random()*16)%16 | 0;
+        d = Math.floor(d/16);
+        return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+    });
+    return uuid;
+};
 
 //撤销质疑
 exports.getRevokedAddQuestion = function (req, res, next) {
@@ -813,7 +827,7 @@ exports.getRevokedAddQuestion = function (req, res, next) {
 exports.getAddQuestion = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
-            if (fields.isReply == true){
+            if (fields.isReply == true){//回复
                 if (fields.GroupUsers == null || fields.GroupUsers.length == 0){
                     questionPatient.create({
                         "StudyID": fields.StudyID,    //研究编号
@@ -825,6 +839,8 @@ exports.getAddQuestion = function (req, res, next) {
                         "Date": new Date(),
                         "GroupUsers" : fields.GroupUsers,
                         "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
+                        "messageIDNum" : fields.messageIDNum,
+                        "markType" : fields.markType
                     }, function (err, userData) {
                         questionPatient.create({
                             "StudyID": fields.StudyID,    //研究编号
@@ -836,6 +852,8 @@ exports.getAddQuestion = function (req, res, next) {
                             "Date": new Date(),
                             "GroupUsers" : fields.GroupUsers,
                             "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
+                            "messageIDNum" : fields.messageIDNum,
+                            "markType" : fields.markType
                         }, function (err, userData) {
                             // var string = fields.StudyID + '研究收到一条消息：' +  fields.text
                             // //发送通知
@@ -873,7 +891,9 @@ exports.getAddQuestion = function (req, res, next) {
                                 "Users": fields.GroupUsers[i], //质疑的医生
                                 "Date": new Date(),
                                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                                "GroupUsers" : fields.GroupUsers
+                                "GroupUsers" : fields.GroupUsers,
+                                "messageIDNum" : fields.messageIDNum,
+                                "markType" : fields.markType
                             }, function (err, userData) {
                                 var string = fields.StudyID + '研究收到一条消息：' +  fields.text
                                 //发送通知
@@ -893,6 +913,8 @@ exports.getAddQuestion = function (req, res, next) {
                 "Users": fields.Users, //质疑的医生
                 "Date": new Date(),
                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
+                "messageIDNum" : fields.messageIDNum,
+                "markType" : fields.markType
             }, function (err, userData) {
                 // if (fields.CRFModeule != null){
                 //     userModeules.update({
@@ -999,6 +1021,8 @@ exports.getAddQuestion = function (req, res, next) {
                             "Users": array[i], //质疑的医生
                             "Date": new Date(),
                             "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
+                            "messageIDNum" : fields.messageIDNum,
+                            "markType" : fields.markType
                         }, function (err, userData) {
                             userModeules.update({
                                 id:fields.CRFModeule.id,
@@ -1016,6 +1040,33 @@ exports.getAddQuestion = function (req, res, next) {
                     }
                 })(0);
             })
+        }
+    })
+}
+
+//标记
+exports.getMarkType = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        if (fields.messageIDNum != null && fields.messageIDNum.length > 0){
+            questionPatient.update({
+                "messageIDNum" : fields.messageIDNum
+            },{ $set: {
+                    markType: fields.markType
+                }
+            }, {multi:true},function (err) {
+                res.send({
+                    'isSucceed': 400,
+                    'msg': '更新成功'
+                });
+                return
+            })
+        }else{
+            res.send({
+                'isSucceed': 200,
+                'msg': '数据错误'
+            });
+            return
         }
     })
 }

@@ -14,7 +14,9 @@ var questionPatientSchema = new mongoose.Schema({
     "Date" : Date,
     "voiceUrls" : String,//语音路径
     "text" : String,//内容
-    "voiceType" : Number,//图片状态,0:未读,1:已读,2:已解决
+    "voiceType" : Number,//图片状态,0:未读,1:已读
+    "markType" : Number,//标记状态,0:未解决,1:已解决,2:不需要解决,3:取消标记
+    "messageIDNum" : String,//消息识别号,用来记录是不是同一串消息
 });
 questionPatientSchema.plugin(autoIncrement.plugin, {
     model: 'Books',

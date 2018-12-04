@@ -765,12 +765,14 @@ app.post('/app/getDeleteImageUrls',appImageData.getDeleteImageUrls);
 app.post('/app/getReviewCorrect',appImageData.getReviewCorrect);
 //撤销审核无误
 app.post('/app/getRevokedReviewCorrect',appImageData.getRevokedReviewCorrect)
-//添加质疑
-app.post('/app/getAddQuestion',appImageData.getAddQuestion);
 //撤销质疑
 app.post('/app/getRevokedAddQuestion',appImageData.getRevokedAddQuestion);
 //发送消息
 app.post('/app/getSendAMessage',appImageData.getSendAMessage);
+//添加质疑,回复消息
+app.post('/app/getAddQuestion',appImageData.getAddQuestion);
+//标记
+app.post('/app/getMarkType',appImageData.getMarkType);
 //质疑后重新提交审核
 app.post('/app/getQuestionRevoked',appImageData.getQuestionRevoked);
 //消息中心列表
