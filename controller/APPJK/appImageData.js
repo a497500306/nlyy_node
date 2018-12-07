@@ -1140,6 +1140,51 @@ exports.getNewsList = function (req, res, next) {
     })
 }
 
+//消息中心用户查询列表
+exports.getUserNewsList = function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        var json = {
+            "StudyID": fields.StudyID,
+            "Users.UserMP" : fields.UserMP,
+            $or:[]
+        }
+        for (var i= 0 ; i < fields.users.length ; i++) {
+            json.$or.push({
+                "CRFModeule.Subjects.persons.id" : fields.users[i].id
+            })
+        }
+        if (fields.yuedu != "") {
+            if (fields.yuedu == "已读") {
+                json.voiceType = 1
+            }else if  (fields.yuedu == "未读") {
+                json.voiceType = 0
+            }else{
+                json.voiceType = fields.yuedu
+            }
+        }
+
+        if (fields.biaoji != "") {
+            if (fields.biaoji == "未解决") {
+                json.markType = 0
+            }else if  (fields.biaoji == "已解决") {
+                json.markType = 1
+            }else if  (fields.biaoji == "不需要解决") {
+                json.markType = 2
+            }else{
+                json.markType = fields.biaoji
+            }
+        }
+        questionPatient.find(json).sort({Date : -1}).exec(function (err, data) {
+            res.send({
+                'isSucceed': 400,
+                'data': data
+            });
+            return
+        })
+    })
+}
+
 //显示中心联系人
 exports.getShowSiteUsers = function (req, res, next) {
     var form = new formidable.IncomingForm();

@@ -777,6 +777,8 @@ app.post('/app/getMarkType',appImageData.getMarkType);
 app.post('/app/getQuestionRevoked',appImageData.getQuestionRevoked);
 //消息中心列表
 app.post('/app/getNewsList',appImageData.getNewsList);
+//消息中心用户查询列表
+app.post('/app/getUserNewsList',appImageData.getUserNewsList);
 //消息标记为已读
 app.post('/app/getNewsHaveRead',appImageData.getNewsHaveRead);
 //显示中心联系人
