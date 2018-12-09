@@ -176,6 +176,27 @@ exports.getAddImageModeulesListUser = function (req, res, next) {
         })
     })
 }
+//通过ID获取图片数据
+exports.getUserModeulesData = function(req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.parse(req,function (err, fields, files) {
+        userModeules.find({id:fields.id},function (err, newData) {
+            if (newData.length > 0){
+                res.send({
+                    'isSucceed' : 400,
+                    'data' : newData[0]
+                });
+                return;
+            }else{
+                res.send({
+                    'isSucceed' : 200,
+                    'msg' : "数据错误"
+                });
+                return;
+            }
+        })
+    })
+}
 //查询一个模块组人数统计
 exports.getAddImageModeulesListStatistics = function (req, res, next) {
     var form = new formidable.IncomingForm();
@@ -1131,11 +1152,26 @@ exports.getNewsList = function (req, res, next) {
             "StudyID": fields.StudyID,
             "Users.UserMP" : fields.UserMP
         }).sort({Date : -1}).exec(function (err, data) {
-            res.send({
-                'isSucceed': 400,
-                'data': data
-            });
-            return
+            (function iterator(i){
+                if (i == data.length){
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                    return
+                }
+                if (data[i].CRFModeule != null) {
+                    userModeules.find({"id" : data[i].CRFModeule.id},function (err, userModeulesData) {
+                        if (userModeulesData.length > 0){
+                            data[i].CRFModeule = userModeulesData[0]
+                        }
+                        iterator(i + 1);
+                    })
+                }else{
+
+                    iterator(i + 1);
+                }
+            })(0);
         })
     })
 }
@@ -1176,11 +1212,26 @@ exports.getUserNewsList = function (req, res, next) {
             }
         }
         questionPatient.find(json).sort({Date : -1}).exec(function (err, data) {
-            res.send({
-                'isSucceed': 400,
-                'data': data
-            });
-            return
+            (function iterator(i){
+                if (i == data.length){
+                    res.send({
+                        'isSucceed': 400,
+                        'data': data
+                    });
+                    return
+                }
+                if (data[i].CRFModeule != null) {
+                    userModeules.find({"id" : data[i].CRFModeule.id},function (err, userModeulesData) {
+                        if (userModeulesData.length > 0){
+                            data[i].CRFModeule = userModeulesData[0]
+                        }
+                        iterator(i + 1);
+                    })
+                }else{
+
+                    iterator(i + 1);
+                }
+            })(0);
         })
     })
 }

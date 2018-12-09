@@ -16,7 +16,11 @@ var questionPatientSchema = new mongoose.Schema({
     "text" : String,//内容
     "voiceType" : Number,//图片状态,0:未读,1:已读
     "markType" : Number,//标记状态,0:未解决,1:已解决,2:不需要解决,3:取消标记
-    "messageIDNum" : String,//消息识别号,用来记录是不是同一串消息
+    "messageIDNum" : String,//消息识别号,用来记录是不是同一串消息,
+    "userModeulesObj" : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'userModeules'
+    }
 });
 questionPatientSchema.plugin(autoIncrement.plugin, {
     model: 'Books',

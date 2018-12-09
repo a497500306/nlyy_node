@@ -754,7 +754,8 @@ app.post('/app/getAddImageModeulesList',appImageData.getAddImageModeulesList);
 app.post('/app/getAddImageModeulesListStatistics',appImageData.getAddImageModeulesListStatistics);
 //查询某个模块组的人
 app.post('/app/getAddImageModeulesListUser',appImageData.getAddImageModeulesListUser);
-
+//通过ID获取图片数据
+app.post('/app/getUserModeulesData',appImageData.getUserModeulesData)
 //添加一个页码
 app.post('/app/getAddImagePageNumberList',appImageData.getAddImagePageNumberList);
 //添加一张图片
