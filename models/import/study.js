@@ -44,6 +44,7 @@ var studySchema = new mongoose.Schema({
     "StudOfflineUsers" : String, //下线操作人
     "StudOfflinePhone" : String, //下线操作手机号
     "StudOfflineDate" : Date,//下线操作时间
+    "questionSerialNumber" : Number,//消息流水号
 
     "Date" : Date, //导入时间
 });

@@ -5,6 +5,7 @@ var users = require('../../models/import/users')
 var researchParameter = require('../../models/import/researchParameter')
 var ApplicationAndAudit = require('../../models/import/ApplicationAndAudit');
 var questionPatient = require('../../models/import/questionPatient')
+var study = require('../../models/import/study');
 var imageData = require('../../models/import/imageData')
 var JPushTool = require('../../JPushTool/JPushaTool');
 var MLArray = require('../../MLArray');
@@ -849,8 +850,12 @@ exports.getAddQuestion = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         var uuid = generateUUID();
-            if (fields.isReply == true){//回复
+        if (fields.isReply == true){//回复
                 if (fields.GroupUsers == null || fields.GroupUsers.length == 0){
+                    var serialNumber = null
+                    if (fields.serialNumber != null) {
+                        serialNumber = fields.serialNumber
+                    }
                     questionPatient.create({
                         "StudyID": fields.StudyID,    //研究编号
                         "CRFModeule": fields.CRFModeule,//研究数据
@@ -862,7 +867,8 @@ exports.getAddQuestion = function (req, res, next) {
                         "GroupUsers" : fields.GroupUsers,
                         "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
                         "messageIDNum" : uuid,
-                        "markType" : 0
+                        "markType" : 0,
+                        "serialNumber" : serialNumber
                     }, function (err, userData) {
                         questionPatient.create({
                             "StudyID": fields.StudyID,    //研究编号
@@ -875,7 +881,8 @@ exports.getAddQuestion = function (req, res, next) {
                             "GroupUsers" : fields.GroupUsers,
                             "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
                             "messageIDNum" : uuid,
-                            "markType" : 0
+                            "markType" : 0,
+                            "serialNumber" : serialNumber
                         }, function (err, userData) {
                             // var string = fields.StudyID + '研究收到一条消息：' +  fields.text
                             // //发送通知
@@ -896,6 +903,7 @@ exports.getAddQuestion = function (req, res, next) {
                         })
                     })
                 }else{
+                    //回复普通消息
                     (function iterator(i){
                         if (i == fields.GroupUsers.length){
                             res.send({
@@ -957,17 +965,18 @@ exports.getAddQuestion = function (req, res, next) {
                 //         return
                 //     })
                 // }else{
-                    var string = fields.StudyID + '研究收到一条消息：' +  fields.text
-                    //发送通知
-                    JPushTool.JPushPush(string,fields.Users.UserMP)
-                    res.send({
-                        'isSucceed': 400,
-                        'msg': userData
-                    });
-                    return
+                var string = fields.StudyID + '研究收到一条消息：' +  fields.text
+                //发送通知
+                JPushTool.JPushPush(string,fields.Users.UserMP)
+                res.send({
+                    'isSucceed': 400,
+                    'msg': userData
+                });
+                return
                 // }
             })
         }else{
+            //发送质疑消息
             if (fields.CRFModeule.imageUrls.length == 0){
                 res.send({
                     'isSucceed': 200,
@@ -975,92 +984,106 @@ exports.getAddQuestion = function (req, res, next) {
                 });
                 return;
             }
-            var json = {
-                $or:[
-                    {"StudyID": fields.StudyID,"UserFun":"H2"},
-                    {"StudyID": fields.StudyID,"UserFun":"H3"},
-                    {"StudyID": fields.StudyID,"UserFun":"H5"},
-                    {"StudyID": fields.StudyID,"UserFun":"S1"}
-                ]
-            }
-            users.find(json,function (err, userData) {
-                var newUsers = [];
-                for (var  i = 0 ; i < userData.length ; i++){
-                    var userJson = userData[i];
-                    if (userJson.UserSiteYN == 1){
-                        newUsers.push(userJson);
-                    }else{
-                        var UserSites = userJson.UserSite.split(",");
-                        for (var j = 0 ; j < UserSites.length ; j++){
-                            if (UserSites[j] == fields.CRFModeule.Subjects.persons.SiteID){
-                                newUsers.push(userJson);
-                                break;
+            //回复质疑
+            study.find({
+                "StudyID": fields.StudyID
+            },function (err, studyData) {
+                var serialNumber = null
+                var num = null
+                if (studyData.length > 0) {
+                    num = studyData[0].questionSerialNumber != null ? studyData[0].questionSerialNumber + 1 : 1;
+                    serialNumber = fields.StudyID + fields.CRFModeule.Subjects.persons.USubjID + num
+                }
+                var json = {
+                    $or:[
+                        {"StudyID": fields.StudyID,"UserFun":"H2"},
+                        {"StudyID": fields.StudyID,"UserFun":"H3"},
+                        {"StudyID": fields.StudyID,"UserFun":"H5"},
+                        {"StudyID": fields.StudyID,"UserFun":"S1"}
+                    ]
+                }
+                users.find(json,function (err, userData) {
+                    var newUsers = [];
+                    for (var  i = 0 ; i < userData.length ; i++){
+                        var userJson = userData[i];
+                        if (userJson.UserSiteYN == 1){
+                            newUsers.push(userJson);
+                        }else{
+                            var UserSites = userJson.UserSite.split(",");
+                            for (var j = 0 ; j < UserSites.length ; j++){
+                                if (UserSites[j] == fields.CRFModeule.Subjects.persons.SiteID){
+                                    newUsers.push(userJson);
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-                //删除相同手机号用户
-                var array = [];
-                array.push(fields.addUsers)
-                for (var n = 0 ; n < newUsers.length ; n++){
-                    if (array.length == 0){
-                        array.push(newUsers[n])
-                    }else{
-                        var isSS = false;
-                        for (var x = 0 ; x < array.length ; x++){
-                            if (array[x].UserMP == newUsers[n].UserMP){
-                                isSS = true;
-                                break;
+                    //删除相同手机号用户
+                    var array = [];
+                    array.push(fields.addUsers)
+                    for (var n = 0 ; n < newUsers.length ; n++){
+                        if (array.length == 0){
+                            array.push(newUsers[n])
+                        }else{
+                            var isSS = false;
+                            for (var x = 0 ; x < array.length ; x++){
+                                if (array[x].UserMP == newUsers[n].UserMP){
+                                    isSS = true;
+                                    break;
+                                }
+                            }
+                            if (isSS == false){
+                                array.push(newUsers[n]);
                             }
                         }
-                        if (isSS == false){
-                            array.push(newUsers[n]);
-                        }
                     }
-                }
-                (function iterator(i){
-                    if (i == array.length){
-                        userModeules.update({
-                            id:fields.CRFModeule.id,
-                        },{
-                            $push : {question : userData,questionDate : new Date()},
-                            questionImageUrls : fields.CRFModeule.imageUrls,
-                            imageType:6
-                        },function (err) {
-                            res.send({
-                                'isSucceed': 400,
-                                'msg': '质疑成功'
+                    (function iterator(i){
+                        if (i == array.length){
+                            // userModeules.update({
+                            //     id:fields.CRFModeule.id,
+                            // },{
+                            //     $push : {question : userData.id,questionDate : new Date()},
+                            //     questionImageUrls : fields.CRFModeule.imageUrls,
+                            //     imageType:6
+                            // },function (err) {
+                            study.update({"StudyID": fields.StudyID},{$set:  { "questionSerialNumber" : num }},function () {
+                                res.send({
+                                    'isSucceed': 400,
+                                    'msg': '质疑成功'
+                                });
+                                return
                             });
-                            return
-                        })
-                    }else{
-                        questionPatient.create({
-                            "StudyID": fields.StudyID,    //研究编号
-                            "CRFModeule": fields.CRFModeule,//研究数据
-                            "voiceUrls": fields.voiceUrls,//语音路径
-                            "text": fields.text,//内容
-                            "addUsers": fields.addUsers, //添加这条数据的医生
-                            "Users": array[i], //质疑的医生
-                            "Date": new Date(),
-                            "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                            "messageIDNum" : uuid,
-                            "markType" : 0
-                        }, function (err, userData) {
-                            userModeules.update({
-                                id:fields.CRFModeule.id,
-                            },{
-                                $push : {question : userData,questionDate : new Date()},
-                                questionImageUrls : fields.CRFModeule.imageUrls,
-                                imageType:6
-                            },function (err) {
-                                var string = fields.StudyID + '研究收到一条消息：' +  fields.text
-                                //发送通知
-                                JPushTool.JPushPush(string,array[i].UserMP)
-                                iterator(i + 1);
+                            // })
+                        }else{
+                            questionPatient.create({
+                                "StudyID": fields.StudyID,    //研究编号
+                                "CRFModeule": fields.CRFModeule,//研究数据
+                                "voiceUrls": fields.voiceUrls,//语音路径
+                                "text": fields.text,//内容
+                                "addUsers": fields.addUsers, //添加这条数据的医生
+                                "Users": array[i], //质疑的医生
+                                "Date": new Date(),
+                                "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
+                                "messageIDNum" : uuid,
+                                "markType" : 0,
+                                "serialNumber" : serialNumber
+                            }, function (err, userData) {
+                                userModeules.update({
+                                    id:fields.CRFModeule.id,
+                                },{
+                                    $push : {question : userData.id,questionDate : new Date()},
+                                    questionImageUrls : fields.CRFModeule.imageUrls,
+                                    imageType:6
+                                },function (err) {
+                                    var string = fields.StudyID + '研究收到一条消息：' +  fields.text
+                                    //发送通知
+                                    JPushTool.JPushPush(string,array[i].UserMP)
+                                    iterator(i + 1);
+                                })
                             })
-                        })
-                    }
-                })(0);
+                        }
+                    })(0);
+                })
             })
         }
     })
