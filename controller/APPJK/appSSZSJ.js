@@ -4103,9 +4103,9 @@ exports.getImageVagueBasicsDataUser = function(req,res,next){
                         var shujuData = [];
                         (function iterator(j) {
                             if(j == data.length){
-                                var newData = data
+                                var newData = shujuData
                                 if (fields.yonghuID != null && fields.yonghuID != ""){
-                                    newData = yonghuIDquchong(fields.yonghuID , newData)
+                                    newData = yonghuIDquchong(fields.yonghuID , shujuData)
                                 }
                                 res.send({
                                     'isSucceed': 400,

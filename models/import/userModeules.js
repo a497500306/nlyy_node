@@ -6,7 +6,7 @@ autoIncrement.initialize(mongoose.connection);   //初始化
 //schema
 var userModeulesSchema = new mongoose.Schema({
     "id" : String,
-    "StudyID" : String,    //研究编号
+    "StudyID" : {type : String , index : true },    //研究编号
     "Users" : Object, //添加的医生
     "Subjects" : Object, //受试者
     "CRFModeuType" : Number,//0位模块,1位页码

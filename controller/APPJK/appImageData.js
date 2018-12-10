@@ -848,6 +848,7 @@ exports.getRevokedAddQuestion = function (req, res, next) {
 exports.getAddQuestion = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
+        var uuid = generateUUID();
             if (fields.isReply == true){//回复
                 if (fields.GroupUsers == null || fields.GroupUsers.length == 0){
                     questionPatient.create({
@@ -860,8 +861,8 @@ exports.getAddQuestion = function (req, res, next) {
                         "Date": new Date(),
                         "GroupUsers" : fields.GroupUsers,
                         "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                        "messageIDNum" : fields.messageIDNum,
-                        "markType" : fields.markType
+                        "messageIDNum" : uuid,
+                        "markType" : 0
                     }, function (err, userData) {
                         questionPatient.create({
                             "StudyID": fields.StudyID,    //研究编号
@@ -873,8 +874,8 @@ exports.getAddQuestion = function (req, res, next) {
                             "Date": new Date(),
                             "GroupUsers" : fields.GroupUsers,
                             "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                            "messageIDNum" : fields.messageIDNum,
-                            "markType" : fields.markType
+                            "messageIDNum" : uuid,
+                            "markType" : 0
                         }, function (err, userData) {
                             // var string = fields.StudyID + '研究收到一条消息：' +  fields.text
                             // //发送通知
@@ -913,8 +914,8 @@ exports.getAddQuestion = function (req, res, next) {
                                 "Date": new Date(),
                                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
                                 "GroupUsers" : fields.GroupUsers,
-                                "messageIDNum" : fields.messageIDNum,
-                                "markType" : fields.markType
+                                "messageIDNum" : uuid,
+                                "markType" : 0
                             }, function (err, userData) {
                                 var string = fields.StudyID + '研究收到一条消息：' +  fields.text
                                 //发送通知
@@ -934,8 +935,8 @@ exports.getAddQuestion = function (req, res, next) {
                 "Users": fields.Users, //质疑的医生
                 "Date": new Date(),
                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                "messageIDNum" : fields.messageIDNum,
-                "markType" : fields.markType
+                "messageIDNum" : uuid,
+                "markType" : 0
             }, function (err, userData) {
                 // if (fields.CRFModeule != null){
                 //     userModeules.update({
@@ -1042,8 +1043,8 @@ exports.getAddQuestion = function (req, res, next) {
                             "Users": array[i], //质疑的医生
                             "Date": new Date(),
                             "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                            "messageIDNum" : fields.messageIDNum,
-                            "markType" : fields.markType
+                            "messageIDNum" : uuid,
+                            "markType" : 0
                         }, function (err, userData) {
                             userModeules.update({
                                 id:fields.CRFModeule.id,
@@ -1184,6 +1185,14 @@ exports.getUserNewsList = function (req, res, next) {
             "StudyID": fields.StudyID,
             "Users.UserMP" : fields.UserMP,
             $or:[]
+        }
+
+        if (fields.users == null || fields.users.length == 0) {
+            res.send({
+                'isSucceed': 400,
+                'data': []
+            });
+            return
         }
         for (var i= 0 ; i < fields.users.length ; i++) {
             json.$or.push({
