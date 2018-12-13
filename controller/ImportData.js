@@ -507,6 +507,7 @@ daochuExcel = function (req, res, conf, name) {
                                 });
                                 return;
                             }else{
+                                //图片状态,0:没有上传图片,1:等待审核,2:正在审核,3:冻结,4:无用的,5:作废,6:质疑中
                                 userModeules.find({
                                     imageUrls : imagedatas[i].imageUrl
                                 },function (err, userModeulesData) {
@@ -520,6 +521,10 @@ daochuExcel = function (req, res, conf, name) {
                                             imageTypeStr = '正在核查';
                                         }else if (userModeulesData[0].imageType == 3){
                                             imageTypeStr = '冻结';
+                                        }else if (userModeulesData[0].imageType == 4){
+                                            imageTypeStr = '无用的';
+                                        }else if (userModeulesData[0].imageType == 5){
+                                            imageTypeStr = '作废';
                                         }else if (userModeulesData[0].imageType == 6){
                                             imageTypeStr = '质疑处理中';
                                         }
