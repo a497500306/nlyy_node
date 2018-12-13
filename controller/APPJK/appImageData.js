@@ -866,8 +866,8 @@ exports.getAddQuestion = function (req, res, next) {
                         "Date": new Date(),
                         "GroupUsers" : fields.GroupUsers,
                         "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                        "messageIDNum" : uuid,
-                        "markType" : 0,
+                        "messageIDNum" : fields.messageIDNum == null ? uuid : fields.messageIDNum,
+                        "markType" : fields.markType == null ? 0 : fields.markType,
                         "serialNumber" : serialNumber
                     }, function (err, userData) {
                         questionPatient.create({
@@ -880,8 +880,8 @@ exports.getAddQuestion = function (req, res, next) {
                             "Date": new Date(),
                             "GroupUsers" : fields.GroupUsers,
                             "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                            "messageIDNum" : uuid,
-                            "markType" : 0,
+                            "messageIDNum" : fields.messageIDNum == null ? uuid : fields.messageIDNum,
+                            "markType" : fields.markType == null ? 0 : fields.markType,
                             "serialNumber" : serialNumber
                         }, function (err, userData) {
                             // var string = fields.StudyID + '研究收到一条消息：' +  fields.text
@@ -922,8 +922,8 @@ exports.getAddQuestion = function (req, res, next) {
                                 "Date": new Date(),
                                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
                                 "GroupUsers" : fields.GroupUsers,
-                                "messageIDNum" : uuid,
-                                "markType" : 0
+                                "messageIDNum" : fields.messageIDNum == null ? uuid : fields.messageIDNum,
+                                "markType" : fields.markType == null ? 0 : fields.markType
                             }, function (err, userData) {
                                 var string = fields.StudyID + '研究收到一条消息：' +  fields.text
                                 //发送通知
@@ -943,8 +943,8 @@ exports.getAddQuestion = function (req, res, next) {
                 "Users": fields.Users, //质疑的医生
                 "Date": new Date(),
                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                "messageIDNum" : uuid,
-                "markType" : 0
+                "messageIDNum" : fields.messageIDNum == null ? uuid : fields.messageIDNum,
+                "markType" : fields.markType == null ? 0 : fields.markType
             }, function (err, userData) {
                 // if (fields.CRFModeule != null){
                 //     userModeules.update({
@@ -1064,8 +1064,8 @@ exports.getAddQuestion = function (req, res, next) {
                                 "Users": array[i], //质疑的医生
                                 "Date": new Date(),
                                 "voiceType": 0,//图片状态,0:未读,1:已读,2:已解决
-                                "messageIDNum" : uuid,
-                                "markType" : 0,
+                                "messageIDNum" : fields.messageIDNum == null ? uuid : fields.messageIDNum,
+                                "markType" : fields.markType == null ? 0 : fields.markType,
                                 "serialNumber" : serialNumber
                             }, function (err, userData) {
                                 userModeules.update({
