@@ -57,6 +57,22 @@ $('#dcyhzhzz').on('click', function () {
         }
     });
 });
+
+$('#dcxxjl').on('click', function () {
+    $.post('node/addDcxxjl',{
+        "id":dataId
+    },function (result) {
+        // if (result.isSucceed == 200){
+        //     $("#daochucuowukuang").html(result.msg);
+        //     $("#daochucuowukuang").fadeIn();
+        //     setTimeout("$(\"#daochucuowukuang\").fadeOut();",3000)
+        // }else if (result.isSucceed == 400){
+        //     $("#daochucuowukuang").fadeOut();
+        //     window.open(window.location.protocol + "//" + window.location.host + '/' + result.ExcelName);
+        // }
+    });
+});
+
 //点击导出图片资料
 $('#dctpzl').on('click', function () {
     $.post('node/addDctpzl',{

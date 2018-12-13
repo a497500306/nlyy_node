@@ -541,6 +541,9 @@ app.post('/node/addDcyysjh',ImportData.addDcyysjh);
 //点击导出用户资料
 app.post('/node/addDctpzl',ImportData.addDctpzl);
 
+// 导出消息记录
+app.post('/node/addDcxxjl',ImportData.addDcxxjl);
+
 /*************APP接口******************/
 //检测新版本
 app.post("/app/getDetectNewVersion",appVersion.appDetectNewVersion);

@@ -14,6 +14,7 @@ var drug = require("../models/import/drug");//导入药物号
 var drugCK = require("../models/import/drugCK");//院内药物号
 var drugWL = require("../models/import/drugWL");//院内药物号
 var adminUser = require("../models/adminUsers");//管理用户
+var questionpatients = require("../models/import/questionPatient");//消息管理
 var users = require("../models/import/users");//用户表
 var addSuccess = require("../models/import/addSuccessPatient");//筛选成功的用户
 var random = require("../models/import/random");//随机号
@@ -87,6 +88,27 @@ exports.addDctpzl = function (req, res, next) {
     ];
     daochuExcel(req, res, conf, 'DCTP')
 }
+
+// 导出消息记录
+exports.addDcxxjl = function(req, res, next) {
+    var conf = {};
+    conf.cols = [
+        {caption:'消息编号', type:'string'},
+        {caption:'研究编号', type:'string'},
+        {caption:'受试者编号', type:'string'},
+        {caption:'编号/模块', type:'string'},
+        {caption:'消息内容', type:'string'},
+        {caption:'发出时间', type:'string'},
+        {caption:'发出用户名', type:'string'},
+        {caption:'发出手机号', type:'string'},
+        {caption:'接收用户名', type:'string'},
+        {caption:'接收手机号', type:'string'},
+        {caption:'已读/未读', type:'string'},
+        {caption:'状态', type:'string'}
+    ];
+    daochuExcel(req, res, conf, 'XXJL')
+}
+
 //点击导出药物资料
 exports.addDcyyywh = function (req, res, next) {
     var conf = {};
@@ -516,6 +538,80 @@ daochuExcel = function (req, res, conf, name) {
                                     iterator(i + 1);
                                 })
                             }
+                        })(0);
+                    })
+                })
+            }else if (name == "XXJL") {
+                /*
+        {caption:'消息编号', type:'string'},
+        {caption:'研究编号', type:'string'},
+        {caption:'受试者编号', type:'string'},
+        {caption:'编号/模块', type:'string'},
+        {caption:'消息内容', type:'string'},
+        {caption:'发出时间', type:'string'},
+        {caption:'发出用户名', type:'string'},
+        {caption:'发出手机号', type:'string'},
+        {caption:'接收用户名', type:'string'},
+        {caption:'接收手机号', type:'string'},
+        {caption:'已读/未读', type:'string'},
+        {caption:'状态', type:'string'}
+                * */
+                study.find({"id" : fields.id}, function (err, studyPersons) {
+                    questionpatients.find({"StudyID": studyPersons[0].StudyID},function (err, datas) {
+                        var dataArray = [];
+                        (function iterator(i) {
+                            if (i == datas.length) {
+                                conf.rows = dataArray;
+                                var result = excelPort.execute(conf);
+
+
+                                var ttt = sd.format(new Date(), 'YYYYMMDDHHmmss');
+                                var ran = parseInt(Math.random() * 89999 + 10000);
+
+                                var uploadDir = 'public/upload/pay/';
+                                var filePath = uploadDir + ran + ttt + name + ".xlsx";
+
+                                fs.writeFile(filePath, result, 'binary', function (err) {
+                                    if (err) {
+                                        res.send({
+                                            'isSucceed': 200,
+                                            'msg': '导出错误,请联系开发人员'
+                                        });
+                                    } else {
+                                        res.send({
+                                            'isSucceed': 400,
+                                            'ExcelName': ran + ttt + name + ".xlsx"
+                                        });
+                                    }
+                                });
+                                return;
+                            }
+                            // 0:未解决,1:已解决,2:不需要解决,3:取消标记
+                            var markTypeStr = ""
+                            if (datas[i].markType == 0) {
+                                markTypeStr = "未解决"
+                            }else if (datas[i].markType == 1) {
+                                markTypeStr = "已解决"
+                            }else if (datas[i].markType == 2) {
+                                markTypeStr = "不需要解决"
+                            }else if (datas[i].markType == 3) {
+                                markTypeStr = "取消标记"
+                            }
+                            dataArray.push([
+                                datas[i].serialNumber == null ? "" : datas[i].serialNumber,
+                                datas[i].StudyID == null ? "" : datas[i].StudyID,
+                                datas[i].Subjects == null ? "" : (datas[i].Subjects.persons == null ? "" : (datas[i].Subjects.persons.USubjID == null ? datas[i].Subjects.persons.USubjectID : datas[i].Subjects.persons.USubjID)),
+                                datas[i].CRFModeule == null ? "" : datas[i].CRFModeule.CRFModeulesName,
+                                datas[i].text == null ? "" : datas[i].text,
+                                datas[i].Date == null ? "" : datas[i].Date,
+                                datas[i].addUsers == null ? "" : datas[i].addUsers.UserNam,
+                                datas[i].addUsers == null ? "" : datas[i].addUsers.UserMP,
+                                datas[i].Users == null ? "" : datas[i].Users.UserNam,
+                                datas[i].Users == null ? "" : datas[i].Users.UserMP,
+                                datas[i].voiceType == 0 ? "未读" : "已读",
+                                markTypeStr
+                            ])
+                            iterator(i + 1);
                         })(0);
                     })
                 })
