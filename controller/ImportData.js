@@ -600,7 +600,7 @@ daochuExcel = function (req, res, conf, name) {
                             dataArray.push([
                                 datas[i].serialNumber == null ? "" : datas[i].serialNumber,
                                 datas[i].StudyID == null ? "" : datas[i].StudyID,
-                                datas[i].Subjects == null ? "" : (datas[i].Subjects.persons == null ? "" : (datas[i].Subjects.persons.USubjID == null ? datas[i].Subjects.persons.USubjectID : datas[i].Subjects.persons.USubjID)),
+                                datas[i].CRFModeule == null ? "" : (datas[i].CRFModeule.Subjects.persons == null ? "" : (datas[i].CRFModeule.Subjects.persons.USubjID == null ? datas[i].CRFModeule.Subjects.persons.USubjectID : datas[i].CRFModeule.Subjects.persons.USubjID)),
                                 datas[i].CRFModeule == null ? "" : datas[i].CRFModeule.CRFModeulesName,
                                 datas[i].text == null ? "" : datas[i].text,
                                 datas[i].Date == null ? "" : datas[i].Date,

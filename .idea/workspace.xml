@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="80ed4ae2-cc87-4dee-82b2-35bbc6d64422" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/controller/ImportData.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/ImportData.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/public/js/mshome.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/mshome.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/mshome.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/mshome.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/selectStudy.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/selectStudy.ejs" afterDir="false" />
     </list>
     <ignored path="nlyy_node.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,31 +25,31 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="ejs" value="8" />
-          <entry key="js" value="727" />
+          <entry key="js" value="769" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="EJS" value="8" />
-          <entry key="JavaScript" value="727" />
+          <entry key="JavaScript" value="769" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
+          <entry key="project.closed" value="2" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.opened" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="ejs" value="2" />
+          <entry key="ejs" value="3" />
           <entry key="js" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="EJS" value="2" />
+          <entry key="EJS" value="3" />
           <entry key="JavaScript" value="8" />
         </counts>
       </usages-collector>
@@ -66,8 +63,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="382">
-              <caret line="541" column="44" lean-forward="true" selection-start-line="541" selection-start-column="44" selection-end-line="541" selection-end-column="44" />
+            <state relative-caret-position="182">
+              <caret line="544" column="19" selection-start-line="544" selection-start-column="19" selection-end-line="544" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/views/mshome.ejs">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="440">
+              <caret line="179" column="76" selection-start-line="179" selection-start-column="70" selection-end-line="179" selection-end-column="76" />
             </state>
           </provider>
         </entry>
@@ -75,8 +81,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controller/ImportData.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="202">
-              <caret line="16" column="64" selection-start-line="16" selection-start-column="64" selection-end-line="16" selection-end-column="64" />
+            <state relative-caret-position="220">
+              <caret line="598" column="29" selection-start-line="598" selection-start-column="29" selection-end-line="598" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -84,8 +90,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/models/import/questionPatient.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="57" lean-forward="true" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="57" />
+            <state relative-caret-position="278">
+              <caret line="19" column="17" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -93,8 +99,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controller/APPJK/appImageData.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="192" column="34" selection-start-line="192" selection-start-column="34" selection-end-line="192" selection-end-column="34" />
+            <state relative-caret-position="402">
+              <caret line="193" column="34" selection-start-line="193" selection-start-column="34" selection-end-line="193" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -129,8 +135,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/js/mshome.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="409">
-              <caret line="61" column="26" selection-start-line="61" selection-start-column="12" selection-end-line="61" selection-end-column="26" />
+            <state relative-caret-position="338">
+              <caret line="78" column="19" lean-forward="true" selection-start-line="78" selection-start-column="19" selection-end-line="78" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -146,9 +152,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>generateUUID</find>
-      <find>imageType</find>
-      <find>受试者</find>
       <find>res.send</find>
       <find>/app/getNewsList</find>
       <find>getUserNewsList</find>
@@ -173,9 +176,12 @@
       <find>USubjID</find>
       <find>USubjectID</find>
       <find>CRFModeulesName</find>
-      <find>node/addD</find>
       <find>questionpatients</find>
+      <find>serialNumber</find>
       <find>fs.writeFile(fil</find>
+      <find>导出消息</find>
+      <find>dcxxjl</find>
+      <find>node/addD</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/file</dir>
@@ -222,9 +228,9 @@
         <option value="$PROJECT_DIR$/controller/APPJK/appSSZSJ.js" />
         <option value="$PROJECT_DIR$/controller/APPJK/appImageData.js" />
         <option value="$PROJECT_DIR$/views/selectStudy.ejs" />
-        <option value="$PROJECT_DIR$/public/js/mshome.js" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/views/mshome.ejs" />
+        <option value="$PROJECT_DIR$/public/js/mshome.js" />
         <option value="$PROJECT_DIR$/controller/ImportData.js" />
       </list>
     </option>
@@ -378,12 +384,12 @@
       <workItem from="1543826464555" duration="14598000" />
       <workItem from="1544148308608" duration="2434000" />
       <workItem from="1544158995275" duration="1816000" />
-      <workItem from="1544685122468" duration="1963000" />
+      <workItem from="1544685122468" duration="3387000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="179984000" />
+    <option name="totallyTimeSpent" value="181408000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-280" y="-1080" width="1920" height="1080" extended-state="0" />
@@ -395,7 +401,7 @@
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32970297" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32574257" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32574257" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3831683" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -433,12 +439,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>319</line>
+          <line>320</line>
           <option name="timeStamp" value="10" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>334</line>
+          <line>335</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -508,47 +514,47 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>1036</line>
+          <line>1058</line>
           <option name="timeStamp" value="132" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>851</line>
+          <line>852</line>
           <option name="timeStamp" value="135" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>321</line>
+          <line>322</line>
           <option name="timeStamp" value="138" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>1072</line>
+          <line>1095</line>
           <option name="timeStamp" value="140" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>898</line>
+          <line>906</line>
           <option name="timeStamp" value="141" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>852</line>
+          <line>853</line>
           <option name="timeStamp" value="142" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>928</line>
+          <line>936</line>
           <option name="timeStamp" value="143" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>15</line>
+          <line>16</line>
           <option name="timeStamp" value="144" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>16</line>
+          <line>17</line>
           <option name="timeStamp" value="145" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -578,12 +584,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>1224</line>
+          <line>1247</line>
           <option name="timeStamp" value="154" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appImageData.js</url>
-          <line>1183</line>
+          <line>1206</line>
           <option name="timeStamp" value="155" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -809,20 +815,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/mshome.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="409">
-          <caret line="61" column="26" selection-start-line="61" selection-start-column="12" selection-end-line="61" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="541" column="44" lean-forward="true" selection-start-line="541" selection-start-column="44" selection-end-line="541" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/views/selectStudy.ejs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="182">
@@ -851,13 +843,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/mshome.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="481">
-          <caret line="179" column="93" selection-start-line="179" selection-start-column="93" selection-end-line="179" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/import/userModeules.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -867,22 +852,43 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controller/APPJK/appImageData.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="192" column="34" selection-start-line="192" selection-start-column="34" selection-end-line="192" selection-end-column="34" />
+        <state relative-caret-position="402">
+          <caret line="193" column="34" selection-start-line="193" selection-start-column="34" selection-end-line="193" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/import/questionPatient.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="57" lean-forward="true" selection-start-line="17" selection-start-column="31" selection-end-line="17" selection-end-column="57" />
+        <state relative-caret-position="278">
+          <caret line="19" column="17" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/mshome.ejs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="179" column="76" selection-start-line="179" selection-start-column="70" selection-end-line="179" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="544" column="19" selection-start-line="544" selection-start-column="19" selection-end-line="544" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/mshome.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="78" column="19" lean-forward="true" selection-start-line="78" selection-start-column="19" selection-end-line="78" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/controller/ImportData.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="16" column="64" selection-start-line="16" selection-start-column="64" selection-end-line="16" selection-end-column="64" />
+        <state relative-caret-position="220">
+          <caret line="598" column="29" selection-start-line="598" selection-start-column="29" selection-end-line="598" selection-end-column="29" />
         </state>
       </provider>
     </entry>
