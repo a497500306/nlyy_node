@@ -28,6 +28,7 @@ var usersSchema = new mongoose.Schema({
     "UserMP"  : String,    //用户手机号
     "platform"  : String,    //ios和安卓
     "registrationId"  : String,    //推送id
+    "isSynchronizeMessage" : Boolean, //是否同步了消息
     "Date" : Date, //导入时间
 });
 usersSchema.plugin(autoIncrement.plugin, {

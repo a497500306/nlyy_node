@@ -6,6 +6,8 @@ var study = require('../../models/import/study');
 var researchParameter = require('../../models/import/researchParameter');
 var ExcludeStandard = require('../../models/import/ExcludeStandard');
 var ApplicationAndAudit = require('../../models/import/ApplicationAndAudit');
+var questionPatient = require('../../models/import/questionPatient');
+var uuid = require('uuid/v1');
 
 TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
@@ -56,6 +58,8 @@ exports.appLogin = function (req, res, next) {
                             return;
                         }
                     }
+                    //判断用户是否同步了数据
+                    synchronizeMessage(persons[i])
                     study.find({
                         StudyID:persons[i].StudyID
                     },function (err, studyData) {
@@ -75,6 +79,84 @@ exports.appLogin = function (req, res, next) {
         })
     })
 }
+
+/*同步数据*/
+function synchronizeMessage(userData) {
+    if (userData.isSynchronizeMessage === true) {
+        return;
+    }
+    //判断这个研究是否有相同用户
+    users.find({
+        StudyID : userData.StudyID,
+        UserSite : userData.UserSite,
+        UserFun : userData.UserFun,
+        UserAcc : {$ne : userData.UserAcc},
+        UserMP : {$ne : userData.UserMP},
+        isSynchronizeMessage : {$ne : true}
+    },function (err, usersPersons) {
+        if (usersPersons.length > 0) {
+            users.update({
+                id : userData.id,
+                isSynchronizeMessage : {$ne : true}
+            },{
+                $set:{isSynchronizeMessage : true}
+            },{multi:true})
+            var uuid2 = uuid();
+            questionPatient.find({
+                "addUsers.StudyID" : usersPersons[0].StudyID,
+                "addUsers.UserSite" : usersPersons[0].UserSite,
+                "addUsers.UserFun" : usersPersons[0].UserFun,
+                "addUsers.UserAcc" : usersPersons[0].UserAcc,
+                "addUsers.UserMP" : usersPersons[0].UserMP
+            },function (err, questionDatas) {
+                if (questionDatas.length > 0){
+                    for (var i = 0; i < questionDatas.length; i++) {
+                        questionPatient.create({
+                            StudyID : questionDatas[i].StudyID,
+                            CRFModeule : questionDatas[i].CRFModeule,
+                            voiceUrls : questionDatas[i].voiceUrls,
+                            text : questionDatas[i].text,
+                            addUsers : userData,
+                            Users : questionDatas[i].Users,
+                            Date : questionDatas[i].Date,
+                            voiceType : questionDatas[i].voiceType,
+                            messageIDNum : uuid2,
+                            markType : questionDatas[i].markType,
+                            GroupUsers : questionDatas[i].GroupUsers
+                        })
+                    }
+                }
+            })
+            var uuid1 = uuid();
+            questionPatient.find({
+                "Users.StudyID" : usersPersons[0].StudyID,
+                "Users.UserSite" : usersPersons[0].UserSite,
+                "Users.UserFun" : usersPersons[0].UserFun,
+                "Users.UserAcc" : usersPersons[0].UserAcc,
+                "Users.UserMP" : usersPersons[0].UserMP
+            },function (err, questionDatas) {
+                if (questionDatas.length > 0){
+                    for (var i = 0; i < questionDatas.length; i++) {
+                        questionPatient.create({
+                            StudyID : questionDatas[i].StudyID,
+                            CRFModeule : questionDatas[i].CRFModeule,
+                            voiceUrls : questionDatas[i].voiceUrls,
+                            text : questionDatas[i].text,
+                            Users : userData,
+                            addUsers : questionDatas[i].Users,
+                            Date : questionDatas[i].Date,
+                            voiceType : questionDatas[i].voiceType,
+                            messageIDNum : uuid1,
+                            markType : questionDatas[i].markType,
+                            GroupUsers : questionDatas[i].GroupUsers
+                        })
+                    }
+                }
+            })
+        }
+    })
+}
+
 //登录
 exports.appStudyAndResearchParameter = function (req, res, next) {
     //得到用户填写的东西
