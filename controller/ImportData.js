@@ -606,7 +606,7 @@ daochuExcel = function (req, res, conf, name) {
                                 datas[i].serialNumber == null ? "" : datas[i].serialNumber,
                                 datas[i].StudyID == null ? "" : datas[i].StudyID,
                                 datas[i].CRFModeule == null ? "" : (datas[i].CRFModeule.Subjects.persons == null ? "" : (datas[i].CRFModeule.Subjects.persons.USubjID == null ? datas[i].CRFModeule.Subjects.persons.USubjectID : datas[i].CRFModeule.Subjects.persons.USubjID)),
-                                datas[i].CRFModeule == null ? "" : datas[i].CRFModeule.CRFModeulesName,
+                                datas[i].CRFModeule == null ? "" : datas[i].CRFModeule.CRFModeulesName + (datas[i].CRFModeule.CRFModeulesNum + 1),
                                 datas[i].text == null ? "" : datas[i].text,
                                 datas[i].Date == null ? "" : datas[i].Date,
                                 datas[i].addUsers == null ? "" : datas[i].addUsers.UserNam,

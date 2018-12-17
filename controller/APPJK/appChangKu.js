@@ -2389,7 +2389,7 @@ exports.getSiteDrugData = function (req, res, next) {
                                                                     drugCK.find({
                                                                         UsedCoreId : fields.UsedCoreId,
                                                                         StudyID : fields.StudyID,
-                                                                        isRecycling: 1
+                                                                        isDestroy: 1
                                                                     },function (err, persons){
                                                                         data.YXHYWL = persons.length
                                                                         res.send({

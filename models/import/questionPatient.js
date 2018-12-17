@@ -18,6 +18,7 @@ var questionPatientSchema = new mongoose.Schema({
     "markType" : Number,//标记状态,0:未解决,1:已解决,2:不需要解决,3:取消标记
     "messageIDNum" : String,//消息识别号,用来记录是不是同一串消息,
     "serialNumber" : String,//流水号 研究编号+受试者编号+1
+    "isSynchronizeMessage" : Boolean,//是否为同步后的数据
 });
 questionPatientSchema.plugin(autoIncrement.plugin, {
     model: 'Books',

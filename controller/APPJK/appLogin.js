@@ -107,7 +107,8 @@ function synchronizeMessage(userData) {
                 "addUsers.UserSite" : usersPersons[0].UserSite,
                 "addUsers.UserFun" : usersPersons[0].UserFun,
                 "addUsers.UserAcc" : usersPersons[0].UserAcc,
-                "addUsers.UserMP" : usersPersons[0].UserMP
+                "addUsers.UserMP" : usersPersons[0].UserMP,
+                "isSynchronizeMessage" : {$ne : true}
             },function (err, questionDatas) {
                 if (questionDatas.length > 0){
                     for (var i = 0; i < questionDatas.length; i++) {
@@ -122,7 +123,8 @@ function synchronizeMessage(userData) {
                             voiceType : questionDatas[i].voiceType,
                             messageIDNum : uuid2,
                             markType : questionDatas[i].markType,
-                            GroupUsers : questionDatas[i].GroupUsers
+                            GroupUsers : questionDatas[i].GroupUsers,
+                            isSynchronizeMessage : true
                         })
                     }
                 }
@@ -133,7 +135,8 @@ function synchronizeMessage(userData) {
                 "Users.UserSite" : usersPersons[0].UserSite,
                 "Users.UserFun" : usersPersons[0].UserFun,
                 "Users.UserAcc" : usersPersons[0].UserAcc,
-                "Users.UserMP" : usersPersons[0].UserMP
+                "Users.UserMP" : usersPersons[0].UserMP,
+                "isSynchronizeMessage" : {$ne : true}
             },function (err, questionDatas) {
                 if (questionDatas.length > 0){
                     for (var i = 0; i < questionDatas.length; i++) {
@@ -148,7 +151,8 @@ function synchronizeMessage(userData) {
                             voiceType : questionDatas[i].voiceType,
                             messageIDNum : uuid1,
                             markType : questionDatas[i].markType,
-                            GroupUsers : questionDatas[i].GroupUsers
+                            GroupUsers : questionDatas[i].GroupUsers,
+                            isSynchronizeMessage : true
                         })
                     }
                 }
