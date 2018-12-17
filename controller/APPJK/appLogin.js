@@ -95,21 +95,28 @@ function synchronizeMessage(userData) {
         isSynchronizeMessage : {$ne : true}
     },function (err, usersPersons) {
         if (usersPersons.length > 0) {
-            users.update({
-                id : userData.id,
-                isSynchronizeMessage : {$ne : true}
-            },{
+            var json = {
+                StudyID : userData.StudyID,
+                UserSite : userData.UserSite,
+                UserFun : userData.UserFun,
+                UserAcc : userData.UserAcc,
+                UserMP : userData.UserMP
+            }
+            users.update(json,{
                 $set:{isSynchronizeMessage : true}
-            },{multi:true})
+            },{multi:true},function (err, data) {
+                console.log("123")
+            })
             var uuid2 = uuid();
-            questionPatient.find({
+            var addUsersJson = {
                 "addUsers.StudyID" : usersPersons[0].StudyID,
                 "addUsers.UserSite" : usersPersons[0].UserSite,
                 "addUsers.UserFun" : usersPersons[0].UserFun,
                 "addUsers.UserAcc" : usersPersons[0].UserAcc,
                 "addUsers.UserMP" : usersPersons[0].UserMP,
                 "isSynchronizeMessage" : {$ne : true}
-            },function (err, questionDatas) {
+            }
+            questionPatient.find(addUsersJson,function (err, questionDatas) {
                 if (questionDatas.length > 0){
                     for (var i = 0; i < questionDatas.length; i++) {
                         questionPatient.create({
@@ -130,14 +137,15 @@ function synchronizeMessage(userData) {
                 }
             })
             var uuid1 = uuid();
-            questionPatient.find({
+            var UsersJson = {
                 "Users.StudyID" : usersPersons[0].StudyID,
                 "Users.UserSite" : usersPersons[0].UserSite,
                 "Users.UserFun" : usersPersons[0].UserFun,
                 "Users.UserAcc" : usersPersons[0].UserAcc,
                 "Users.UserMP" : usersPersons[0].UserMP,
                 "isSynchronizeMessage" : {$ne : true}
-            },function (err, questionDatas) {
+            }
+            questionPatient.find(UsersJson,function (err, questionDatas) {
                 if (questionDatas.length > 0){
                     for (var i = 0; i < questionDatas.length; i++) {
                         questionPatient.create({
