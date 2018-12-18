@@ -2258,8 +2258,6 @@ exports.getSiteDrugData = function (req, res, next) {
             DDrugNumAYN: {$ne:0},
             DDrugDMNumYN: {$ne:1},
             DrugExpryDTC : {$gte:new Date()},
-            isDestroy:{$ne:1},
-            isRecycling:{$ne:1},
             $or:[
                 {DDrugUseAYN:0},
                 {DDrugUseAYN:null}
@@ -2278,8 +2276,6 @@ exports.getSiteDrugData = function (req, res, next) {
                     drugCK.find({
                         UsedCoreId : fields.UsedCoreId,
                         StudyID : fields.StudyID,
-                        isDestroy:{$ne:1},
-                        isRecycling:{$ne:1},
                         },function (err, persons){
                         if (err != null){
                             console.log(err)
@@ -2296,8 +2292,6 @@ exports.getSiteDrugData = function (req, res, next) {
                                 UsedCoreId : fields.UsedCoreId,
                                 StudyID : fields.StudyID,
                                 DDrugNumAYN: 1,
-                                isDestroy:{$ne:1},
-                                isRecycling:{$ne:1},
                             },function (err, persons){
                                 if (err != null){
                                     console.log(err)
@@ -2314,8 +2308,6 @@ exports.getSiteDrugData = function (req, res, next) {
                                         UsedCoreId : fields.UsedCoreId,
                                         StudyID : fields.StudyID,
                                         DDrugUseAYN: 1,
-                                        isDestroy:{$ne:1},
-                                        isRecycling:{$ne:1},
                                     },function (err, persons){
                                         if (err != null){
                                             console.log(err)
@@ -2332,8 +2324,6 @@ exports.getSiteDrugData = function (req, res, next) {
                                                 UsedCoreId : fields.UsedCoreId,
                                                 StudyID : fields.StudyID,
                                                 DDrugDMNumYN: 1,
-                                                isDestroy:{$ne:1},
-                                                isRecycling:{$ne:1},
                                             },function (err, drugCKPersons){
                                                 if (err != null){
                                                     console.log(err)
@@ -2348,8 +2338,6 @@ exports.getSiteDrugData = function (req, res, next) {
                                                     addSuccessPatient.find({
                                                         SiteID : fields.UsedCoreId,
                                                         StudyID : fields.StudyID,
-                                                        isDestroy:{$ne:1},
-                                                        isRecycling:{$ne:1},
                                                     },function (err, persons){
                                                         var sss = 0
                                                         for (var i = 0 ; i < persons.length ; i++){
