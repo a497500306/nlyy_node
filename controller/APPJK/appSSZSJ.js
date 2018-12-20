@@ -200,7 +200,8 @@ exports.getAddBasicsData = function (req, res, next) {
                                                             for (var j = newPhone.length ; j < 5 ; j++){
                                                                 newPhone = "0" + newPhone;
                                                             }
-                                                            newPhone = subjId + newPhone
+                                                            // newPhone = subjId + newPhone
+                                                            newPhone = subjId + "12345"
                                                             updateJons.SubjMP = newPhone
                                                             site.update({
                                                                 "StudyID" : fields.StudyID,
@@ -415,7 +416,8 @@ exports.getAddSuccessBasicsData = function (req, res, next) {
                                                             for (var j = newPhone.length ; j < 5 ; j++){
                                                                 newPhone = "0" + newPhone;
                                                             }
-                                                            newPhone = subjId + newPhone
+                                                            // newPhone = subjId + newPhone
+                                                            newPhone = subjId + "12345"
                                                             updateJons.SubjMP = newPhone
                                                             site.update({
                                                                 "StudyID" : fields.StudyID,

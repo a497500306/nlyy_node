@@ -116,6 +116,8 @@ function synchronizeMessage(userData) {
                 "addUsers.UserMP" : usersPersons[0].UserMP,
                 "isSynchronizeMessage" : {$ne : true}
             }
+            var newUsers = usersPersons[0];
+            newUsers.UserMP = userData.UserMP;
             questionPatient.find(addUsersJson,function (err, questionDatas) {
                 if (questionDatas.length > 0){
                     for (var i = 0; i < questionDatas.length; i++) {
@@ -124,7 +126,7 @@ function synchronizeMessage(userData) {
                             CRFModeule : questionDatas[i].CRFModeule,
                             voiceUrls : questionDatas[i].voiceUrls,
                             text : questionDatas[i].text,
-                            addUsers : userData,
+                            addUsers : newUsers,
                             Users : questionDatas[i].Users,
                             Date : questionDatas[i].Date,
                             voiceType : questionDatas[i].voiceType,
@@ -145,6 +147,8 @@ function synchronizeMessage(userData) {
                 "Users.UserMP" : usersPersons[0].UserMP,
                 "isSynchronizeMessage" : {$ne : true}
             }
+            var newUsers1 = usersPersons[0];
+            newUsers1.UserMP = userData.UserMP;
             questionPatient.find(UsersJson,function (err, questionDatas) {
                 if (questionDatas.length > 0){
                     for (var i = 0; i < questionDatas.length; i++) {
@@ -153,7 +157,7 @@ function synchronizeMessage(userData) {
                             CRFModeule : questionDatas[i].CRFModeule,
                             voiceUrls : questionDatas[i].voiceUrls,
                             text : questionDatas[i].text,
-                            Users : userData,
+                            Users : newUsers1,
                             addUsers : questionDatas[i].Users,
                             Date : questionDatas[i].Date,
                             voiceType : questionDatas[i].voiceType,
