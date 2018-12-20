@@ -107,37 +107,36 @@ function synchronizeMessage(userData) {
             },{multi:true},function (err, data) {
                 console.log("123")
             })
-            var uuid2 = uuid();
-            var addUsersJson = {
-                "addUsers.StudyID" : usersPersons[0].StudyID,
-                "addUsers.UserSite" : usersPersons[0].UserSite,
-                "addUsers.UserFun" : usersPersons[0].UserFun,
-                "addUsers.UserAcc" : usersPersons[0].UserAcc,
-                "addUsers.UserMP" : usersPersons[0].UserMP,
-                "isSynchronizeMessage" : {$ne : true}
-            }
-            var newUsers = usersPersons[0];
-            newUsers.UserMP = userData.UserMP;
-            questionPatient.find(addUsersJson,function (err, questionDatas) {
-                if (questionDatas.length > 0){
-                    for (var i = 0; i < questionDatas.length; i++) {
-                        questionPatient.create({
-                            StudyID : questionDatas[i].StudyID,
-                            CRFModeule : questionDatas[i].CRFModeule,
-                            voiceUrls : questionDatas[i].voiceUrls,
-                            text : questionDatas[i].text,
-                            addUsers : newUsers,
-                            Users : questionDatas[i].Users,
-                            Date : questionDatas[i].Date,
-                            voiceType : questionDatas[i].voiceType,
-                            messageIDNum : uuid2,
-                            markType : questionDatas[i].markType,
-                            GroupUsers : questionDatas[i].GroupUsers,
-                            isSynchronizeMessage : true
-                        })
-                    }
-                }
-            })
+            // var uuid2 = uuid();
+            // var addUsersJson = {
+            //     "addUsers.StudyID" : usersPersons[0].StudyID,
+            //     "addUsers.UserSite" : usersPersons[0].UserSite,
+            //     "addUsers.UserFun" : usersPersons[0].UserFun,
+            //     "addUsers.UserAcc" : usersPersons[0].UserAcc,
+            //     "addUsers.UserMP" : usersPersons[0].UserMP,
+            //     "isSynchronizeMessage" : {$ne : true}
+            // }
+            // questionPatient.find(addUsersJson,function (err, questionDatas) {
+            //     if (questionDatas.length > 0){
+            //         for (var i = 0; i < questionDatas.length; i++) {
+            //             questionPatient.create({
+            //                 StudyID : questionDatas[i].StudyID,
+            //                 CRFModeule : questionDatas[i].CRFModeule,
+            //                 voiceUrls : questionDatas[i].voiceUrls,
+            //                 text : questionDatas[i].text,
+            //                 addUsers : userData,
+            //                 Users : questionDatas[i].Users,
+            //                 Date : questionDatas[i].Date,
+            //                 voiceType : questionDatas[i].voiceType,
+            //                 messageIDNum : uuid2,
+            //                 markType : questionDatas[i].markType,
+            //                 GroupUsers : questionDatas[i].GroupUsers,
+            //                 isSynchronizeMessage : true,
+            //                 Synchronize : usersPersons[0]
+            //             })
+            //         }
+            //     }
+            // })
             var uuid1 = uuid();
             var UsersJson = {
                 "Users.StudyID" : usersPersons[0].StudyID,
@@ -147,8 +146,6 @@ function synchronizeMessage(userData) {
                 "Users.UserMP" : usersPersons[0].UserMP,
                 "isSynchronizeMessage" : {$ne : true}
             }
-            var newUsers1 = usersPersons[0];
-            newUsers1.UserMP = userData.UserMP;
             questionPatient.find(UsersJson,function (err, questionDatas) {
                 if (questionDatas.length > 0){
                     for (var i = 0; i < questionDatas.length; i++) {
@@ -157,14 +154,15 @@ function synchronizeMessage(userData) {
                             CRFModeule : questionDatas[i].CRFModeule,
                             voiceUrls : questionDatas[i].voiceUrls,
                             text : questionDatas[i].text,
-                            Users : newUsers1,
+                            Users : userData,
                             addUsers : questionDatas[i].Users,
                             Date : questionDatas[i].Date,
                             voiceType : questionDatas[i].voiceType,
                             messageIDNum : uuid1,
                             markType : questionDatas[i].markType,
                             GroupUsers : questionDatas[i].GroupUsers,
-                            isSynchronizeMessage : true
+                            isSynchronizeMessage : true,
+                            SynchronizeUser : usersPersons[0]
                         })
                     }
                 }

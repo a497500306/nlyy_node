@@ -1172,28 +1172,51 @@ exports.getQuestionRevoked = function (req, res, next) {
 exports.getNewsList = function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
+        var newData = []
         questionPatient.find({
             "StudyID": fields.StudyID,
             "Users.UserMP" : fields.UserMP
         }).sort({Date : -1}).exec(function (err, data) {
             (function iterator(i){
                 if (i == data.length){
-                    res.send({
-                        'isSucceed': 400,
-                        'data': data
-                    });
-                    return
-                }
-                if (data[i].CRFModeule != null) {
-                    userModeules.find({"id" : data[i].CRFModeule.id},function (err, userModeulesData) {
-                        if (userModeulesData.length > 0){
-                            data[i].CRFModeule = userModeulesData[0]
-                        }
-                        iterator(i + 1);
+                    newData = data;
+                    questionPatient.find({
+                        "StudyID": fields.StudyID,
+                        "SynchronizeUser.UserMP" : fields.UserMP
+                    }).sort({Date : -1}).exec(function (err, data) {
+                        (function iterator(j){
+                            if (j == data.length){
+                                newData = newData.concat(data)
+                                res.send({
+                                    'isSucceed': 400,
+                                    'data': newData
+                                });
+                                return
+                            }
+                            if (data[j].CRFModeule != null) {
+                                userModeules.find({"id" : data[j].CRFModeule.id},function (err, userModeulesData) {
+                                    if (userModeulesData.length > 0){
+                                        data[j].CRFModeule = userModeulesData[0]
+                                    }
+                                    iterator(j + 1);
+                                })
+                            }else{
+                                iterator(j + 1);
+                            }
+                        })(0);
                     })
                 }else{
+                    if (data[i].CRFModeule != null) {
+                        userModeules.find({"id" : data[i].CRFModeule.id},function (err, userModeulesData) {
+                            if (userModeulesData.length > 0){
+                                data[i].CRFModeule = userModeulesData[0]
+                            }
+                            iterator(i + 1);
+                        })
+                    }else{
 
-                    iterator(i + 1);
+                        iterator(i + 1);
+                    }
                 }
             })(0);
         })

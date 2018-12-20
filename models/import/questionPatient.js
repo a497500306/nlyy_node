@@ -9,6 +9,7 @@ var questionPatientSchema = new mongoose.Schema({
     "StudyID" : String,    //研究编号
     "addUsers" : Object, //添加这条数据的医生
     "Users" : Object, //质疑的医生
+    "SynchronizeUser" : Object, //同步的医生
     "CRFModeule" : Object,//研究数据
     "GroupUsers" : Array,//群成员
     "Date" : Date,
