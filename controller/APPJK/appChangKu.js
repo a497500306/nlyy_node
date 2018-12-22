@@ -1889,20 +1889,18 @@ exports.getCancelSelectedDestroy = function (req, res, next) {
                             isDestroy: 0
                         }
                     }, {multi:true},function () {
-                        if (persons[0].isDestroy != 1){
-                            //修改物流信息
-                            drugWL.update({
-                                'StudyID' : persons[0].StudyID,
-                                'DrugNum' : persons[0].DrugNum
-                            },{
-                                $push : {
-                                    'drugStrs' : '撤回销毁',
-                                    'drugDate' : new Date()
-                                } ,
-                            },{multi:true},function () {
-                                console.log("修改成功");
-                            })
-                        }
+                        //修改物流信息
+                        drugWL.update({
+                            'StudyID' : persons[0].StudyID,
+                            'DrugNum' : persons[0].DrugNum
+                        },{
+                            $push : {
+                                'drugStrs' : '撤回销毁',
+                                'drugDate' : new Date()
+                            } ,
+                        },{multi:true},function () {
+                            console.log("修改成功");
+                        })
                         iterator(i+1)
                     })
                 })

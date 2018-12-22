@@ -162,7 +162,8 @@ function synchronizeMessage(userData) {
                             markType : questionDatas[i].markType,
                             GroupUsers : questionDatas[i].GroupUsers,
                             isSynchronizeMessage : true,
-                            SynchronizeUser : usersPersons[0]
+                            SynchronizeUser : usersPersons[0],
+                            serialNumber : questionDatas[i].serialNumber
                         })
                     }
                 }
