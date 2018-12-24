@@ -104,7 +104,8 @@ exports.addDcxxjl = function(req, res, next) {
         {caption:'接收用户名', type:'string'},
         {caption:'接收手机号', type:'string'},
         {caption:'已读/未读', type:'string'},
-        {caption:'状态', type:'string'}
+        {caption:'状态', type:'string'},
+        {caption:'是否为同步', type:'string'}
     ];
     daochuExcel(req, res, conf, 'XXJL')
 }
@@ -559,7 +560,8 @@ daochuExcel = function (req, res, conf, name) {
         {caption:'接收用户名', type:'string'},
         {caption:'接收手机号', type:'string'},
         {caption:'已读/未读', type:'string'},
-        {caption:'状态', type:'string'}
+        {caption:'状态', type:'string'},
+        {caption:'是否为同步', type:'string'}
                 * */
                 study.find({"id" : fields.id}, function (err, studyPersons) {
                     questionpatients.find({"StudyID": studyPersons[0].StudyID},function (err, datas) {
@@ -614,7 +616,8 @@ daochuExcel = function (req, res, conf, name) {
                                 datas[i].Users == null ? "" : datas[i].Users.UserNam,
                                 datas[i].Users == null ? "" : datas[i].Users.UserMP,
                                 datas[i].voiceType == 0 ? "未读" : "已读",
-                                markTypeStr
+                                markTypeStr,
+                                datas[i].isSynchronizeMessage == null ? "" : (datas[i].isSynchronizeMessage == true ? "是" : "否")
                             ])
                             iterator(i + 1);
                         })(0);

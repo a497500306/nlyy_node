@@ -154,15 +154,15 @@ function synchronizeMessage(userData) {
                             CRFModeule : questionDatas[i].CRFModeule,
                             voiceUrls : questionDatas[i].voiceUrls,
                             text : questionDatas[i].text,
-                            Users : userData,
-                            addUsers : questionDatas[i].Users,
+                            Users : questionDatas[i].Users,
+                            addUsers : questionDatas[i].addUsers,
                             Date : questionDatas[i].Date,
                             voiceType : questionDatas[i].voiceType,
                             messageIDNum : uuid1,
                             markType : questionDatas[i].markType,
                             GroupUsers : questionDatas[i].GroupUsers,
                             isSynchronizeMessage : true,
-                            SynchronizeUser : usersPersons[0],
+                            SynchronizeUser : userData,
                             serialNumber : questionDatas[i].serialNumber
                         })
                     }
