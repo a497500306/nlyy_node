@@ -1175,7 +1175,8 @@ exports.getNewsList = function (req, res, next) {
         var newData = []
         questionPatient.find({
             "StudyID": fields.StudyID,
-            "Users.UserMP" : fields.UserMP
+            "Users.UserMP" : fields.UserMP,
+            "isSynchronizeMessage" : {$ne : true}
         }).sort({Date : -1}).exec(function (err, data) {
             (function iterator(i){
                 if (i == data.length){

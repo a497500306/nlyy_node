@@ -629,6 +629,8 @@ daochuExcel = function (req, res, conf, name) {
 }
 
 tongbucaozuo = function (suijihao,soushizhe,researchPerssons,studyPersons,dataArray,yisheng,shuchu) {
+
+
         (function iterator(yy) {
             if (yy == soushizhe.Drug.length){
                 shuchu(dataArray);
