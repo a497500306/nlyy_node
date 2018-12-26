@@ -91,8 +91,8 @@ function synchronizeMessage(userData) {
         UserSite : userData.UserSite,
         UserFun : userData.UserFun,
         UserAcc : {$ne : userData.UserAcc},
-        UserMP : {$ne : userData.UserMP},
-        isSynchronizeMessage : {$ne : true}
+        UserMP : {$ne : userData.UserMP}
+        // isSynchronizeMessage : {$ne : true}
     },function (err, usersPersons) {
         if (usersPersons.length > 0) {
             var json = {

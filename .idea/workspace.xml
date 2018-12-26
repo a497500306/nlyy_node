@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="80ed4ae2-cc87-4dee-82b2-35bbc6d64422" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/APPJK/appImageData.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/APPJK/appImageData.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/ImportData.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/ImportData.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/APPJK/appLogin.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/APPJK/appLogin.js" afterDir="false" />
     </list>
     <ignored path="nlyy_node.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -60,7 +58,7 @@
         <entry file="file://$PROJECT_DIR$/controller/APPJK/appLogin.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="288">
-              <caret line="93" column="41" selection-start-line="93" selection-start-column="41" selection-end-line="93" selection-end-column="41" />
+              <caret line="93" column="40" lean-forward="true" selection-start-line="93" selection-start-column="40" selection-end-line="93" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -397,12 +395,12 @@
       <workItem from="1545014296822" duration="7891000" />
       <workItem from="1545287924810" duration="2604000" />
       <workItem from="1545645159744" duration="2015000" />
-      <workItem from="1545809626359" duration="1436000" />
+      <workItem from="1545809626359" duration="1727000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="201693000" />
+    <option name="totallyTimeSpent" value="201984000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-280" y="-1080" width="1920" height="1080" extended-state="0" />
@@ -925,7 +923,7 @@
     <entry file="file://$PROJECT_DIR$/controller/APPJK/appLogin.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
-          <caret line="93" column="41" selection-start-line="93" selection-start-column="41" selection-end-line="93" selection-end-column="41" />
+          <caret line="93" column="40" lean-forward="true" selection-start-line="93" selection-start-column="40" selection-end-line="93" selection-end-column="40" />
         </state>
       </provider>
     </entry>
