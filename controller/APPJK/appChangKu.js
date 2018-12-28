@@ -2258,6 +2258,7 @@ exports.getSiteDrugData = function (req, res, next) {
             DDrugNumAYN: {$ne:0},
             DDrugDMNumYN: {$ne:1},
             DrugExpryDTC : {$gte:new Date()},
+            isDestroy:{$ne:1},
             $or:[
                 {DDrugUseAYN:0},
                 {DDrugUseAYN:null}
