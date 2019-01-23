@@ -378,7 +378,7 @@ exports.getAddImageUrls = function (req, res, next) {
                             }
                             //取出相同手机号
                             phones = MLArray.unique(phones);
-                            var string = fields.StudyID + '研究' + fields.Subjects.persons.SiteID + "中心受试者：" + (typeof(fields.Subjects.persons.SubjIni!="undefined") ? fields.Subjects.persons.SubjIni : fields.Subjects.persons.SubjectIn)  + '添加了一张图片。';
+                            var string = fields.StudyID + '研究' + fields.Subjects.persons.SiteID + "中心受试者：" + (typeof(fields.Subjects.persons.USubjID)=="undefined" ? fields.Subjects.persons.SubjectIn : fields.Subjects.persons.SubjIni)  + '添加了一张图片。';
                             //发送推送
                             for (var i = 0; i < phones.length; i++) {
                                 JPushTool.JPushPush(string, phones[i]);
@@ -433,7 +433,7 @@ exports.getAddImageUrls = function (req, res, next) {
                             }
                             //取出相同手机号
                             phones = MLArray.unique(phones);
-                            var string = fields.StudyID + '研究' + fields.Subjects.persons.SiteID + "中心受试者：" + (typeof(fields.Subjects.persons.SubjIni!="undefined") ? fields.Subjects.persons.SubjIni : fields.Subjects.persons.SubjectIn) + '质疑后添加了一张图片。';
+                            var string = fields.StudyID + '研究' + fields.Subjects.persons.SiteID + "中心受试者：" + (typeof(fields.Subjects.persons.USubjID)=="undefined" ? fields.Subjects.persons.SubjectIn : fields.Subjects.persons.SubjIni) + '质疑后添加了一张图片。';
                             //发送推送
                             for (var i = 0; i < phones.length; i++) {
                                 JPushTool.JPushPush(string, phones[i]);
