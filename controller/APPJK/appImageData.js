@@ -324,7 +324,7 @@ exports.getAddImageUrls = function (req, res, next) {
             "StudyID" : fields.StudyID,    //研究编号
             "imageUrl" : fields.imageUrl,    //图片地址
             "isAbandoned" : 0,//是否废弃
-            "successPatientPhone" :fields.Subjects.persons.SubjIni,
+            "successPatientPhone" :(typeof(fields.Subjects.persons.USubjID)=="undefined" ? fields.Subjects.persons.SubjectIn : fields.Subjects.persons.SubjIni),
             "successUSubjID" : (typeof(fields.Subjects.persons.USubjID)=="undefined" ? fields.Subjects.persons.USubjectID : fields.Subjects.persons.USubjID),
             "uploadUserPhone" :fields.uploadUserPhone,
             "uploadName" : fields.uploadName,
