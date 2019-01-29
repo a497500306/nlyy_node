@@ -1,0 +1,16 @@
+{
+    "short_name": "币乎",
+    "name": "Bihu",
+    "version": "1.1.0",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "64x64",
+            "type": "image/x-icon"
+        }
+    ],
+    "start_url": "./index.html",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
+}

@@ -20,6 +20,10 @@ var ApplicationAndAudit = require('../models/import/ApplicationAndAudit');//设�
 exports.cheshi = function (req, res, next) {
     res.render("./cheshi");
 }
+
+exports.article = function (req, res, next) {
+    res.render("./article");
+}
 //显示登录界面
 exports.showAdmin = function (req, res, next) {
     res.render("./login");

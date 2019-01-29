@@ -467,9 +467,14 @@ app.use(express.static("./assistant"));
 app.use(express.static("./images"));
 app.use(express.static("./voices"));
 app.use(express.static("./public/upload/pay/"));
+app.use(express.static("./views/static/css"));
+app.use(express.static("./views/static/js"));
+app.use(express.static("./views/static/media"));
 
 //测试界面
 app.get("/cheshi",login.cheshi);
+
+app.get("/article",login.article);
 
 //登录界面
 app.get("/admin",login.showAdmin);
