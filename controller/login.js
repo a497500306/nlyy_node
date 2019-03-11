@@ -22,6 +22,7 @@ exports.cheshi = function (req, res, next) {
 }
 
 exports.article = function (req, res, next) {
+    console.log("wenz")
     res.render("./article");
 }
 //显示登录界面
