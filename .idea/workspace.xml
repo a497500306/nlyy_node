@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="80ed4ae2-cc87-4dee-82b2-35bbc6d64422" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controller/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/article.ejs" beforeDir="false" afterPath="$PROJECT_DIR$/views/article.ejs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/asset-manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/views/asset-manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/service-worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/views/service-worker.js" afterDir="false" />
-    </list>
+    <list default="true" id="80ed4ae2-cc87-4dee-82b2-35bbc6d64422" name="Default" comment="" />
     <ignored path="nlyy_node.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -426,7 +420,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="206390000" />
+    <option name="totallyTimeSpent" value="206687000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-280" y="-1080" width="1920" height="1080" extended-state="0" />
