@@ -94,7 +94,7 @@ exports.getTzrzSite = function (req, res, next) {
                         }else{
                             res.send({
                                 'isSucceed': 200,
-                                'msg': '该用户有该模块操作权限'
+                                'msg': '该用户没有该模块操作权限'
                             });
                             return
                         }
@@ -180,7 +180,7 @@ exports.getApplyZXStopIt = function (req, res, next) {
                                         htmlStr = htmlStr + '<h2>申请人手机号：' + fields.UserMP + '</h2>'
                                         htmlStr = htmlStr + '<h2>申请人邮箱：' + fields.UserEmail + '</h2>'
                                         htmlStr = htmlStr + '<h2>原因：' + fields.Reason + '</h2>'
-                                        var duanxinStr = '中心停止入组' + '：' + '研究编号：' + fields.StudyID + '，' + '研究标题全称：' + persons1[0].StudNameF
+                                        var duanxinStr = '中心停止入组：' + '研究编号：' + fields.StudyID + '，' + '研究标题全称：' + persons1[0].StudNameF
                                             + '，' + '研究标题简称：' + persons1[0].StudNameS + '，' + '研究中心编号：' + fields.SiteID + '，' +
                                             '研究中心名称：' + fields.SiteNam + '，' + '主要研究者：' + persons2[0].UserNam + '，' + '已随机例数：' + jj
                                             + '，' + '已完成或者提前退出例数：' + addOutPersons.length + '，' + '申请人：' + fields.UserNam + '，' + '申请人手机号：' + fields.UserMP + '，'
@@ -975,7 +975,7 @@ exports.getApplyYJStopIt = function (req, res, next) {
                     htmlStr = htmlStr + '<h2>申请人:' + fields.UserNam + '</h2>'
                     htmlStr = htmlStr + '<h2>申请人手机号:' + fields.UserMP + '</h2>'
                     htmlStr = htmlStr + '<h2>原因:' + fields.Reason + '</h2>'
-                    var duanxinStr = "研究停止入组：" + "研究编号：" + fields.StudyID + '，' + "申请人：" + fields.UserNam + '，'
+                    var duanxinStr = "研究停止入组" + "：" + "研究编号：" + fields.StudyID + '，' + "申请人：" + fields.UserNam + '，'
                                         +  "申请人手机号：" + fields.UserMP + '，' + "原因" + fields.Reason
                     for (var j = 0; j < phones.length; j++) {
 

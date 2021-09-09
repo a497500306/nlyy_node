@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="80ed4ae2-cc87-4dee-82b2-35bbc6d64422" name="Default" comment="" />
-    <ignored path="nlyy_node.iws" />
-    <ignored path=".idea/workspace.xml" />
-    <ignored path="$PROJECT_DIR$/.tmp/" />
-    <ignored path="$PROJECT_DIR$/temp/" />
-    <ignored path="$PROJECT_DIR$/tmp/" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <list default="true" id="80ed4ae2-cc87-4dee-82b2-35bbc6d64422" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/nlyy_node.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/nlyy_node.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/APPJK/appLogin.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/APPJK/appLogin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/APPJK/appSSZSJ.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/APPJK/appSSZSJ.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controller/APPJK/appTzrz.js" beforeDir="false" afterPath="$PROJECT_DIR$/controller/APPJK/appTzrz.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/db.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/import/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/import/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,133 +19,6 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="-195931033">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="6" />
-          <entry key="project.open.time.1" value="2" />
-          <entry key="project.open.time.5" value="3" />
-          <entry key="project.open.time.6" value="2" />
-          <entry key="project.opened" value="7" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.edit">
-        <counts>
-          <entry key="ejs" value="41" />
-          <entry key="js" value="283" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.edit">
-        <counts>
-          <entry key="EJS" value="41" />
-          <entry key="JavaScript" value="283" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.extensions.open">
-        <counts>
-          <entry key="css" value="2" />
-          <entry key="ejs" value="3" />
-          <entry key="js" value="5" />
-        </counts>
-      </usages-collector>
-      <usages-collector id="statistics.file.types.open">
-        <counts>
-          <entry key="CSS" value="2" />
-          <entry key="EJS" value="3" />
-          <entry key="JavaScript" value="5" />
-        </counts>
-      </usages-collector>
-    </session>
-  </component>
-  <component name="FavoritesManager">
-    <favorites_list name="nlyy_node" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1538">
-              <caret line="476" column="28" selection-start-line="476" selection-start-column="28" selection-end-line="476" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/controller/ImportData.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7455">
-              <caret line="497" column="19" selection-start-line="497" selection-start-column="19" selection-end-line="497" selection-end-column="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/service-worker.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="3103" selection-start-column="3103" selection-end-column="3103" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/login.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/models/db.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="10" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/controller/login.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="37" column="15" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/views/article.ejs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="788" selection-start-column="784" selection-end-column="788" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/settings.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/import/users.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="30" column="25" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
-  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -150,173 +26,44 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>回复</find>
-      <find>中心</find>
-      <find>YHZL</find>
-      <find>.update({</find>
-      <find>/app/getSiteDrugData</find>
-      <find>.c</find>
-      <find>DDrugDMNumYN</find>
-      <find>fields.SubjMP =</find>
-      <find>同步</find>
-      <find>questionPatient.create</find>
-      <find>/app/getAddQuestion</find>
-      <find>messageIDNum</find>
-      <find>uuid</find>
-      <find>/app/getCancelSelectedDestroy</find>
-      <find>serialNumber</find>
-      <find>fields.messageIDNum</find>
-      <find>isDestroy</find>
-      <find>dcxx</find>
-      <find>消息</find>
-      <find>MQKCL</find>
-      <find>isRecycling</find>
-      <find>导出</find>
-      <find>successpatie</find>
-      <find>DCTP</find>
-      <find>successPatientPhone</find>
-      <find>推送</find>
-      <find>JPushTool.</find>
-      <find>views</find>
-      <find>main.456d090e.css</find>
-      <find>main</find>
-    </findStrings>
-    <dirStrings>
-      <dir>$PROJECT_DIR$/file</dir>
-      <dir>$PROJECT_DIR$/appLicationAndAuditTool</dir>
-    </dirStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="IdeDocumentHistory">
-    <option name="CHANGED_PATHS">
-      <list>
-        <option value="$PROJECT_DIR$/models/adminUsers.js" />
-        <option value="$PROJECT_DIR$/models/login/login.js" />
-        <option value="$PROJECT_DIR$/public/css/dashboard.css" />
-        <option value="$PROJECT_DIR$/public/js/ie10-viewport-bug-workaround.js" />
-        <option value="$PROJECT_DIR$/public/js/ie-emulation-modes-warning.js" />
-        <option value="$PROJECT_DIR$/public/js/underscore-noflect.js" />
-        <option value="$PROJECT_DIR$/settings.js" />
-        <option value="$PROJECT_DIR$/models/dbHelper.js" />
-        <option value="$PROJECT_DIR$/models/study.js" />
-        <option value="$PROJECT_DIR$/public/css/default.css" />
-        <option value="$PROJECT_DIR$/public/css/fileinput.css" />
-        <option value="$PROJECT_DIR$/models/EMail.js" />
-        <option value="$PROJECT_DIR$/models/studyCenter.js" />
-        <option value="$PROJECT_DIR$/models/site.js" />
-        <option value="$PROJECT_DIR$/models/depot.js" />
-        <option value="$PROJECT_DIR$/views/login.ejs" />
-        <option value="$PROJECT_DIR$/models/import/depot.js" />
-        <option value="$PROJECT_DIR$/models/import/study.js" />
-        <option value="$PROJECT_DIR$/controller/appJK.js" />
-        <option value="$PROJECT_DIR$/controller/appjk/login.js" />
-        <option value="$PROJECT_DIR$/models/db.js" />
-        <option value="$PROJECT_DIR$/controller/APPJK/appVersion.js" />
-        <option value="$PROJECT_DIR$/models/import/addSuccessPatient.js" />
-        <option value="$PROJECT_DIR$/models/import/site.js" />
-        <option value="$PROJECT_DIR$/models/import/sitePhone.js" />
-        <option value="$PROJECT_DIR$/models/import/drugCK.js" />
-        <option value="$PROJECT_DIR$/models/import/userModeules.js" />
-        <option value="$PROJECT_DIR$/views/selectStudy.ejs" />
-        <option value="$PROJECT_DIR$/views/mshome.ejs" />
-        <option value="$PROJECT_DIR$/public/js/mshome.js" />
-        <option value="$PROJECT_DIR$/models/import/users.js" />
-        <option value="$PROJECT_DIR$/controller/APPJK/appSSZSJ.js" />
-        <option value="$PROJECT_DIR$/models/import/questionPatient.js" />
-        <option value="$PROJECT_DIR$/controller/ImportData.js" />
-        <option value="$PROJECT_DIR$/controller/APPJK/appLogin.js" />
-        <option value="$PROJECT_DIR$/controller/APPJK/appChangKu.js" />
-        <option value="$PROJECT_DIR$/controller/APPJK/appImageData.js" />
-        <option value="$PROJECT_DIR$/app.js" />
-        <option value="$PROJECT_DIR$/controller/login.js" />
-        <option value="$PROJECT_DIR$/views/article.ejs" />
-      </list>
-    </option>
-  </component>
-  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
-    <package-json value="$PROJECT_DIR$/package.json" />
-  </component>
-  <component name="JsGulpfileManager">
-    <detection-done>true</detection-done>
-    <sorting>DEFINITION_ORDER</sorting>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
   </component>
   <component name="NodeModulesDirectoryManager">
     <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
-  <component name="NodePackageJsonFileManager">
-    <packageJsonPaths>
-      <path value="$PROJECT_DIR$/ALYZM/package.json" />
-      <path value="$PROJECT_DIR$/package.json" />
-    </packageJsonPaths>
-  </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="-280" />
-    <option name="y" value="-1080" />
-    <option name="width" value="1920" />
-    <option name="height" value="1080" />
-  </component>
+  <component name="ProjectId" id="1uYlqS51EECweWb5xl5Eqxo7H0e" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
-  <component name="ProjectView">
-    <navigator proportions="" version="1">
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="nlyy_node" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nlyy_node" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nlyy_node" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nlyy_node" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nlyy_node" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nlyy_node" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nlyy_node" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nlyy_node" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="css" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nlyy_node" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nlyy_node" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-    </panes>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="HbShouldOpenHtmlAsHb" value="" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="javascript.nodejs.core.library.configured.version" value="4.5.0" />
+    <property name="javascript.nodejs.core.library.configured.version" value="12.18.0" />
+    <property name="javascript.nodejs.core.library.typings.version" value="12.20.15" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="settings.nodejs" />
-    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
+    <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -334,23 +81,11 @@
       <recent name="$PROJECT_DIR$/models/import" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager">
-    <configuration name="app.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
+    <configuration name="app.js" type="NodeJSConfigurationType" temporary="true" path-to-js-file="app.js" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+    <configuration default="true" type="js.build_tools.gulp">
       <node-interpreter>project</node-interpreter>
       <node-options />
       <gulpfile />
@@ -365,6 +100,7 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -412,39 +148,27 @@
       <workItem from="1548218235463" duration="1212000" />
       <workItem from="1548739356442" duration="19000" />
       <workItem from="1548739801608" duration="1067000" />
-      <workItem from="1553499150247" duration="786000" />
+      <workItem from="1553499150247" duration="962000" />
+      <workItem from="1554862000940" duration="9000" />
+      <workItem from="1565144775444" duration="214000" />
+      <workItem from="1571794500518" duration="1422000" />
+      <workItem from="1571800081063" duration="309000" />
+      <workItem from="1594442144188" duration="1023000" />
+      <workItem from="1604029196405" duration="27000" />
+      <workItem from="1624850595436" duration="67000" />
+      <workItem from="1624850716389" duration="1433000" />
+      <workItem from="1624874123959" duration="42000" />
+      <workItem from="1624874199901" duration="178000" />
+      <workItem from="1625039178897" duration="827000" />
+      <workItem from="1625554238747" duration="19898000" />
+      <workItem from="1625820429803" duration="1226000" />
+      <workItem from="1626832338345" duration="548000" />
+      <workItem from="1631165581559" duration="31000" />
     </task>
     <servers />
   </component>
-  <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="207473000" />
-  </component>
-  <component name="ToolWindowManager">
-    <frame x="-280" y="-1080" width="1920" height="1080" extended-state="0" />
-    <editor active="true" />
-    <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8079208" visible="true" weight="0.15218537" />
-      <window_info id="Structure" order="1" weight="0.25" />
-      <window_info id="npm" order="2" sideWeight="0.1920792" side_tool="true" visible="true" weight="0.15218537" />
-      <window_info id="Favorites" order="3" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32970297" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.30792078" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.36534652" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-  </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -456,6 +180,112 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="3419" height="313" key="GridCell.Tab.0.bottom" timestamp="1625815302193">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="313" key="GridCell.Tab.0.bottom/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625646737536" />
+    <state width="3419" height="313" key="GridCell.Tab.0.bottom/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302193" />
+    <state width="1659" height="318" key="GridCell.Tab.0.bottom/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624862617208" />
+    <state width="3419" height="313" key="GridCell.Tab.0.center" timestamp="1625815302192">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="313" key="GridCell.Tab.0.center/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625646737535" />
+    <state width="3419" height="313" key="GridCell.Tab.0.center/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302192" />
+    <state width="1659" height="318" key="GridCell.Tab.0.center/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624862617207" />
+    <state width="3419" height="313" key="GridCell.Tab.0.left" timestamp="1625815302191">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="313" key="GridCell.Tab.0.left/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625646737534" />
+    <state width="3419" height="313" key="GridCell.Tab.0.left/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302191" />
+    <state width="1659" height="318" key="GridCell.Tab.0.left/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624862617206" />
+    <state width="3419" height="313" key="GridCell.Tab.0.right" timestamp="1625815302193">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="313" key="GridCell.Tab.0.right/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625646737535" />
+    <state width="3419" height="313" key="GridCell.Tab.0.right/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302193" />
+    <state width="1659" height="318" key="GridCell.Tab.0.right/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624862617208" />
+    <state width="3419" height="472" key="GridCell.Tab.1.bottom" timestamp="1625815302132">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.1.bottom/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503899" />
+    <state width="3419" height="472" key="GridCell.Tab.1.bottom/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302132" />
+    <state width="1659" height="330" key="GridCell.Tab.1.bottom/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661474" />
+    <state width="3419" height="472" key="GridCell.Tab.1.center" timestamp="1625815302131">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.1.center/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503898" />
+    <state width="3419" height="472" key="GridCell.Tab.1.center/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302131" />
+    <state width="1659" height="330" key="GridCell.Tab.1.center/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661473" />
+    <state width="3419" height="472" key="GridCell.Tab.1.left" timestamp="1625815302130">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.1.left/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503897" />
+    <state width="3419" height="472" key="GridCell.Tab.1.left/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302130" />
+    <state width="1659" height="330" key="GridCell.Tab.1.left/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661472" />
+    <state width="3419" height="472" key="GridCell.Tab.1.right" timestamp="1625815302132">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.1.right/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503899" />
+    <state width="3419" height="472" key="GridCell.Tab.1.right/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302132" />
+    <state width="1659" height="330" key="GridCell.Tab.1.right/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661473" />
+    <state width="3419" height="472" key="GridCell.Tab.2.bottom" timestamp="1625815302134">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.2.bottom/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503903" />
+    <state width="3419" height="472" key="GridCell.Tab.2.bottom/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302134" />
+    <state width="1659" height="330" key="GridCell.Tab.2.bottom/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661476" />
+    <state width="3419" height="472" key="GridCell.Tab.2.center" timestamp="1625815302133">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.2.center/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503901" />
+    <state width="3419" height="472" key="GridCell.Tab.2.center/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302133" />
+    <state width="1659" height="330" key="GridCell.Tab.2.center/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661475" />
+    <state width="3419" height="472" key="GridCell.Tab.2.left" timestamp="1625815302133">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.2.left/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503900" />
+    <state width="3419" height="472" key="GridCell.Tab.2.left/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302133" />
+    <state width="1659" height="330" key="GridCell.Tab.2.left/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661475" />
+    <state width="3419" height="472" key="GridCell.Tab.2.right" timestamp="1625815302134">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.2.right/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503902" />
+    <state width="3419" height="472" key="GridCell.Tab.2.right/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302134" />
+    <state width="1659" height="330" key="GridCell.Tab.2.right/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661476" />
+    <state width="3419" height="472" key="GridCell.Tab.3.bottom" timestamp="1625815302137">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.3.bottom/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503905" />
+    <state width="3419" height="472" key="GridCell.Tab.3.bottom/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302137" />
+    <state width="1659" height="330" key="GridCell.Tab.3.bottom/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661478" />
+    <state width="3419" height="472" key="GridCell.Tab.3.center" timestamp="1625815302135">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.3.center/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503904" />
+    <state width="3419" height="472" key="GridCell.Tab.3.center/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302135" />
+    <state width="1659" height="330" key="GridCell.Tab.3.center/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661477" />
+    <state width="3419" height="472" key="GridCell.Tab.3.left" timestamp="1625815302135">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.3.left/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503903" />
+    <state width="3419" height="472" key="GridCell.Tab.3.left/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302135" />
+    <state width="1659" height="330" key="GridCell.Tab.3.left/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661477" />
+    <state width="3419" height="472" key="GridCell.Tab.3.right" timestamp="1625815302136">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state width="3419" height="472" key="GridCell.Tab.3.right/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625641503905" />
+    <state width="3419" height="472" key="GridCell.Tab.3.right/-804.-1440.3440.1440/0.25.1680.1025@-804.-1440.3440.1440" timestamp="1625815302136" />
+    <state width="1659" height="330" key="GridCell.Tab.3.right/1680.0.1920.1080/0.0.1680.1050@0.0.1680.1050" timestamp="1624850661478" />
+    <state x="425" y="-1084" key="SettingsEditor" timestamp="1625554653425">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state x="425" y="-1084" key="SettingsEditor/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625554653425" />
+    <state x="615" y="-1088" width="720" height="735" key="find.popup" timestamp="1625648752388">
+      <screen x="-804" y="-1440" width="3440" height="1440" />
+    </state>
+    <state x="615" y="-1088" width="720" height="735" key="find.popup/-804.-1440.3440.1440/0.0.1680.1050@-804.-1440.3440.1440" timestamp="1625648752388" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -612,12 +442,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appLogin.js</url>
-          <line>149</line>
+          <line>148</line>
           <option name="timeStamp" value="177" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/controller/APPJK/appLogin.js</url>
-          <line>148</line>
+          <line>147</line>
           <option name="timeStamp" value="178" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -627,318 +457,5 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
-  </component>
-  <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/node_modules/node-xlsx/node_modules/xlsx/xlsx.js" />
-    <entry file="file://$PROJECT_DIR$/models/EMail.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="28" column="10" selection-start-line="28" selection-start-column="10" selection-end-line="28" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/dbHelper.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/mongoose/lib/schema.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="1160" selection-start-line="1160" selection-end-line="1160" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/adminUsers.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="4" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/depot.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="27" column="18" selection-start-line="27" selection-start-column="18" selection-end-line="27" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/study.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/appJK.js" />
-    <entry file="file://$PROJECT_DIR$/controller/appjk/login.js" />
-    <entry file="file://$PROJECT_DIR$/models/import/drug.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="29" column="3" selection-start-line="29" selection-start-column="3" selection-end-line="29" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ALYZM/topClient.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1890">
-          <caret line="126" column="22" selection-start-line="126" selection-start-column="22" selection-end-line="126" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar!/com/intellij/javascript/nodejs/library/node-globals-stub.js" />
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="15" selection-start-line="33" selection-start-column="15" selection-end-line="33" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appVersion.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="128">
-          <caret line="14" column="16" selection-start-line="14" selection-start-column="16" selection-end-line="14" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/sitePhone.js" />
-    <entry file="file://$PROJECT_DIR$/models/import/drugGQ.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="35" lean-forward="true" selection-start-line="22" selection-start-column="35" selection-end-line="22" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/drugWL.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/express/lib/application.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9150">
-          <caret line="616" column="23" selection-start-line="616" selection-start-column="23" selection-end-line="616" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/bootstrap.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="344" column="28" lean-forward="true" selection-start-line="344" selection-start-column="28" selection-end-line="344" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MLArray.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="11" selection-start-column="11" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/selectStudy.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="214" column="97" lean-forward="true" selection-start-line="214" selection-start-column="97" selection-end-line="217" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/mshome.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2685">
-          <caret line="179" column="76" selection-start-line="179" selection-start-column="70" selection-end-line="179" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appTool.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1515">
-          <caret line="101" column="10" selection-start-line="101" selection-start-column="10" selection-end-line="101" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/addOutPatient.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="15" selection-start-line="15" selection-start-column="5" selection-end-line="15" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/js/mshome.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1170">
-          <caret line="78" column="19" lean-forward="true" selection-start-line="78" selection-start-column="19" selection-end-line="78" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/site.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="8" column="12" selection-start-line="8" selection-start-column="5" selection-end-line="8" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/uuid/v1.js">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/uuid/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="8" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appLogin.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1395">
-          <caret line="93" column="40" selection-start-line="93" selection-start-column="40" selection-end-line="93" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/questionPatient.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="17" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/userModeules.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="19" selection-start-line="13" selection-start-column="5" selection-end-line="13" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appSSZSJ.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="61350">
-          <caret line="4090" column="15" selection-start-line="4090" selection-start-column="15" selection-end-line="4090" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/imageData.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appChangKu.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33900">
-          <caret line="2260" column="14" selection-start-line="2260" selection-start-column="14" selection-end-line="2260" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/drugCK.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="26" column="14" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JPushTool/JPushaTool.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/addFailPatient.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="14" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/addSuccessPatient.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="12" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/APPJK/appImageData.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="530">
-          <caret line="417" column="12" selection-start-line="417" selection-start-column="12" selection-end-line="417" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/css/main.456d090e.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="26" selection-end-line="12" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/cheshi1.ejs">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/static/css/main.456d090e.css">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/ImportData.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7455">
-          <caret line="497" column="19" selection-start-line="497" selection-start-column="19" selection-end-line="497" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/service-worker.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="3103" selection-start-column="3103" selection-end-column="3103" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/login.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="16" selection-start-line="4" selection-start-column="16" selection-end-line="4" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/login.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="37" column="15" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/settings.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/import/users.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" column="25" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/article.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="788" selection-start-column="784" selection-end-column="788" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1538">
-          <caret line="476" column="28" selection-start-line="476" selection-start-column="28" selection-end-line="476" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/db.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="10" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
   </component>
 </project>

@@ -19,8 +19,8 @@ var randomTool = require('../../randomTool/MLRandomTool');
 var EMail = require("../../models/EMail");
 var appTool = require("./appTool");
 var async = require("async");
-const Locker = require('lockman');
-var locker = new Locker('demo');
+// const Locker = require('lockman');
+// var locker = new Locker('demo');
 
 TopClient = require( '../../ALYZM/topClient' ).TopClient;
 var client = new TopClient({
@@ -118,7 +118,7 @@ exports.getAddBasicsData = function (req, res, next) {
                                 console.log(err);
                                 res.send({
                                     'isSucceed' : 200,
-                                    'msg' : 'C服务器忙碌,请移步到随机列表'
+                                    'msg' : '服务器忙碌,请移步到随机列表'
                                 });
                             }else {
                                 //判断是否有中心人数限制
