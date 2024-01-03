@@ -26,7 +26,6 @@ var usersSchema = new mongoose.Schema({
     "UserDepot" : String,  //具体负责仓库的编号
     "UserEmail" : String,  //用户邮箱
     "UserMP"  : String,    //用户手机号
-    "UserPassword" : String, // 用户密码
     "platform"  : String,    //ios和安卓
     "registrationId"  : String,    //推送id
     "isSynchronizeMessage" : Boolean, //是否同步了消息

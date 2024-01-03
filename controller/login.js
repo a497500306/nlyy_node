@@ -16,13 +16,18 @@ var researchParameter = require('../models/import/researchParameter');//设置�
 var ApplicationAndAudit = require('../models/import/ApplicationAndAudit');//设置研究的随机化参数
 
 
+
+//显示登录界面
+exports.fenfa = function (req, res, next) {
+    res.render("./fenfa");
+}
+
 //显示登录界面
 exports.cheshi = function (req, res, next) {
     res.render("./cheshi");
 }
 
 exports.article = function (req, res, next) {
-    console.log("wenz")
     res.render("./article");
 }
 //显示登录界面
